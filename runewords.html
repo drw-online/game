@@ -60,6 +60,12 @@ body{
 
 .masthead{padding:52px 0 26px; border-bottom:1px solid var(--rule)}
 .eyebrow{margin:0 0 10px; font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+a.eyebrow{display:inline-block; text-decoration:none}
+a.eyebrow:hover{text-decoration:underline; text-underline-offset:5px}
+a.eyebrow:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+.back{display:inline-block; margin-top:14px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
 h1{
   margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
   font-size:clamp(34px,6vw,52px); line-height:1.1; letter-spacing:.06em; text-wrap:balance;
@@ -164,7 +170,7 @@ h1{
 <body>
 <div class="wrap">
   <header class="masthead">
-    <p class="eyebrow">神域仙境</p>
+    <a class="eyebrow" href="index.html">← 神域仙境 玩家工具</a>
     <h1>符文之語圖鑑</h1>
     <p class="lede">三十三種符文，可組出 <b>290 組符文之語</b>。符文直接插在裝備的卡槽上，同一件裝備自己湊齊就生效 —— 武器與鎧甲各自湊齊，就各算一次。</p>
   </header>
@@ -205,6 +211,7 @@ h1{
     <p><b>怎麼讀這張表</b>　名稱左邊的圓點是需要的卡槽數。同一組合若列了兩個相同符文（例如 光＋光＋神＋魂），代表要插兩張同符文，只插一張不會生效。</p>
     <p><b>「另觸發」是什麼</b>　湊齊大組合時，凡是符文剛好是它子集的小組合也會一起生效，效果疊加。290 組裡有 221 組會發生這件事，該欄列出的就是會被順帶觸發的組合。</p>
     <p><b>符文哪裡來</b>　十二洞天打怪掉落，每三張圖多開一階：凡符（1～3 洞天）、仙符（4～6）、神符（7～9）、上古符（10～12）。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
   </footer>
 </div>
 
