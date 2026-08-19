@@ -10,10 +10,13 @@
 <meta property="og:site_name" content="神域仙境">
 <meta property="og:title" content="符文之語圖鑑">
 <meta property="og:description" content="神域仙境 33 種符文、290 組符文之語的查詢表。可依符文、洞數與裝備部位篩選。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%224%22 fill=%22%23B8331C%22/%3E%3Ctext x=%2216%22 y=%2224%22 font-size=%2223%22 text-anchor=%22middle%22 fill=%22%23F8F9F6%22 font-family=%22serif%22%3E%E7%AC%A6%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
 <style>
@@ -60,6 +63,11 @@ body{
 
 .masthead{padding:52px 0 26px; border-bottom:1px solid var(--rule)}
 .eyebrow{margin:0 0 10px; font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:10px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
 a.eyebrow{display:inline-block; text-decoration:none}
 a.eyebrow:hover{text-decoration:underline; text-underline-offset:5px}
 a.eyebrow:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
@@ -170,7 +178,10 @@ h1{
 <body>
 <div class="wrap">
   <header class="masthead">
-    <a class="eyebrow" href="index.html">← 神域仙境 玩家工具</a>
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
     <h1>符文之語圖鑑</h1>
     <p class="lede">三十三種符文，可組出 <b>290 組符文之語</b>。符文直接插在裝備的卡槽上，同一件裝備自己湊齊就生效 —— 武器與鎧甲各自湊齊，就各算一次。</p>
   </header>

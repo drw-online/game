@@ -10,10 +10,13 @@
 <meta property="og:site_name" content="神域仙境">
 <meta property="og:title" content="神域仙境 玩家工具">
 <meta property="og:description" content="神域仙境的玩家查詢工具集。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%224%22 fill=%22%23B8331C%22/%3E%3Ctext x=%2216%22 y=%2224%22 font-size=%2223%22 text-anchor=%22middle%22 fill=%22%23F8F9F6%22 font-family=%22serif%22%3E%E7%A5%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
 <style>
@@ -55,7 +58,10 @@ body{
 }
 .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
 
-.masthead{padding:72px 0 34px; border-bottom:1px solid var(--rule)}
+.masthead{padding:64px 0 34px; border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:38px}
+.brand{min-width:0}
+.logo{width:190px; height:auto; flex:none; display:block}
 .eyebrow{margin:0 0 12px; font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
 h1{
   margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
@@ -83,7 +89,8 @@ h1{
 .foot{margin-top:52px; padding-top:20px; border-top:1px solid var(--rule); font-size:12.5px; line-height:1.8; color:var(--ink-faint)}
 
 @media (max-width:640px){
-  .masthead{padding:46px 0 26px}
+  .masthead{padding:40px 0 26px; flex-direction:column; align-items:flex-start; gap:22px}
+  .logo{width:140px}
   .tools{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion: reduce){
@@ -94,9 +101,11 @@ h1{
 <body>
 <div class="wrap">
   <header class="masthead">
-    <p class="eyebrow">神域仙境</p>
-    <h1>玩家工具</h1>
-    <p class="lede">伺服器自製系統的查詢頁。資料取自線上實際設定，系統改動後會一併更新。</p>
+    <img class="logo" src="logo.webp" width="440" height="440" alt="神域仙境" decoding="async">
+    <div class="brand">
+      <h1>玩家工具</h1>
+      <p class="lede">伺服器自製系統的查詢頁。資料取自線上實際設定，系統改動後會一併更新。</p>
+    </div>
   </header>
 
   <ul class="tools">
