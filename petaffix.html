@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>寵物詞條與星級</title>
+<meta name="description" content="神域仙境 寵物的 40 種詞條能力、數值範圍與 3→9 星升階需求。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="寵物詞條與星級">
+<meta property="og:description" content="神域仙境 寵物的 40 種詞條能力、數值範圍與 3→9 星升階需求。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.card{background:var(--paper); border:1px solid var(--rule-soft); border-radius:6px; padding:20px 22px; box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px; font-family:"Noto Serif TC",serif; font-size:19px; font-weight:700; letter-spacing:.06em}
+.card p{margin:0; font-size:14px; line-height:1.75; color:var(--ink-soft)}
+.card p + p{margin-top:9px}
+.card b{color:var(--ink); font-weight:500}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:hover{background:var(--sunk)}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.stars{display:flex; flex-wrap:wrap; gap:10px; margin:0}
+.star{display:flex; flex-direction:column; align-items:center; gap:4px;
+  min-width:64px; padding:12px 10px; background:var(--paper);
+  border:1px solid var(--rule-soft); border-radius:6px; box-shadow:var(--shadow)}
+.star b{font-family:"Noto Serif TC",serif; font-size:19px; color:var(--cinnabar); letter-spacing:.04em}
+.star span{font-size:11.5px; color:var(--ink-faint)}
+.star.init{border-color:var(--cinnabar)}
+td.ab{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%}
+td.rng{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--cinnabar); font-weight:500}
+td.rate{font-variant-numeric:tabular-nums; white-space:nowrap}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:66ch}
+.two-col{columns:2; column-gap:34px}
+@media (max-width:720px){ .two-col{columns:1} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>寵物詞條與星級</h1>
+    <p class="lede">自創寵物孵出來就帶著 <b>★ 3 星</b>與 <b>3 條詞條</b>，最高可以練到 <b>★ 9 星 9 條</b>。詞條直接寫在蛋上，滑鼠移過去就看得到。</p>
+  </header>
+
+  <section>
+    <h2>星級 = 詞條數</h2>
+    <div class="stars"><div class="star init"><b>★ 3</b><span>孵化</span></div><div class="star"><b>★ 4</b><span>4 條詞條</span></div><div class="star"><b>★ 5</b><span>5 條詞條</span></div><div class="star"><b>★ 6</b><span>6 條詞條</span></div><div class="star"><b>★ 7</b><span>7 條詞條</span></div><div class="star"><b>★ 8</b><span>8 條詞條</span></div><div class="star"><b>★ 9</b><span>9 條詞條</span></div></div>
+    <p class="note">每升一星就多骰一條新詞條，能力種類與數值都是隨機的。星級上限是 9 —— 蛋只有 10 個選項欄位，第 1 格用來記星級，剩下 9 格剛好放 9 條。</p>
+  </section>
+
+  <section>
+    <h2>升階需求</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">升到</th><th class="num">同款蛋</th><th class="num">善惡晶核</th><th class="num">成功率</th><th class="num">金幣</th></tr></thead>
+        <tbody><tr><td class="num">★ 4</td><td class="num">1 顆</td><td class="num">10 個</td><td class="rate num">60%</td><td class="num">5,000 萬</td></tr><tr><td class="num">★ 5</td><td class="num">2 顆</td><td class="num">20 個</td><td class="rate num">50%</td><td class="num">1 億</td></tr><tr><td class="num">★ 6</td><td class="num">3 顆</td><td class="num">40 個</td><td class="rate num">40%</td><td class="num">2 億</td></tr><tr><td class="num">★ 7</td><td class="num">4 顆</td><td class="num">80 個</td><td class="rate num">30%</td><td class="num">4 億</td></tr><tr><td class="num">★ 8</td><td class="num">5 顆</td><td class="num">160 個</td><td class="rate num">20%</td><td class="num">8 億</td></tr><tr><td class="num">★ 9</td><td class="num">6 顆</td><td class="num">320 個</td><td class="rate num">10%</td><td class="num">16 億</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">「同款蛋」是指<b>同一種寵物</b>的蛋，逼你重複取得同一隻。你正在攜帶的那顆蛋會被精確排除，不會被吃掉。<br>
+    失敗時材料照樣消耗，但<b>星級不會掉</b>，已有的詞條也不會消失。</p>
+  </section>
+
+  <section>
+    <h2>40 種詞條能力</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">#</th><th>能力</th><th class="num">數值範圍</th></tr></thead>
+        <tbody><tr><td class="ab num">1</td><td>對小體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">2</td><td>對中體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">3</td><td>對大體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">4</td><td>對全種族物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">5</td><td>MHP</td><td class="rng num">100 ~ 5000</td></tr><tr><td class="ab num">6</td><td>MHP(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">7</td><td>CRT</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">8</td><td>POW</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">9</td><td>STA</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">10</td><td>WIS</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">11</td><td>SPL</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">12</td><td>CON</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">13</td><td>P.ATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">14</td><td>S.MATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">15</td><td>C.RATE</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">16</td><td>暴擊傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">17</td><td>近距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">18</td><td>遠距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">19</td><td>魔法傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">20</td><td>ATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">21</td><td>MATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">22</td><td>水屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">23</td><td>地屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">24</td><td>火屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">25</td><td>風屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">26</td><td>毒屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">27</td><td>聖屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">28</td><td>闇屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">29</td><td>念屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">30</td><td>不死屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">31</td><td>HIT</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">32</td><td>CRI</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">33</td><td>對首領物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">34</td><td>對玩家增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">35</td><td>對一般魔物物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">36</td><td>負重</td><td class="rng num">100 ~ 2500</td></tr><tr><td class="ab num">37</td><td>變動詠唱減少(%)</td><td class="rng num">5 ~ 30</td></tr><tr><td class="ab num">38</td><td>MDEF</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">39</td><td>FLEE</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">40</td><td>DEF</td><td class="rng num">10 ~ 100</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><b>每一條都是獨立隨機的</b>：升階時從這 40 種裡隨機抽一種，數值再在該種的範圍內隨機。同一種能力可能重複出現。</p>
+    <p><b>詞條顯示在蛋上</b>，不是在寵物身上 —— 收回成蛋後滑鼠移過去就能看到全部詞條。也可以直接打 <b>@petaffix</b> 查目前出戰寵物的詞條。</p>
+    <p><b>能力加成隨時生效</b>，不需要另外操作；換寵物、重新召喚都會自動重算。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
+  </footer>
+</div>
+</body>
+</html>

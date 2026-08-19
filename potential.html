@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>裝備潛能詞條表</title>
+<meta name="description" content="神域仙境 裝備潛能的 190 條詞條與數值範圍，可依部位篩選。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="裝備潛能詞條表">
+<meta property="og:description" content="神域仙境 裝備潛能的 190 條詞條與數值範圍，可依部位篩選。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.card{background:var(--paper); border:1px solid var(--rule-soft); border-radius:6px; padding:20px 22px; box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px; font-family:"Noto Serif TC",serif; font-size:19px; font-weight:700; letter-spacing:.06em}
+.card p{margin:0; font-size:14px; line-height:1.75; color:var(--ink-soft)}
+.card p + p{margin-top:9px}
+.card b{color:var(--ink); font-weight:500}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:hover{background:var(--sunk)}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:14px 0 12px;
+  border-bottom:1px solid var(--rule); margin-bottom:18px}
+.ctl-row{display:flex; flex-wrap:wrap; gap:9px 16px; align-items:center}
+.glab{font-size:12px; letter-spacing:.18em; color:var(--ink-faint)}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+td.oid{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%; white-space:nowrap}
+td.pos{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.rng{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--cinnabar); font-weight:500}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:64ch}
+.empty{padding:40px 0; text-align:center; color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>裝備潛能詞條表</h1>
+    <p class="lede">裝備潛能會在裝備上隨機附加 <b>4 ～ 8 條</b>詞條。各部位有自己的詞條池，合計 <b>190 條</b>：服飾頭飾 28 條、防具 32 條、飾品 39 條、武器 · 物理 47 條、武器 · 魔法 44 條。</p>
+  </header>
+
+  <section>
+    <h2>兩種道具的差別</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>裝備潛能激發箱</h3>
+        <p><b>整組重骰。</b>詞條種類與條數全部重新決定，原有的會被完全覆蓋。</p>
+        <p>選到右手武器（或左手雙刀）時會多問一步：走<b>物理</b>還是<b>魔法</b>方向，選定後只從該方向的池子抽。</p>
+      </div>
+      <div class="card">
+        <h3>神聖石</h3>
+        <p><b>只重骰數值。</b>詞條種類與條數都不動，僅把每一條的數值在範圍內重新骰過。</p>
+        <p>不會問方向 —— 你身上既有的詞條本身就決定了它屬於哪一池。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>抽到幾條的機率</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">條數</th><th class="num">一般</th><th class="num">加倍</th></tr></thead>
+        <tbody><tr><td class="num">4 條</td><td class="num">60.0%</td><td class="num">20.0%</td></tr><tr><td class="num">5 條</td><td class="num">28.0%</td><td class="num">56.0%</td></tr><tr><td class="num">6 條</td><td class="num">10.95%</td><td class="num">21.9%</td></tr><tr><td class="num">7 條</td><td class="num">1.0%</td><td class="num">2.0%</td></tr><tr><td class="num">8 條</td><td class="num">0.05%</td><td class="num">0.1%</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">「加倍」是 5 條以上的機率各自變成一般表的兩倍，多出來的份額全部從 4 條扣掉，總量不變。</p>
+  </section>
+
+  <section>
+    <h2>詞條池</h2>
+    <div class="controls">
+      <div class="ctl-row">
+        <input id="q" class="search" type="search" placeholder="搜尋效果…　例：暴擊、Boss、詠唱、抗性" aria-label="搜尋詞條">
+        <span class="glab">部位</span>
+        <div id="pos" class="ctl-row" role="group" aria-label="部位"></div>
+      </div>
+      <p class="tally" id="tally"></p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">ID</th><th>部位</th><th>效果</th><th class="num">數值範圍</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>沒有符合條件的詞條。</div>
+  </section>
+
+  <footer class="foot">
+    <p><b>同一個詞條可能出現在多個部位</b>，數值範圍未必相同 —— 表中的「部位」欄就是它所屬的池。</p>
+    <p><b>服飾頭飾與一般頭飾不同池</b>：服飾（上／中／下）走服飾頭飾池；一般頭飾與鎧甲、披風、鞋子、盾同走防具池。</p>
+    <p><b>左手拿雙刀也算武器</b>：部位判定看的是實際物品類型，不是裝備欄位。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
+  </footer>
+</div>
+
+<script>
+const ROWS = [{"p":"服飾頭飾","id":3,"d":"STR +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":4,"d":"AGI +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":5,"d":"VIT +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":6,"d":"INT +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":7,"d":"DEX +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":8,"d":"LUK +1~15","lo":1,"hi":15},{"p":"服飾頭飾","id":243,"d":"POW +1~10","lo":1,"hi":10},{"p":"服飾頭飾","id":245,"d":"STA +1~10","lo":1,"hi":10},{"p":"服飾頭飾","id":246,"d":"WIS +1~10","lo":1,"hi":10},{"p":"服飾頭飾","id":244,"d":"SPL +1~10","lo":1,"hi":10},{"p":"服飾頭飾","id":247,"d":"CON +1~10","lo":1,"hi":10},{"p":"服飾頭飾","id":208,"d":"對玩家種族傷害 +1~10%","lo":1,"hi":10},{"p":"服飾頭飾","id":206,"d":"對玩家種族抗性 +1~5%","lo":1,"hi":5},{"p":"服飾頭飾","id":17,"d":"ATK +50~500","lo":50,"hi":500},{"p":"服飾頭飾","id":19,"d":"MATK +50~500","lo":50,"hi":500},{"p":"服飾頭飾","id":249,"d":"P.ATK +1~20","lo":1,"hi":20},{"p":"服飾頭飾","id":250,"d":"S.MATK +1~20","lo":1,"hi":20},{"p":"服飾頭飾","id":86,"d":"對全種族減傷 +1~10%","lo":1,"hi":10},{"p":"服飾頭飾","id":173,"d":"對全體型減傷 +1~10%","lo":1,"hi":10},{"p":"服飾頭飾","id":164,"d":"暴擊傷害 +5~30%","lo":5,"hi":30},{"p":"服飾頭飾","id":166,"d":"遠距離物理傷害 +5~20%","lo":5,"hi":20},{"p":"服飾頭飾","id":231,"d":"魔法傷害 +5~20%","lo":5,"hi":20},{"p":"服飾頭飾","id":1,"d":"MHP +500~5000","lo":500,"hi":5000},{"p":"服飾頭飾","id":9,"d":"MHP +5~15%","lo":5,"hi":15},{"p":"服飾頭飾","id":10,"d":"MSP +5~15%","lo":5,"hi":15},{"p":"服飾頭飾","id":193,"d":"全屬性抗性 +5~15%","lo":5,"hi":15},{"p":"服飾頭飾","id":251,"d":"RES +50~300","lo":50,"hi":300},{"p":"服飾頭飾","id":252,"d":"MRES +50~300","lo":50,"hi":300},{"p":"防具","id":1,"d":"HP +1000~15000   (合併 1000~10000 與 3000~15000)","lo":1000,"hi":15000},{"p":"防具","id":9,"d":"HP +5~20%","lo":5,"hi":20},{"p":"防具","id":20,"d":"DEF +50~300","lo":50,"hi":300},{"p":"防具","id":21,"d":"MDEF +50~300","lo":50,"hi":300},{"p":"防具","id":251,"d":"RES +100~1000    (合併 100~500 與 200~1000)","lo":100,"hi":1000},{"p":"防具","id":252,"d":"MRES +100~1000   (合併 100~500 與 200~1000)","lo":100,"hi":1000},{"p":"防具","id":86,"d":"對全種族減傷 +1~10%","lo":1,"hi":10},{"p":"防具","id":173,"d":"對全體型減傷 +1~10%","lo":1,"hi":10},{"p":"防具","id":174,"d":"技能傷害減免 +1~10%","lo":1,"hi":10},{"p":"防具","id":193,"d":"全屬性傷害減少 +1~15%","lo":1,"hi":15},{"p":"防具","id":28,"d":"火屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":26,"d":"水屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":29,"d":"風屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":27,"d":"地屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":32,"d":"暗屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":31,"d":"聖屬性抗性 +5~30%","lo":5,"hi":30},{"p":"防具","id":204,"d":"全種族傷害 +5~20%","lo":5,"hi":20},{"p":"防具","id":13,"d":"物理傷害增加 +5~20%","lo":5,"hi":20},{"p":"防具","id":14,"d":"魔法傷害增加 +5~20%","lo":5,"hi":20},{"p":"防具","id":205,"d":"技能傷害 +5~25%","lo":5,"hi":25},{"p":"防具","id":255,"d":"移動速度 +5~30%  (合併 5~20% 與 10~30%)","lo":5,"hi":30},{"p":"防具","id":171,"d":"技能後延遲 -5~-20%","lo":5,"hi":20},{"p":"防具","id":172,"d":"SP消耗 -5~-20%","lo":5,"hi":20},{"p":"防具","id":256,"d":"受到傷害降低 +5~15%","lo":5,"hi":15},{"p":"防具","id":4,"d":"AGI +5~20","lo":5,"hi":20},{"p":"防具","id":16,"d":"ASPD +5~15%","lo":5,"hi":15},{"p":"防具","id":262,"d":"獨立延遲 -5~-20%  (見檔頭: 官方無固定秒數版, 改用百分比)","lo":5,"hi":20},{"p":"防具","id":257,"d":"固定詠唱 -100~-500 毫秒 (= -0.1~-0.5 秒)","lo":100,"hi":500},{"p":"防具","id":150,"d":"Boss/MVP 傷害減免 +5~20%","lo":5,"hi":20},{"p":"防具","id":258,"d":"反射傷害 +5~20%","lo":5,"hi":20},{"p":"防具","id":259,"d":"被攻擊時 1~10% 機率觸發護盾","lo":1,"hi":10},{"p":"防具","id":260,"d":"被攻擊時 1~10% 機率恢復 HP","lo":1,"hi":10},{"p":"飾品","id":17,"d":"ATK +10~300","lo":10,"hi":300},{"p":"飾品","id":249,"d":"P.ATK +1~20","lo":1,"hi":20},{"p":"飾品","id":164,"d":"暴擊傷害 +1~30%","lo":1,"hi":30},{"p":"飾品","id":205,"d":"技能傷害 +1~20%","lo":1,"hi":20},{"p":"飾品","id":261,"d":"最終傷害 +1~10%","lo":1,"hi":10},{"p":"飾品","id":19,"d":"MATK +10~300","lo":10,"hi":300},{"p":"飾品","id":250,"d":"S.MATK +1~20","lo":1,"hi":20},{"p":"飾品","id":231,"d":"魔法傷害 +1~20%","lo":1,"hi":20},{"p":"飾品","id":1,"d":"HP +1000~10000","lo":1000,"hi":10000},{"p":"飾品","id":9,"d":"HP +5~20%","lo":5,"hi":20},{"p":"飾品","id":20,"d":"DEF +50~300","lo":50,"hi":300},{"p":"飾品","id":21,"d":"MDEF +50~300","lo":50,"hi":300},{"p":"飾品","id":251,"d":"RES +100~500","lo":100,"hi":500},{"p":"飾品","id":252,"d":"MRES +100~500","lo":100,"hi":500},{"p":"飾品","id":86,"d":"對全種族減傷 +1~10%","lo":1,"hi":10},{"p":"飾品","id":173,"d":"對全體型減傷 +1~10%","lo":1,"hi":10},{"p":"飾品","id":3,"d":"STR +1~15","lo":1,"hi":15},{"p":"飾品","id":4,"d":"AGI +1~15","lo":1,"hi":15},{"p":"飾品","id":5,"d":"VIT +1~15","lo":1,"hi":15},{"p":"飾品","id":6,"d":"INT +1~15","lo":1,"hi":15},{"p":"飾品","id":7,"d":"DEX +1~15","lo":1,"hi":15},{"p":"飾品","id":8,"d":"LUK +1~15","lo":1,"hi":15},{"p":"飾品","id":243,"d":"POW +1~10","lo":1,"hi":10},{"p":"飾品","id":245,"d":"STA +1~10","lo":1,"hi":10},{"p":"飾品","id":246,"d":"WIS +1~10","lo":1,"hi":10},{"p":"飾品","id":244,"d":"SPL +1~10","lo":1,"hi":10},{"p":"飾品","id":247,"d":"CON +1~10","lo":1,"hi":10},{"p":"飾品","id":206,"d":"對玩家種族抗性 +1~5%","lo":1,"hi":5},{"p":"飾品","id":208,"d":"對玩家種族傷害 +1~20% (合併 1~10% 與 1~20%)","lo":1,"hi":20},{"p":"飾品","id":157,"d":"對小體型 物理傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":187,"d":"對小體型 魔法傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":158,"d":"對中體型 物理傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":188,"d":"對中體型 魔法傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":159,"d":"對大體型 物理傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":189,"d":"對大體型 魔法傷害 +1~15%","lo":1,"hi":15},{"p":"飾品","id":148,"d":"對首領階級 物理傷害 +1~20%","lo":1,"hi":20},{"p":"飾品","id":152,"d":"對首領階級 魔法傷害 +1~20%","lo":1,"hi":20},{"p":"飾品","id":147,"d":"對一般魔物 物理傷害 +1~20%","lo":1,"hi":20},{"p":"飾品","id":151,"d":"對一般魔物 魔法傷害 +1~20%","lo":1,"hi":20},{"p":"武器 · 物理","id":37,"d":"對無屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":39,"d":"對水屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":41,"d":"對地屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":43,"d":"對火屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":45,"d":"對風屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":47,"d":"對毒屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":49,"d":"對聖屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":51,"d":"對暗屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":53,"d":"對念屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":55,"d":"對不死屬性敵人的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":17,"d":"ATK +1~60","lo":1,"hi":60},{"p":"武器 · 物理","id":13,"d":"ATK +1~15%","lo":1,"hi":15},{"p":"武器 · 物理","id":18,"d":"HIT +1~40","lo":1,"hi":40},{"p":"武器 · 物理","id":24,"d":"CRI +1~20","lo":1,"hi":20},{"p":"武器 · 物理","id":15,"d":"ASPD +1~3","lo":1,"hi":3},{"p":"武器 · 物理","id":22,"d":"FLEE +1~40","lo":1,"hi":40},{"p":"武器 · 物理","id":157,"d":"對小型魔物的物理傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 物理","id":158,"d":"對中型魔物的物理傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 物理","id":159,"d":"對大型魔物的物理傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 物理","id":164,"d":"暴擊傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 物理","id":16,"d":"攻擊速度增加(攻擊後延遲 - 1~20%)","lo":1,"hi":20},{"p":"武器 · 物理","id":166,"d":"遠距離物理傷害 +1~20%","lo":1,"hi":20},{"p":"武器 · 物理","id":1,"d":"MHP +1~1000","lo":1,"hi":1000},{"p":"武器 · 物理","id":2,"d":"MSP +1~200","lo":1,"hi":200},{"p":"武器 · 物理","id":172,"d":"使用技能時SP消耗量 - 1~10%","lo":1,"hi":10},{"p":"武器 · 物理","id":97,"d":"對無型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":98,"d":"對不死型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":99,"d":"對動物型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":100,"d":"對植物型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":101,"d":"對昆蟲型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":102,"d":"對魚貝型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":103,"d":"對惡魔型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":104,"d":"對人類型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":105,"d":"對天使型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":106,"d":"對龍族型魔物的物理傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 物理","id":127,"d":"無視無型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":128,"d":"無視不死型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":129,"d":"無視動物型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":130,"d":"無視植物型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":131,"d":"無視昆蟲型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":132,"d":"無視魚貝型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":133,"d":"無視惡魔型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":134,"d":"無視人類型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":135,"d":"無視天使型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":136,"d":"無視龍族型魔物的物理防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 物理","id":147,"d":"對一般階級魔物的物理傷害 +10~25%","lo":10,"hi":25},{"p":"武器 · 物理","id":148,"d":"對首領階級魔物的物理傷害 +10~25%","lo":10,"hi":25},{"p":"武器 · 魔法","id":57,"d":"對無屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":59,"d":"對水屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":61,"d":"對地屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":63,"d":"對火屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":65,"d":"對風屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":67,"d":"對毒屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":69,"d":"對聖屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":71,"d":"對暗屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":73,"d":"對念屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":75,"d":"對不死屬性敵人的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":19,"d":"MATK +1~60","lo":1,"hi":60},{"p":"武器 · 魔法","id":14,"d":"MATK +1~15%","lo":1,"hi":15},{"p":"武器 · 魔法","id":170,"d":"變動詠唱 - 1~10%","lo":1,"hi":10},{"p":"武器 · 魔法","id":15,"d":"ASPD +1~3","lo":1,"hi":3},{"p":"武器 · 魔法","id":22,"d":"FLEE +1~40","lo":1,"hi":40},{"p":"武器 · 魔法","id":187,"d":"對小型魔物的魔法傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 魔法","id":188,"d":"對中型魔物的魔法傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 魔法","id":189,"d":"對大型魔物的魔法傷害 +1~35%","lo":1,"hi":35},{"p":"武器 · 魔法","id":16,"d":"攻擊速度增加(攻擊後延遲 - 1~20%)","lo":1,"hi":20},{"p":"武器 · 魔法","id":1,"d":"MHP +1~1000","lo":1,"hi":1000},{"p":"武器 · 魔法","id":2,"d":"MSP +1~200","lo":1,"hi":200},{"p":"武器 · 魔法","id":172,"d":"使用技能時SP消耗量 - 1~10%","lo":1,"hi":10},{"p":"武器 · 魔法","id":107,"d":"對無型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":108,"d":"對不死型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":109,"d":"對動物型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":110,"d":"對植物型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":111,"d":"對昆蟲型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":112,"d":"對魚貝型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":113,"d":"惡魔型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":114,"d":"對人類型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":115,"d":"對天使型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":116,"d":"對龍族型魔物的魔法傷害 +1~50%","lo":1,"hi":50},{"p":"武器 · 魔法","id":137,"d":"無視無型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":138,"d":"無視不死型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":139,"d":"無視動物型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":140,"d":"無視植物型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":141,"d":"無視昆蟲型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":142,"d":"無視魚貝型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":143,"d":"無視惡魔型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":144,"d":"無視人類型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":145,"d":"無視天使型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":146,"d":"無視龍族型魔物的魔法防禦力1~25%","lo":1,"hi":25},{"p":"武器 · 魔法","id":151,"d":"對一般階級魔物的魔法傷害 +10~25%","lo":10,"hi":25},{"p":"武器 · 魔法","id":152,"d":"對首領階級魔物的魔法傷害 +10~25%","lo":10,"hi":25}];
+const POS = ["服飾頭飾", "防具", "飾品", "武器 · 物理", "武器 · 魔法"];
+const state = {pos:new Set(), q:""};
+const el=(t,c,x)=>{const n=document.createElement(t); if(c)n.className=c; if(x!=null)n.textContent=x; return n;};
+
+const posHost=document.getElementById("pos");
+POS.forEach(p=>{
+  const n=ROWS.filter(r=>r.p===p).length;
+  const b=el("button","chip"); b.type="button"; b.setAttribute("aria-pressed","false");
+  b.textContent=p+" "+n;
+  b.addEventListener("click",()=>{ state.pos.has(p)?state.pos.delete(p):state.pos.add(p);
+    b.setAttribute("aria-pressed",state.pos.has(p)?"true":"false"); render(); });
+  posHost.append(b);
+});
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value.trim().toLowerCase(); render();});
+
+const tbody=document.getElementById("rows"), empty=document.getElementById("empty"), tally=document.getElementById("tally");
+function render(){
+  const hits=ROWS.filter(r=>{
+    if(state.pos.size && !state.pos.has(r.p)) return false;
+    if(state.q && (r.d+" "+r.p+" "+r.id).toLowerCase().indexOf(state.q)===-1) return false;
+    return true;
+  });
+  tbody.replaceChildren.apply(tbody, hits.map(r=>{
+    const tr=el("tr");
+    tr.append(el("td","oid num",String(r.id)), el("td","pos",r.p), el("td",null,r.d),
+              el("td","rng num", r.lo===r.hi ? String(r.lo) : r.lo+" ~ "+r.hi));
+    return tr;
+  }));
+  empty.hidden = hits.length>0;
+  tally.replaceChildren(el("b",null,String(hits.length)),
+    document.createTextNode(" 條詞條" + (hits.length!==ROWS.length ? "　（全部 "+ROWS.length+" 條）" : "")));
+}
+render();
+</script>
+</body>
+</html>
