@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>寵物詞條與星級</title>
-<meta name="description" content="神域仙境 寵物的 40 種詞條能力、數值範圍與 3→9 星升階需求。">
+<meta name="description" content="神域仙境 寵物的 41 種詞條能力、數值範圍、3→9 星升階需求與升等配點。">
 <meta name="color-scheme" content="light dark">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="神域仙境">
 <meta property="og:title" content="寵物詞條與星級">
-<meta property="og:description" content="神域仙境 寵物的 40 種詞條能力、數值範圍與 3→9 星升階需求。">
+<meta property="og:description" content="神域仙境 寵物的 41 種詞條能力、數值範圍、3→9 星升階需求與升等配點。">
 <meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
 <meta property="og:image:width" content="600">
 <meta property="og:image:height" content="600">
@@ -109,21 +109,22 @@ td.rate{font-variant-numeric:tabular-nums; white-space:nowrap}
       <span>← 神域仙境 玩家工具</span>
     </a>
     <h1>寵物詞條與星級</h1>
-    <p class="lede">自創寵物孵出來就帶著 <b>★ 3 星</b>與 <b>3 條詞條</b>，最高可以練到 <b>★ 9 星 9 條</b>。詞條直接寫在蛋上，滑鼠移過去就看得到。</p>
+    <p class="lede">自創寵物孵出來就帶著 <b>★ 3 星</b>與 <b>3 條詞條</b>，最高可以練到 <b>★ 9 星 9 條</b>。詞條直接寫在蛋上，滑鼠移過去就看得到。寵物另外還會<b>自己升等</b>，升級的點數由你手動分配到六維。</p>
   </header>
 
   <section>
     <h2>星級 = 詞條數</h2>
     <div class="stars"><div class="star init"><b>★ 3</b><span>孵化</span></div><div class="star"><b>★ 4</b><span>4 條詞條</span></div><div class="star"><b>★ 5</b><span>5 條詞條</span></div><div class="star"><b>★ 6</b><span>6 條詞條</span></div><div class="star"><b>★ 7</b><span>7 條詞條</span></div><div class="star"><b>★ 8</b><span>8 條詞條</span></div><div class="star"><b>★ 9</b><span>9 條詞條</span></div></div>
     <p class="note">每升一星就多骰一條新詞條，能力種類與數值都是隨機的。星級上限是 9 —— 蛋只有 10 個選項欄位，第 1 格用來記星級，剩下 9 格剛好放 9 條。</p>
+    <p class="note"><b>數碼寶貝是例外</b>：孵出來直接就是 ★ 5 星 5 條，等於先送你兩階。</p>
   </section>
 
   <section>
     <h2>升階需求</h2>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th class="num">升到</th><th class="num">同款蛋</th><th class="num">善惡晶核</th><th class="num">成功率</th><th class="num">金幣</th></tr></thead>
-        <tbody><tr><td class="num">★ 4</td><td class="num">1 顆</td><td class="num">10 個</td><td class="rate num">60%</td><td class="num">5,000 萬</td></tr><tr><td class="num">★ 5</td><td class="num">2 顆</td><td class="num">20 個</td><td class="rate num">50%</td><td class="num">1 億</td></tr><tr><td class="num">★ 6</td><td class="num">3 顆</td><td class="num">40 個</td><td class="rate num">40%</td><td class="num">2 億</td></tr><tr><td class="num">★ 7</td><td class="num">4 顆</td><td class="num">80 個</td><td class="rate num">30%</td><td class="num">4 億</td></tr><tr><td class="num">★ 8</td><td class="num">5 顆</td><td class="num">160 個</td><td class="rate num">20%</td><td class="num">8 億</td></tr><tr><td class="num">★ 9</td><td class="num">6 顆</td><td class="num">320 個</td><td class="rate num">10%</td><td class="num">16 億</td></tr></tbody>
+        <thead><tr><th class="num">升到</th><th class="num">同款蛋</th><th class="num">成功率</th><th class="num">金幣</th></tr></thead>
+        <tbody><tr><td class="num">★ 4</td><td class="num">1 顆</td><td class="rate num">60%</td><td class="num">5,000 萬</td></tr><tr><td class="num">★ 5</td><td class="num">2 顆</td><td class="rate num">50%</td><td class="num">1 億</td></tr><tr><td class="num">★ 6</td><td class="num">3 顆</td><td class="rate num">40%</td><td class="num">2 億</td></tr><tr><td class="num">★ 7</td><td class="num">4 顆</td><td class="rate num">30%</td><td class="num">4 億</td></tr><tr><td class="num">★ 8</td><td class="num">5 顆</td><td class="rate num">20%</td><td class="num">8 億</td></tr><tr><td class="num">★ 9</td><td class="num">6 顆</td><td class="rate num">10%</td><td class="num">16 億</td></tr></tbody>
       </table>
     </div>
     <p class="note">「同款蛋」是指<b>同一種寵物</b>的蛋，逼你重複取得同一隻。你正在攜帶的那顆蛋會被精確排除，不會被吃掉。<br>
@@ -131,17 +132,54 @@ td.rate{font-variant-numeric:tabular-nums; white-space:nowrap}
   </section>
 
   <section>
-    <h2>40 種詞條能力</h2>
+    <h2>升等與六維配點</h2>
+    <p class="note">★ 星級跟等級是<b>兩回事</b>：星級要花同款蛋與金幣去升、換的是詞條數；等級是寵物<b>自己長的</b>，換的是六維點數。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>項目</th><th>內容</th></tr></thead>
+        <tbody>
+          <tr><td>經驗值</td><td>你打怪時<b>同步分給在場寵物</b>，比例 100% —— 你自己拿到的一分不少</td></tr>
+          <tr><td>等級上限</td><td><b>200 級</b>（你的職業上限較低時以職業上限為準）</td></tr>
+          <tr><td>每級點數</td><td><b>1 點</b>；數碼寶貝 <b>3 點</b></td></tr>
+          <tr><td>練滿 200 級</td><td>一般寵物 <b>199 點</b>；數碼寶貝 <b>597 點</b></td></tr>
+          <tr><td>加到哪裡</td><td>STR / AGI / VIT / INT / DEX / LUK，加在<b>寵物自己</b>身上</td></tr>
+          <tr><td>怎麼加</td><td>找<b>馴獸師</b>選【寵物加點】</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">升級需要的經驗量跟玩家的表一樣，所以低等寵物一開始升得很快。<b>你自己滿等之後，寵物照樣會長經驗。</b></p>
+    <p class="note">加點只能透過 NPC —— 客戶端的寵物視窗只顯示得了等級，六維與經驗值都塞不進那個封包。</p>
+    <p class="note">★ 這套系統上線時，<b>所有既有寵物一律重置為 1 級</b>。原本的等級是魔物本身的等級（50～280 都有），沿用會讓超過 200 的寵物永遠拿不到點數。實際戰力幾乎沒有影響 —— 寵物的六維、攻擊、命迴防本來就不看這個等級算。</p>
+  </section>
+
+  <section>
+    <h2>41 種詞條能力</h2>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th class="num">#</th><th>能力</th><th class="num">數值範圍</th></tr></thead>
-        <tbody><tr><td class="ab num">1</td><td>對小體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">2</td><td>對中體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">3</td><td>對大體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">4</td><td>對全種族物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">5</td><td>MHP</td><td class="rng num">100 ~ 5000</td></tr><tr><td class="ab num">6</td><td>MHP(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">7</td><td>CRT</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">8</td><td>POW</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">9</td><td>STA</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">10</td><td>WIS</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">11</td><td>SPL</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">12</td><td>CON</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">13</td><td>P.ATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">14</td><td>S.MATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">15</td><td>C.RATE</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">16</td><td>暴擊傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">17</td><td>近距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">18</td><td>遠距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">19</td><td>魔法傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">20</td><td>ATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">21</td><td>MATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">22</td><td>水屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">23</td><td>地屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">24</td><td>火屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">25</td><td>風屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">26</td><td>毒屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">27</td><td>聖屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">28</td><td>闇屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">29</td><td>念屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">30</td><td>不死屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">31</td><td>HIT</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">32</td><td>CRI</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">33</td><td>對首領物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">34</td><td>對玩家增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">35</td><td>對一般魔物物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">36</td><td>負重</td><td class="rng num">100 ~ 2500</td></tr><tr><td class="ab num">37</td><td>變動詠唱減少(%)</td><td class="rng num">5 ~ 30</td></tr><tr><td class="ab num">38</td><td>MDEF</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">39</td><td>FLEE</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">40</td><td>DEF</td><td class="rng num">10 ~ 100</td></tr></tbody>
+        <tbody><tr><td class="ab num">1</td><td>對小體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">2</td><td>對中體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">3</td><td>對大體型物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">4</td><td>對全種族物理/魔法傷害(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">5</td><td>MHP</td><td class="rng num">100 ~ 5000</td></tr><tr><td class="ab num">6</td><td>MHP(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">7</td><td>CRT</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">8</td><td>POW</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">9</td><td>STA</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">10</td><td>WIS</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">11</td><td>SPL</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">12</td><td>CON</td><td class="rng num">1 ~ 30</td></tr><tr><td class="ab num">13</td><td>P.ATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">14</td><td>S.MATK</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">15</td><td>C.RATE</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">16</td><td>暴擊傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">17</td><td>近距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">18</td><td>遠距離物理傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">19</td><td>魔法傷害(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">20</td><td>ATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">21</td><td>MATK</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">22</td><td>水屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">23</td><td>地屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">24</td><td>火屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">25</td><td>風屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">26</td><td>毒屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">27</td><td>聖屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">28</td><td>闇屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">29</td><td>念屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">30</td><td>不死屬性抗性(%)</td><td class="rng num">1 ~ 15</td></tr><tr><td class="ab num">31</td><td>HIT</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">32</td><td>CRI</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">33</td><td>對首領物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">34</td><td>對玩家增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">35</td><td>對一般魔物物理/魔法增傷(%)</td><td class="rng num">1 ~ 20</td></tr><tr><td class="ab num">36</td><td>負重</td><td class="rng num">100 ~ 2500</td></tr><tr><td class="ab num">37</td><td>變動詠唱減少(%)</td><td class="rng num">5 ~ 30</td></tr><tr><td class="ab num">38</td><td>MDEF</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">39</td><td>FLEE</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">40</td><td>DEF</td><td class="rng num">10 ~ 100</td></tr><tr><td class="ab num">41</td><td>法術爆傷(%)</td><td class="rng num">1 ~ 40</td></tr></tbody>
       </table>
     </div>
   </section>
 
+  <section>
+    <h2>兩批寵物的特例</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>靈獸島寵物</h3>
+        <p><b>第 1 條詞條是固定的。</b>孵化時照常隨機決定內容，但用<b>靈獸丹</b>重洗時會跳過它 —— 洗不掉。</p>
+        <p>它佔的是既有的第 1 條，不是額外多一條。蛋上看到的是第 2 格（第 1 格是星級）。</p>
+      </div>
+      <div class="card">
+        <h3>數碼寶貝</h3>
+        <p><b>孵化即 ★ 5 星 5 條</b>，升級的點數也是三倍（每級 3 點）。</p>
+        <p>另外天生自帶一組<b>固定能力</b>：MHP +10000、MHP +20%、全體型抗性 +10%、全技能傷害 +10%。這組不佔詞條欄位、蛋上也看不到，用 <b>@petaffix</b> 或馴獸師【查看詞條】才列得出來。</p>
+      </div>
+    </div>
+  </section>
+
   <footer class="foot">
-    <p><b>每一條都是獨立隨機的</b>：升階時從這 40 種裡隨機抽一種，數值再在該種的範圍內隨機。同一種能力可能重複出現。</p>
+    <p><b>每一條都是獨立隨機的</b>：升階時從這 41 種裡隨機抽一種，數值再在該種的範圍內隨機。同一種能力可能重複出現。</p>
     <p><b>詞條顯示在蛋上</b>，不是在寵物身上 —— 收回成蛋後滑鼠移過去就能看到全部詞條。也可以直接打 <b>@petaffix</b> 查目前出戰寵物的詞條。</p>
     <p><b>能力加成隨時生效</b>，不需要另外操作；換寵物、重新召喚都會自動重算。</p>
     <a class="back" href="index.html">← 回神域仙境玩家工具</a>
