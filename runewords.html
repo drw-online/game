@@ -258,7 +258,7 @@ td.mat{font-size:13px; color:var(--ink-soft); line-height:1.7}
 
   <footer class="foot">
     <p><b>怎麼讀這張表</b>　名稱左邊的圓點是需要的卡槽數。每一組用到的符文都不重複，插在同一件裝備上湊齊就生效。</p>
-    <p><b>「另觸發」是什麼</b>　湊齊大組合時，凡是符文剛好是它子集的小組合也會一起生效，效果疊加。290 組裡有 222 組會發生這件事，該欄列出的就是會被順帶觸發的組合。</p>
+    <p><b>「蓋過」是什麼</b>　同一件裝備上<b>只有一組符文之語會生效</b> —— 用到最多符文的那一組（符文數相同時取編號較小的）。符文剛好構成子集的小組合會被它蓋掉，<b>不會疊加</b>。290 組裡有 222 組會蓋掉別的組合，該欄列出的就是被蓋掉的那些。</p>
     <a class="back" href="index.html">← 回神域仙境玩家工具</a>
   </footer>
 </div>
@@ -384,7 +384,7 @@ function card(w){
 
   if (w.sub.length){
     const p = el("p", "w-sub");
-    p.append(el("b", null, "另觸發 " + w.sub.length + " 組："), document.createTextNode(w.sub.join("、")));
+    p.append(el("b", null, "蓋過 " + w.sub.length + " 組："), document.createTextNode(w.sub.join("、")));
     li.append(p);
   }
   return li;
