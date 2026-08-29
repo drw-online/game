@@ -19,7 +19,7 @@
 
 **一頁一個 `.html`，全部平放在同一層。**
 
-唯一的子資料夾是 `pets/` —— 神域寵物圖鑑的 162 張外觀圖，沒辦法像其他頁一樣塞進單一檔案。除此之外不要再開新的子資料夾。
+子資料夾只有兩個：`pets/` 放神域寵物圖鑑的 162 張外觀圖（沒辦法像其他頁一樣塞進單一檔案），`tools/` 放產生器（不是頁面內容，發布出去也無害）。除此之外不要再開新的子資料夾。
 
 新增一頁 = 丟一支新的 `.html` 進來 + 在 `index.html` 的清單加一項。不用改結構，舊連結不會壞。
 
@@ -31,6 +31,7 @@ petaffix.html       ├ 各工具頁，彼此獨立
 daopan.html         │
 pets.html           ┘
 pets/               神域寵物圖鑑的 162 張外觀圖（drwmob001.png ~ drwmob162.png，共約 920 KB）
+tools/              產生器。目前只有 build_pets.py（產 pets.html 與 pets/）
 logo.webp           站台 logo（去背 440px，入口頁與各頁的回首頁鈕共用）
 favicon.png         瀏覽器分頁圖示（64px）
 og.jpg              貼 Discord / 社群時的連結預覽圖（600px，紙色底）
@@ -52,12 +53,14 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 | `runewords.html` | `2.開機擋/db/import/item_combos.yml`（290 組的符文與組合名）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（33 種符文的 ID、中文名與階級區段）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（適用裝備、定位、效果文字）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號 |
 | `potential.html` | `2.開機擋/script/04.系統/22.裝備潛能.txt` 的 `$@BGP_*` 五個詞條池與 `$@BGP_OptWeight*`；**效果文字取自同檔的 `$@BGP_OptFmt$`**（客戶端 tooltip 原文，NPC 也是印這張表）——<br>2026-08-27 之前誤用詞條池的開發註解，45 筆與遊戲內用字不符<br>同檔 `F_BGP_Enchant` 檔頭的六支道具與旗標；`db/import/blackgod/item_vipmat.yml` 是實際的呼叫端 |
 | `petaffix.html` | `2.開機擋/script/04.系統/30.寵物詞條.txt` 的 `$@PETAB_*`、`$@PETUP_*`、`$@PET_DIGI_*`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `pet_gain_exp_rate` / `pet_levelup_point` / `pet_max_level` / `pet_bonus_point_class_*`（升等與配點） |
-| `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act` |
+| `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act`<br>**這一頁有產生器**：`python tools/build_pets.py` |
 | `daopan.html` | `2.開機擋/script/04.系統/70.大道星盤.txt` 的 `OnInit` 八張節點表（`$@dao_name$` / `tier` / `pre` / `pre2` / `ex` / `ek1~3` / `ev1~3`）、分級表 `$@dao_tmax` `$@dao_tcost`、效果對照 `$@dao_kn$` `$@dao_ku` `$@dao_ks`、境界配點 `$@dao_grant`、常數 `$@DAO_*`<br>`2.開機擋/script/04.系統/12.境界突破.txt` 的 `$@realm_name$`（十三境的名字） |
 
-### ⚠ 產生器已經不在了
+### ⚠ 產生器已經不在了（`pets.html` 除外）
 
-README 原本寫「改完來源要重跑產生器」，但那支產生器**沒有留下來** —— repo 裡沒有，專案其他地方也沒有。
+**`pets.html` 有產生器**，在 `tools/build_pets.py`：解析三支 YAML → 把客戶端 sprite 轉成 PNG → 寫出 `pets.html` → **自己反向解析驗證一次**。輸出是決定性的，來源沒變的話重跑一次 `git status` 應該是乾淨的 —— 這同時就是它的回歸測試，改完務必跑一次確認。
+
+其餘四頁沒有。README 原本寫「改完來源要重跑產生器」，但那支產生器**沒有留下來** —— repo 裡沒有，專案其他地方也沒有。
 2026-08-25 這次更新是**逐頁寫一次性腳本、直接改 `.html`** 完成的：解析來源 → 覆寫內嵌 JSON 或表格 → 再反過來解析改完的 `.html` 與來源逐項比對。
 
 下次更新照同樣的做法就好，但**一定要留下驗證那一步** —— 直接改 HTML 最容易出的錯是「改了 A 忘了改 B」（表格改了、lede 的數字沒改、`<title>` 沒改），只有把改完的頁面重新解析回來跟來源對，才抓得到。
