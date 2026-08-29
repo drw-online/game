@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>神域寵物圖鑑</title>
+<meta name="description" content="神域仙境 靈獸島 162 種神域寵物的外觀對照，附魔物編號與寵物蛋編號。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="神域寵物圖鑑">
+<meta property="og:description" content="神域仙境 靈獸島 162 種神域寵物的外觀對照，附魔物編號與寵物蛋編號。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+  --shadow-lift:0 2px 4px #1f242216, 0 14px 34px #1f242212;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+    --shadow-lift:0 2px 6px #00000055, 0 14px 34px #00000045;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  --shadow-lift:0 2px 6px #00000055, 0 14px 34px #00000045;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+
+.bar{margin-top:30px; display:flex; flex-wrap:wrap; align-items:center; gap:14px}
+.search{flex:1 1 260px; min-width:0}
+.search input{
+  width:100%; padding:11px 14px; font:inherit; font-size:14px; color:var(--ink);
+  background:var(--paper); border:1px solid var(--rule); border-radius:6px;
+}
+.search input::placeholder{color:var(--ink-faint)}
+.search input:focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-color:var(--cinnabar)}
+.count{font-size:13px; color:var(--ink-faint); font-variant-numeric:tabular-nums; white-space:nowrap}
+.count b{color:var(--cinnabar); font-weight:700}
+
+.grid{list-style:none; margin:22px 0 0; padding:0;
+  display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(158px,1fr))}
+.pet{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:14px 12px 16px; background:var(--paper);
+  border:1px solid var(--rule-soft); border-radius:6px; box-shadow:var(--shadow);
+  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.pet:hover{transform:translateY(-3px); box-shadow:var(--shadow-lift); border-color:var(--cinnabar)}
+.pet[hidden]{display:none}
+.fig{height:136px; width:100%; display:flex; align-items:flex-end; justify-content:center;
+  border-bottom:1px solid var(--rule-soft); margin-bottom:11px}
+.fig img{max-width:100%; height:auto; image-rendering:pixelated;
+  image-rendering:-moz-crisp-edges; image-rendering:crisp-edges}
+.no{font-family:"Noto Serif TC",serif; font-size:23px; font-weight:900;
+  letter-spacing:.08em; color:var(--cinnabar); font-variant-numeric:tabular-nums; line-height:1.2}
+.nm{font-size:13px; color:var(--ink-soft)}
+.ids{margin-top:7px; display:flex; flex-direction:column; align-items:center; gap:1px;
+  font-size:11.5px; color:var(--ink-faint); letter-spacing:.04em}
+.ids i{font-style:normal; font-variant-numeric:tabular-nums; color:var(--ink-soft)}
+
+.empty{margin:34px 0 0; color:var(--ink-faint); font-size:14px}
+.empty[hidden]{display:none}
+
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){
+  .masthead{padding:32px 0 22px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr)); gap:11px}
+  .fig{height:112px}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>神域寵物圖鑑</h1>
+    <p class="lede">靈獸島的 <b>162 種神域寵物</b>，編號與長相的對照表。每一筆附上牠的<b>魔物編號</b>與對應的<b>寵物蛋編號</b> —— 蛋的名稱、掉落與詞條查詢用的都是這組號碼。</p>
+  </header>
+
+  <div class="bar">
+    <div class="search">
+      <input id="q" type="search" placeholder="輸入編號、名稱、魔物編號或蛋編號…" autocomplete="off" aria-label="搜尋寵物">
+    </div>
+    <div class="count"><b id="shown">162</b> / 162 種</div>
+  </div>
+
+  <ul class="grid" id="grid">
+    <li class="pet" data-k="001 神域魔物001 25000 4100000"><span class="fig"><img src="pets/drwmob001.png" width="73" height="93" alt="神域魔物001" loading="lazy" decoding="async"></span><b class="no">001</b><span class="nm">神域魔物001</span><span class="ids"><span>魔物 <i>25000</i></span><span>蛋 <i>4100000</i></span></span></li>
+    <li class="pet" data-k="002 神域魔物002 25001 4100001"><span class="fig"><img src="pets/drwmob002.png" width="81" height="96" alt="神域魔物002" loading="lazy" decoding="async"></span><b class="no">002</b><span class="nm">神域魔物002</span><span class="ids"><span>魔物 <i>25001</i></span><span>蛋 <i>4100001</i></span></span></li>
+    <li class="pet" data-k="003 神域魔物003 25002 4100002"><span class="fig"><img src="pets/drwmob003.png" width="73" height="88" alt="神域魔物003" loading="lazy" decoding="async"></span><b class="no">003</b><span class="nm">神域魔物003</span><span class="ids"><span>魔物 <i>25002</i></span><span>蛋 <i>4100002</i></span></span></li>
+    <li class="pet" data-k="004 神域魔物004 25003 4100003"><span class="fig"><img src="pets/drwmob004.png" width="77" height="89" alt="神域魔物004" loading="lazy" decoding="async"></span><b class="no">004</b><span class="nm">神域魔物004</span><span class="ids"><span>魔物 <i>25003</i></span><span>蛋 <i>4100003</i></span></span></li>
+    <li class="pet" data-k="005 神域魔物005 25004 4100004"><span class="fig"><img src="pets/drwmob005.png" width="86" height="112" alt="神域魔物005" loading="lazy" decoding="async"></span><b class="no">005</b><span class="nm">神域魔物005</span><span class="ids"><span>魔物 <i>25004</i></span><span>蛋 <i>4100004</i></span></span></li>
+    <li class="pet" data-k="006 神域魔物006 25005 4100005"><span class="fig"><img src="pets/drwmob006.png" width="86" height="112" alt="神域魔物006" loading="lazy" decoding="async"></span><b class="no">006</b><span class="nm">神域魔物006</span><span class="ids"><span>魔物 <i>25005</i></span><span>蛋 <i>4100005</i></span></span></li>
+    <li class="pet" data-k="007 神域魔物007 25006 4100006"><span class="fig"><img src="pets/drwmob007.png" width="85" height="112" alt="神域魔物007" loading="lazy" decoding="async"></span><b class="no">007</b><span class="nm">神域魔物007</span><span class="ids"><span>魔物 <i>25006</i></span><span>蛋 <i>4100006</i></span></span></li>
+    <li class="pet" data-k="008 神域魔物008 25007 4100007"><span class="fig"><img src="pets/drwmob008.png" width="45" height="100" alt="神域魔物008" loading="lazy" decoding="async"></span><b class="no">008</b><span class="nm">神域魔物008</span><span class="ids"><span>魔物 <i>25007</i></span><span>蛋 <i>4100007</i></span></span></li>
+    <li class="pet" data-k="009 神域魔物009 25008 4100008"><span class="fig"><img src="pets/drwmob009.png" width="45" height="99" alt="神域魔物009" loading="lazy" decoding="async"></span><b class="no">009</b><span class="nm">神域魔物009</span><span class="ids"><span>魔物 <i>25008</i></span><span>蛋 <i>4100008</i></span></span></li>
+    <li class="pet" data-k="010 神域魔物010 25009 4100009"><span class="fig"><img src="pets/drwmob010.png" width="45" height="100" alt="神域魔物010" loading="lazy" decoding="async"></span><b class="no">010</b><span class="nm">神域魔物010</span><span class="ids"><span>魔物 <i>25009</i></span><span>蛋 <i>4100009</i></span></span></li>
+    <li class="pet" data-k="011 神域魔物011 25010 4100010"><span class="fig"><img src="pets/drwmob011.png" width="45" height="100" alt="神域魔物011" loading="lazy" decoding="async"></span><b class="no">011</b><span class="nm">神域魔物011</span><span class="ids"><span>魔物 <i>25010</i></span><span>蛋 <i>4100010</i></span></span></li>
+    <li class="pet" data-k="012 神域魔物012 25011 4100011"><span class="fig"><img src="pets/drwmob012.png" width="45" height="100" alt="神域魔物012" loading="lazy" decoding="async"></span><b class="no">012</b><span class="nm">神域魔物012</span><span class="ids"><span>魔物 <i>25011</i></span><span>蛋 <i>4100011</i></span></span></li>
+    <li class="pet" data-k="013 神域魔物013 25012 4100012"><span class="fig"><img src="pets/drwmob013.png" width="45" height="100" alt="神域魔物013" loading="lazy" decoding="async"></span><b class="no">013</b><span class="nm">神域魔物013</span><span class="ids"><span>魔物 <i>25012</i></span><span>蛋 <i>4100012</i></span></span></li>
+    <li class="pet" data-k="014 神域魔物014 25013 4100013"><span class="fig"><img src="pets/drwmob014.png" width="45" height="99" alt="神域魔物014" loading="lazy" decoding="async"></span><b class="no">014</b><span class="nm">神域魔物014</span><span class="ids"><span>魔物 <i>25013</i></span><span>蛋 <i>4100013</i></span></span></li>
+    <li class="pet" data-k="015 神域魔物015 25014 4100014"><span class="fig"><img src="pets/drwmob015.png" width="45" height="100" alt="神域魔物015" loading="lazy" decoding="async"></span><b class="no">015</b><span class="nm">神域魔物015</span><span class="ids"><span>魔物 <i>25014</i></span><span>蛋 <i>4100014</i></span></span></li>
+    <li class="pet" data-k="016 神域魔物016 25015 4100015"><span class="fig"><img src="pets/drwmob016.png" width="75" height="96" alt="神域魔物016" loading="lazy" decoding="async"></span><b class="no">016</b><span class="nm">神域魔物016</span><span class="ids"><span>魔物 <i>25015</i></span><span>蛋 <i>4100015</i></span></span></li>
+    <li class="pet" data-k="017 神域魔物017 25016 4100016"><span class="fig"><img src="pets/drwmob017.png" width="78" height="103" alt="神域魔物017" loading="lazy" decoding="async"></span><b class="no">017</b><span class="nm">神域魔物017</span><span class="ids"><span>魔物 <i>25016</i></span><span>蛋 <i>4100016</i></span></span></li>
+    <li class="pet" data-k="018 神域魔物018 25017 4100017"><span class="fig"><img src="pets/drwmob018.png" width="73" height="110" alt="神域魔物018" loading="lazy" decoding="async"></span><b class="no">018</b><span class="nm">神域魔物018</span><span class="ids"><span>魔物 <i>25017</i></span><span>蛋 <i>4100017</i></span></span></li>
+    <li class="pet" data-k="019 神域魔物019 25018 4100018"><span class="fig"><img src="pets/drwmob019.png" width="85" height="109" alt="神域魔物019" loading="lazy" decoding="async"></span><b class="no">019</b><span class="nm">神域魔物019</span><span class="ids"><span>魔物 <i>25018</i></span><span>蛋 <i>4100018</i></span></span></li>
+    <li class="pet" data-k="020 神域魔物020 25019 4100019"><span class="fig"><img src="pets/drwmob020.png" width="80" height="116" alt="神域魔物020" loading="lazy" decoding="async"></span><b class="no">020</b><span class="nm">神域魔物020</span><span class="ids"><span>魔物 <i>25019</i></span><span>蛋 <i>4100019</i></span></span></li>
+    <li class="pet" data-k="021 神域魔物021 25020 4100020"><span class="fig"><img src="pets/drwmob021.png" width="75" height="99" alt="神域魔物021" loading="lazy" decoding="async"></span><b class="no">021</b><span class="nm">神域魔物021</span><span class="ids"><span>魔物 <i>25020</i></span><span>蛋 <i>4100020</i></span></span></li>
+    <li class="pet" data-k="022 神域魔物022 25021 4100021"><span class="fig"><img src="pets/drwmob022.png" width="76" height="128" alt="神域魔物022" loading="lazy" decoding="async"></span><b class="no">022</b><span class="nm">神域魔物022</span><span class="ids"><span>魔物 <i>25021</i></span><span>蛋 <i>4100021</i></span></span></li>
+    <li class="pet" data-k="023 神域魔物023 25022 4100022"><span class="fig"><img src="pets/drwmob023.png" width="73" height="114" alt="神域魔物023" loading="lazy" decoding="async"></span><b class="no">023</b><span class="nm">神域魔物023</span><span class="ids"><span>魔物 <i>25022</i></span><span>蛋 <i>4100022</i></span></span></li>
+    <li class="pet" data-k="024 神域魔物024 25023 4100023"><span class="fig"><img src="pets/drwmob024.png" width="73" height="120" alt="神域魔物024" loading="lazy" decoding="async"></span><b class="no">024</b><span class="nm">神域魔物024</span><span class="ids"><span>魔物 <i>25023</i></span><span>蛋 <i>4100023</i></span></span></li>
+    <li class="pet" data-k="025 神域魔物025 25024 4100024"><span class="fig"><img src="pets/drwmob025.png" width="73" height="120" alt="神域魔物025" loading="lazy" decoding="async"></span><b class="no">025</b><span class="nm">神域魔物025</span><span class="ids"><span>魔物 <i>25024</i></span><span>蛋 <i>4100024</i></span></span></li>
+    <li class="pet" data-k="026 神域魔物026 25025 4100025"><span class="fig"><img src="pets/drwmob026.png" width="73" height="115" alt="神域魔物026" loading="lazy" decoding="async"></span><b class="no">026</b><span class="nm">神域魔物026</span><span class="ids"><span>魔物 <i>25025</i></span><span>蛋 <i>4100025</i></span></span></li>
+    <li class="pet" data-k="027 神域魔物027 25026 4100026"><span class="fig"><img src="pets/drwmob027.png" width="91" height="103" alt="神域魔物027" loading="lazy" decoding="async"></span><b class="no">027</b><span class="nm">神域魔物027</span><span class="ids"><span>魔物 <i>25026</i></span><span>蛋 <i>4100026</i></span></span></li>
+    <li class="pet" data-k="028 神域魔物028 25027 4100027"><span class="fig"><img src="pets/drwmob028.png" width="92" height="106" alt="神域魔物028" loading="lazy" decoding="async"></span><b class="no">028</b><span class="nm">神域魔物028</span><span class="ids"><span>魔物 <i>25027</i></span><span>蛋 <i>4100027</i></span></span></li>
+    <li class="pet" data-k="029 神域魔物029 25028 4100028"><span class="fig"><img src="pets/drwmob029.png" width="80" height="128" alt="神域魔物029" loading="lazy" decoding="async"></span><b class="no">029</b><span class="nm">神域魔物029</span><span class="ids"><span>魔物 <i>25028</i></span><span>蛋 <i>4100028</i></span></span></li>
+    <li class="pet" data-k="030 神域魔物030 25029 4100029"><span class="fig"><img src="pets/drwmob030.png" width="128" height="115" alt="神域魔物030" loading="lazy" decoding="async"></span><b class="no">030</b><span class="nm">神域魔物030</span><span class="ids"><span>魔物 <i>25029</i></span><span>蛋 <i>4100029</i></span></span></li>
+    <li class="pet" data-k="031 神域魔物031 25030 4100030"><span class="fig"><img src="pets/drwmob031.png" width="95" height="128" alt="神域魔物031" loading="lazy" decoding="async"></span><b class="no">031</b><span class="nm">神域魔物031</span><span class="ids"><span>魔物 <i>25030</i></span><span>蛋 <i>4100030</i></span></span></li>
+    <li class="pet" data-k="032 神域魔物032 25031 4100031"><span class="fig"><img src="pets/drwmob032.png" width="88" height="119" alt="神域魔物032" loading="lazy" decoding="async"></span><b class="no">032</b><span class="nm">神域魔物032</span><span class="ids"><span>魔物 <i>25031</i></span><span>蛋 <i>4100031</i></span></span></li>
+    <li class="pet" data-k="033 神域魔物033 25032 4100032"><span class="fig"><img src="pets/drwmob033.png" width="95" height="81" alt="神域魔物033" loading="lazy" decoding="async"></span><b class="no">033</b><span class="nm">神域魔物033</span><span class="ids"><span>魔物 <i>25032</i></span><span>蛋 <i>4100032</i></span></span></li>
+    <li class="pet" data-k="034 神域魔物034 25033 4100033"><span class="fig"><img src="pets/drwmob034.png" width="39" height="63" alt="神域魔物034" loading="lazy" decoding="async"></span><b class="no">034</b><span class="nm">神域魔物034</span><span class="ids"><span>魔物 <i>25033</i></span><span>蛋 <i>4100033</i></span></span></li>
+    <li class="pet" data-k="035 神域魔物035 25034 4100034"><span class="fig"><img src="pets/drwmob035.png" width="39" height="63" alt="神域魔物035" loading="lazy" decoding="async"></span><b class="no">035</b><span class="nm">神域魔物035</span><span class="ids"><span>魔物 <i>25034</i></span><span>蛋 <i>4100034</i></span></span></li>
+    <li class="pet" data-k="036 神域魔物036 25035 4100035"><span class="fig"><img src="pets/drwmob036.png" width="39" height="63" alt="神域魔物036" loading="lazy" decoding="async"></span><b class="no">036</b><span class="nm">神域魔物036</span><span class="ids"><span>魔物 <i>25035</i></span><span>蛋 <i>4100035</i></span></span></li>
+    <li class="pet" data-k="037 神域魔物037 25036 4100036"><span class="fig"><img src="pets/drwmob037.png" width="39" height="63" alt="神域魔物037" loading="lazy" decoding="async"></span><b class="no">037</b><span class="nm">神域魔物037</span><span class="ids"><span>魔物 <i>25036</i></span><span>蛋 <i>4100036</i></span></span></li>
+    <li class="pet" data-k="038 神域魔物038 25037 4100037"><span class="fig"><img src="pets/drwmob038.png" width="40" height="66" alt="神域魔物038" loading="lazy" decoding="async"></span><b class="no">038</b><span class="nm">神域魔物038</span><span class="ids"><span>魔物 <i>25037</i></span><span>蛋 <i>4100037</i></span></span></li>
+    <li class="pet" data-k="039 神域魔物039 25038 4100038"><span class="fig"><img src="pets/drwmob039.png" width="43" height="65" alt="神域魔物039" loading="lazy" decoding="async"></span><b class="no">039</b><span class="nm">神域魔物039</span><span class="ids"><span>魔物 <i>25038</i></span><span>蛋 <i>4100038</i></span></span></li>
+    <li class="pet" data-k="040 神域魔物040 25039 4100039"><span class="fig"><img src="pets/drwmob040.png" width="43" height="64" alt="神域魔物040" loading="lazy" decoding="async"></span><b class="no">040</b><span class="nm">神域魔物040</span><span class="ids"><span>魔物 <i>25039</i></span><span>蛋 <i>4100039</i></span></span></li>
+    <li class="pet" data-k="041 神域魔物041 25040 4100040"><span class="fig"><img src="pets/drwmob041.png" width="39" height="59" alt="神域魔物041" loading="lazy" decoding="async"></span><b class="no">041</b><span class="nm">神域魔物041</span><span class="ids"><span>魔物 <i>25040</i></span><span>蛋 <i>4100040</i></span></span></li>
+    <li class="pet" data-k="042 神域魔物042 25041 4100041"><span class="fig"><img src="pets/drwmob042.png" width="31" height="34" alt="神域魔物042" loading="lazy" decoding="async"></span><b class="no">042</b><span class="nm">神域魔物042</span><span class="ids"><span>魔物 <i>25041</i></span><span>蛋 <i>4100041</i></span></span></li>
+    <li class="pet" data-k="043 神域魔物043 25042 4100042"><span class="fig"><img src="pets/drwmob043.png" width="37" height="38" alt="神域魔物043" loading="lazy" decoding="async"></span><b class="no">043</b><span class="nm">神域魔物043</span><span class="ids"><span>魔物 <i>25042</i></span><span>蛋 <i>4100042</i></span></span></li>
+    <li class="pet" data-k="044 神域魔物044 25043 4100043"><span class="fig"><img src="pets/drwmob044.png" width="32" height="34" alt="神域魔物044" loading="lazy" decoding="async"></span><b class="no">044</b><span class="nm">神域魔物044</span><span class="ids"><span>魔物 <i>25043</i></span><span>蛋 <i>4100043</i></span></span></li>
+    <li class="pet" data-k="045 神域魔物045 25044 4100044"><span class="fig"><img src="pets/drwmob045.png" width="34" height="34" alt="神域魔物045" loading="lazy" decoding="async"></span><b class="no">045</b><span class="nm">神域魔物045</span><span class="ids"><span>魔物 <i>25044</i></span><span>蛋 <i>4100044</i></span></span></li>
+    <li class="pet" data-k="046 神域魔物046 25045 4100045"><span class="fig"><img src="pets/drwmob046.png" width="36" height="41" alt="神域魔物046" loading="lazy" decoding="async"></span><b class="no">046</b><span class="nm">神域魔物046</span><span class="ids"><span>魔物 <i>25045</i></span><span>蛋 <i>4100045</i></span></span></li>
+    <li class="pet" data-k="047 神域魔物047 25046 4100046"><span class="fig"><img src="pets/drwmob047.png" width="37" height="36" alt="神域魔物047" loading="lazy" decoding="async"></span><b class="no">047</b><span class="nm">神域魔物047</span><span class="ids"><span>魔物 <i>25046</i></span><span>蛋 <i>4100046</i></span></span></li>
+    <li class="pet" data-k="048 神域魔物048 25047 4100047"><span class="fig"><img src="pets/drwmob048.png" width="37" height="41" alt="神域魔物048" loading="lazy" decoding="async"></span><b class="no">048</b><span class="nm">神域魔物048</span><span class="ids"><span>魔物 <i>25047</i></span><span>蛋 <i>4100047</i></span></span></li>
+    <li class="pet" data-k="049 神域魔物049 25048 4100048"><span class="fig"><img src="pets/drwmob049.png" width="37" height="36" alt="神域魔物049" loading="lazy" decoding="async"></span><b class="no">049</b><span class="nm">神域魔物049</span><span class="ids"><span>魔物 <i>25048</i></span><span>蛋 <i>4100048</i></span></span></li>
+    <li class="pet" data-k="050 神域魔物050 25049 4100049"><span class="fig"><img src="pets/drwmob050.png" width="37" height="36" alt="神域魔物050" loading="lazy" decoding="async"></span><b class="no">050</b><span class="nm">神域魔物050</span><span class="ids"><span>魔物 <i>25049</i></span><span>蛋 <i>4100049</i></span></span></li>
+    <li class="pet" data-k="051 神域魔物051 25050 4100050"><span class="fig"><img src="pets/drwmob051.png" width="91" height="65" alt="神域魔物051" loading="lazy" decoding="async"></span><b class="no">051</b><span class="nm">神域魔物051</span><span class="ids"><span>魔物 <i>25050</i></span><span>蛋 <i>4100050</i></span></span></li>
+    <li class="pet" data-k="052 神域魔物052 25051 4100051"><span class="fig"><img src="pets/drwmob052.png" width="88" height="67" alt="神域魔物052" loading="lazy" decoding="async"></span><b class="no">052</b><span class="nm">神域魔物052</span><span class="ids"><span>魔物 <i>25051</i></span><span>蛋 <i>4100051</i></span></span></li>
+    <li class="pet" data-k="053 神域魔物053 25052 4100052"><span class="fig"><img src="pets/drwmob053.png" width="48" height="50" alt="神域魔物053" loading="lazy" decoding="async"></span><b class="no">053</b><span class="nm">神域魔物053</span><span class="ids"><span>魔物 <i>25052</i></span><span>蛋 <i>4100052</i></span></span></li>
+    <li class="pet" data-k="054 神域魔物054 25053 4100053"><span class="fig"><img src="pets/drwmob054.png" width="37" height="36" alt="神域魔物054" loading="lazy" decoding="async"></span><b class="no">054</b><span class="nm">神域魔物054</span><span class="ids"><span>魔物 <i>25053</i></span><span>蛋 <i>4100053</i></span></span></li>
+    <li class="pet" data-k="055 神域魔物055 25054 4100054"><span class="fig"><img src="pets/drwmob055.png" width="50" height="44" alt="神域魔物055" loading="lazy" decoding="async"></span><b class="no">055</b><span class="nm">神域魔物055</span><span class="ids"><span>魔物 <i>25054</i></span><span>蛋 <i>4100054</i></span></span></li>
+    <li class="pet" data-k="056 神域魔物056 25055 4100055"><span class="fig"><img src="pets/drwmob056.png" width="37" height="36" alt="神域魔物056" loading="lazy" decoding="async"></span><b class="no">056</b><span class="nm">神域魔物056</span><span class="ids"><span>魔物 <i>25055</i></span><span>蛋 <i>4100055</i></span></span></li>
+    <li class="pet" data-k="057 神域魔物057 25056 4100056"><span class="fig"><img src="pets/drwmob057.png" width="37" height="35" alt="神域魔物057" loading="lazy" decoding="async"></span><b class="no">057</b><span class="nm">神域魔物057</span><span class="ids"><span>魔物 <i>25056</i></span><span>蛋 <i>4100056</i></span></span></li>
+    <li class="pet" data-k="058 神域魔物058 25057 4100057"><span class="fig"><img src="pets/drwmob058.png" width="37" height="36" alt="神域魔物058" loading="lazy" decoding="async"></span><b class="no">058</b><span class="nm">神域魔物058</span><span class="ids"><span>魔物 <i>25057</i></span><span>蛋 <i>4100057</i></span></span></li>
+    <li class="pet" data-k="059 神域魔物059 25058 4100058"><span class="fig"><img src="pets/drwmob059.png" width="37" height="36" alt="神域魔物059" loading="lazy" decoding="async"></span><b class="no">059</b><span class="nm">神域魔物059</span><span class="ids"><span>魔物 <i>25058</i></span><span>蛋 <i>4100058</i></span></span></li>
+    <li class="pet" data-k="060 神域魔物060 25059 4100059"><span class="fig"><img src="pets/drwmob060.png" width="37" height="36" alt="神域魔物060" loading="lazy" decoding="async"></span><b class="no">060</b><span class="nm">神域魔物060</span><span class="ids"><span>魔物 <i>25059</i></span><span>蛋 <i>4100059</i></span></span></li>
+    <li class="pet" data-k="061 神域魔物061 25060 4100060"><span class="fig"><img src="pets/drwmob061.png" width="37" height="35" alt="神域魔物061" loading="lazy" decoding="async"></span><b class="no">061</b><span class="nm">神域魔物061</span><span class="ids"><span>魔物 <i>25060</i></span><span>蛋 <i>4100060</i></span></span></li>
+    <li class="pet" data-k="062 神域魔物062 25061 4100061"><span class="fig"><img src="pets/drwmob062.png" width="49" height="38" alt="神域魔物062" loading="lazy" decoding="async"></span><b class="no">062</b><span class="nm">神域魔物062</span><span class="ids"><span>魔物 <i>25061</i></span><span>蛋 <i>4100061</i></span></span></li>
+    <li class="pet" data-k="063 神域魔物063 25062 4100062"><span class="fig"><img src="pets/drwmob063.png" width="49" height="38" alt="神域魔物063" loading="lazy" decoding="async"></span><b class="no">063</b><span class="nm">神域魔物063</span><span class="ids"><span>魔物 <i>25062</i></span><span>蛋 <i>4100062</i></span></span></li>
+    <li class="pet" data-k="064 神域魔物064 25063 4100063"><span class="fig"><img src="pets/drwmob064.png" width="49" height="38" alt="神域魔物064" loading="lazy" decoding="async"></span><b class="no">064</b><span class="nm">神域魔物064</span><span class="ids"><span>魔物 <i>25063</i></span><span>蛋 <i>4100063</i></span></span></li>
+    <li class="pet" data-k="065 神域魔物065 25064 4100064"><span class="fig"><img src="pets/drwmob065.png" width="49" height="38" alt="神域魔物065" loading="lazy" decoding="async"></span><b class="no">065</b><span class="nm">神域魔物065</span><span class="ids"><span>魔物 <i>25064</i></span><span>蛋 <i>4100064</i></span></span></li>
+    <li class="pet" data-k="066 神域魔物066 25065 4100065"><span class="fig"><img src="pets/drwmob066.png" width="49" height="38" alt="神域魔物066" loading="lazy" decoding="async"></span><b class="no">066</b><span class="nm">神域魔物066</span><span class="ids"><span>魔物 <i>25065</i></span><span>蛋 <i>4100065</i></span></span></li>
+    <li class="pet" data-k="067 神域魔物067 25066 4100066"><span class="fig"><img src="pets/drwmob067.png" width="49" height="38" alt="神域魔物067" loading="lazy" decoding="async"></span><b class="no">067</b><span class="nm">神域魔物067</span><span class="ids"><span>魔物 <i>25066</i></span><span>蛋 <i>4100066</i></span></span></li>
+    <li class="pet" data-k="068 神域魔物068 25067 4100067"><span class="fig"><img src="pets/drwmob068.png" width="49" height="38" alt="神域魔物068" loading="lazy" decoding="async"></span><b class="no">068</b><span class="nm">神域魔物068</span><span class="ids"><span>魔物 <i>25067</i></span><span>蛋 <i>4100067</i></span></span></li>
+    <li class="pet" data-k="069 神域魔物069 25068 4100068"><span class="fig"><img src="pets/drwmob069.png" width="69" height="78" alt="神域魔物069" loading="lazy" decoding="async"></span><b class="no">069</b><span class="nm">神域魔物069</span><span class="ids"><span>魔物 <i>25068</i></span><span>蛋 <i>4100068</i></span></span></li>
+    <li class="pet" data-k="070 神域魔物070 25069 4100069"><span class="fig"><img src="pets/drwmob070.png" width="37" height="42" alt="神域魔物070" loading="lazy" decoding="async"></span><b class="no">070</b><span class="nm">神域魔物070</span><span class="ids"><span>魔物 <i>25069</i></span><span>蛋 <i>4100069</i></span></span></li>
+    <li class="pet" data-k="071 神域魔物071 25070 4100070"><span class="fig"><img src="pets/drwmob071.png" width="23" height="28" alt="神域魔物071" loading="lazy" decoding="async"></span><b class="no">071</b><span class="nm">神域魔物071</span><span class="ids"><span>魔物 <i>25070</i></span><span>蛋 <i>4100070</i></span></span></li>
+    <li class="pet" data-k="072 神域魔物072 25071 4100071"><span class="fig"><img src="pets/drwmob072.png" width="22" height="22" alt="神域魔物072" loading="lazy" decoding="async"></span><b class="no">072</b><span class="nm">神域魔物072</span><span class="ids"><span>魔物 <i>25071</i></span><span>蛋 <i>4100071</i></span></span></li>
+    <li class="pet" data-k="073 神域魔物073 25072 4100072"><span class="fig"><img src="pets/drwmob073.png" width="128" height="109" alt="神域魔物073" loading="lazy" decoding="async"></span><b class="no">073</b><span class="nm">神域魔物073</span><span class="ids"><span>魔物 <i>25072</i></span><span>蛋 <i>4100072</i></span></span></li>
+    <li class="pet" data-k="074 神域魔物074 25073 4100073"><span class="fig"><img src="pets/drwmob074.png" width="128" height="122" alt="神域魔物074" loading="lazy" decoding="async"></span><b class="no">074</b><span class="nm">神域魔物074</span><span class="ids"><span>魔物 <i>25073</i></span><span>蛋 <i>4100073</i></span></span></li>
+    <li class="pet" data-k="075 神域魔物075 25074 4100074"><span class="fig"><img src="pets/drwmob075.png" width="128" height="115" alt="神域魔物075" loading="lazy" decoding="async"></span><b class="no">075</b><span class="nm">神域魔物075</span><span class="ids"><span>魔物 <i>25074</i></span><span>蛋 <i>4100074</i></span></span></li>
+    <li class="pet" data-k="076 神域魔物076 25075 4100075"><span class="fig"><img src="pets/drwmob076.png" width="54" height="48" alt="神域魔物076" loading="lazy" decoding="async"></span><b class="no">076</b><span class="nm">神域魔物076</span><span class="ids"><span>魔物 <i>25075</i></span><span>蛋 <i>4100075</i></span></span></li>
+    <li class="pet" data-k="077 神域魔物077 25076 4100076"><span class="fig"><img src="pets/drwmob077.png" width="43" height="48" alt="神域魔物077" loading="lazy" decoding="async"></span><b class="no">077</b><span class="nm">神域魔物077</span><span class="ids"><span>魔物 <i>25076</i></span><span>蛋 <i>4100076</i></span></span></li>
+    <li class="pet" data-k="078 神域魔物078 25077 4100077"><span class="fig"><img src="pets/drwmob078.png" width="79" height="66" alt="神域魔物078" loading="lazy" decoding="async"></span><b class="no">078</b><span class="nm">神域魔物078</span><span class="ids"><span>魔物 <i>25077</i></span><span>蛋 <i>4100077</i></span></span></li>
+    <li class="pet" data-k="079 神域魔物079 25078 4100078"><span class="fig"><img src="pets/drwmob079.png" width="104" height="81" alt="神域魔物079" loading="lazy" decoding="async"></span><b class="no">079</b><span class="nm">神域魔物079</span><span class="ids"><span>魔物 <i>25078</i></span><span>蛋 <i>4100078</i></span></span></li>
+    <li class="pet" data-k="080 神域魔物080 25079 4100079"><span class="fig"><img src="pets/drwmob080.png" width="128" height="85" alt="神域魔物080" loading="lazy" decoding="async"></span><b class="no">080</b><span class="nm">神域魔物080</span><span class="ids"><span>魔物 <i>25079</i></span><span>蛋 <i>4100079</i></span></span></li>
+    <li class="pet" data-k="081 神域魔物081 25080 4100080"><span class="fig"><img src="pets/drwmob081.png" width="44" height="56" alt="神域魔物081" loading="lazy" decoding="async"></span><b class="no">081</b><span class="nm">神域魔物081</span><span class="ids"><span>魔物 <i>25080</i></span><span>蛋 <i>4100080</i></span></span></li>
+    <li class="pet" data-k="082 神域魔物082 25081 4100081"><span class="fig"><img src="pets/drwmob082.png" width="51" height="68" alt="神域魔物082" loading="lazy" decoding="async"></span><b class="no">082</b><span class="nm">神域魔物082</span><span class="ids"><span>魔物 <i>25081</i></span><span>蛋 <i>4100081</i></span></span></li>
+    <li class="pet" data-k="083 神域魔物083 25082 4100082"><span class="fig"><img src="pets/drwmob083.png" width="125" height="102" alt="神域魔物083" loading="lazy" decoding="async"></span><b class="no">083</b><span class="nm">神域魔物083</span><span class="ids"><span>魔物 <i>25082</i></span><span>蛋 <i>4100082</i></span></span></li>
+    <li class="pet" data-k="084 神域魔物084 25083 4100083"><span class="fig"><img src="pets/drwmob084.png" width="88" height="79" alt="神域魔物084" loading="lazy" decoding="async"></span><b class="no">084</b><span class="nm">神域魔物084</span><span class="ids"><span>魔物 <i>25083</i></span><span>蛋 <i>4100083</i></span></span></li>
+    <li class="pet" data-k="085 神域魔物085 25084 4100084"><span class="fig"><img src="pets/drwmob085.png" width="95" height="85" alt="神域魔物085" loading="lazy" decoding="async"></span><b class="no">085</b><span class="nm">神域魔物085</span><span class="ids"><span>魔物 <i>25084</i></span><span>蛋 <i>4100084</i></span></span></li>
+    <li class="pet" data-k="086 神域魔物086 25085 4100085"><span class="fig"><img src="pets/drwmob086.png" width="44" height="54" alt="神域魔物086" loading="lazy" decoding="async"></span><b class="no">086</b><span class="nm">神域魔物086</span><span class="ids"><span>魔物 <i>25085</i></span><span>蛋 <i>4100085</i></span></span></li>
+    <li class="pet" data-k="087 神域魔物087 25086 4100086"><span class="fig"><img src="pets/drwmob087.png" width="56" height="73" alt="神域魔物087" loading="lazy" decoding="async"></span><b class="no">087</b><span class="nm">神域魔物087</span><span class="ids"><span>魔物 <i>25086</i></span><span>蛋 <i>4100086</i></span></span></li>
+    <li class="pet" data-k="088 神域魔物088 25087 4100087"><span class="fig"><img src="pets/drwmob088.png" width="87" height="82" alt="神域魔物088" loading="lazy" decoding="async"></span><b class="no">088</b><span class="nm">神域魔物088</span><span class="ids"><span>魔物 <i>25087</i></span><span>蛋 <i>4100087</i></span></span></li>
+    <li class="pet" data-k="089 神域魔物089 25088 4100088"><span class="fig"><img src="pets/drwmob089.png" width="110" height="114" alt="神域魔物089" loading="lazy" decoding="async"></span><b class="no">089</b><span class="nm">神域魔物089</span><span class="ids"><span>魔物 <i>25088</i></span><span>蛋 <i>4100088</i></span></span></li>
+    <li class="pet" data-k="090 神域魔物090 25089 4100089"><span class="fig"><img src="pets/drwmob090.png" width="54" height="59" alt="神域魔物090" loading="lazy" decoding="async"></span><b class="no">090</b><span class="nm">神域魔物090</span><span class="ids"><span>魔物 <i>25089</i></span><span>蛋 <i>4100089</i></span></span></li>
+    <li class="pet" data-k="091 神域魔物091 25090 4100090"><span class="fig"><img src="pets/drwmob091.png" width="61" height="87" alt="神域魔物091" loading="lazy" decoding="async"></span><b class="no">091</b><span class="nm">神域魔物091</span><span class="ids"><span>魔物 <i>25090</i></span><span>蛋 <i>4100090</i></span></span></li>
+    <li class="pet" data-k="092 神域魔物092 25091 4100091"><span class="fig"><img src="pets/drwmob092.png" width="88" height="82" alt="神域魔物092" loading="lazy" decoding="async"></span><b class="no">092</b><span class="nm">神域魔物092</span><span class="ids"><span>魔物 <i>25091</i></span><span>蛋 <i>4100091</i></span></span></li>
+    <li class="pet" data-k="093 神域魔物093 25092 4100092"><span class="fig"><img src="pets/drwmob093.png" width="50" height="48" alt="神域魔物093" loading="lazy" decoding="async"></span><b class="no">093</b><span class="nm">神域魔物093</span><span class="ids"><span>魔物 <i>25092</i></span><span>蛋 <i>4100092</i></span></span></li>
+    <li class="pet" data-k="094 神域魔物094 25093 4100093"><span class="fig"><img src="pets/drwmob094.png" width="82" height="56" alt="神域魔物094" loading="lazy" decoding="async"></span><b class="no">094</b><span class="nm">神域魔物094</span><span class="ids"><span>魔物 <i>25093</i></span><span>蛋 <i>4100093</i></span></span></li>
+    <li class="pet" data-k="095 神域魔物095 25094 4100094"><span class="fig"><img src="pets/drwmob095.png" width="78" height="77" alt="神域魔物095" loading="lazy" decoding="async"></span><b class="no">095</b><span class="nm">神域魔物095</span><span class="ids"><span>魔物 <i>25094</i></span><span>蛋 <i>4100094</i></span></span></li>
+    <li class="pet" data-k="096 神域魔物096 25095 4100095"><span class="fig"><img src="pets/drwmob096.png" width="111" height="86" alt="神域魔物096" loading="lazy" decoding="async"></span><b class="no">096</b><span class="nm">神域魔物096</span><span class="ids"><span>魔物 <i>25095</i></span><span>蛋 <i>4100095</i></span></span></li>
+    <li class="pet" data-k="097 神域魔物097 25096 4100096"><span class="fig"><img src="pets/drwmob097.png" width="63" height="50" alt="神域魔物097" loading="lazy" decoding="async"></span><b class="no">097</b><span class="nm">神域魔物097</span><span class="ids"><span>魔物 <i>25096</i></span><span>蛋 <i>4100096</i></span></span></li>
+    <li class="pet" data-k="098 神域魔物098 25097 4100097"><span class="fig"><img src="pets/drwmob098.png" width="69" height="68" alt="神域魔物098" loading="lazy" decoding="async"></span><b class="no">098</b><span class="nm">神域魔物098</span><span class="ids"><span>魔物 <i>25097</i></span><span>蛋 <i>4100097</i></span></span></li>
+    <li class="pet" data-k="099 神域魔物099 25098 4100098"><span class="fig"><img src="pets/drwmob099.png" width="47" height="67" alt="神域魔物099" loading="lazy" decoding="async"></span><b class="no">099</b><span class="nm">神域魔物099</span><span class="ids"><span>魔物 <i>25098</i></span><span>蛋 <i>4100098</i></span></span></li>
+    <li class="pet" data-k="100 神域魔物100 25099 4100099"><span class="fig"><img src="pets/drwmob100.png" width="53" height="91" alt="神域魔物100" loading="lazy" decoding="async"></span><b class="no">100</b><span class="nm">神域魔物100</span><span class="ids"><span>魔物 <i>25099</i></span><span>蛋 <i>4100099</i></span></span></li>
+    <li class="pet" data-k="101 神域魔物101 25100 4100100"><span class="fig"><img src="pets/drwmob101.png" width="127" height="80" alt="神域魔物101" loading="lazy" decoding="async"></span><b class="no">101</b><span class="nm">神域魔物101</span><span class="ids"><span>魔物 <i>25100</i></span><span>蛋 <i>4100100</i></span></span></li>
+    <li class="pet" data-k="102 神域魔物102 25101 4100101"><span class="fig"><img src="pets/drwmob102.png" width="62" height="93" alt="神域魔物102" loading="lazy" decoding="async"></span><b class="no">102</b><span class="nm">神域魔物102</span><span class="ids"><span>魔物 <i>25101</i></span><span>蛋 <i>4100101</i></span></span></li>
+    <li class="pet" data-k="103 神域魔物103 25102 4100102"><span class="fig"><img src="pets/drwmob103.png" width="81" height="88" alt="神域魔物103" loading="lazy" decoding="async"></span><b class="no">103</b><span class="nm">神域魔物103</span><span class="ids"><span>魔物 <i>25102</i></span><span>蛋 <i>4100102</i></span></span></li>
+    <li class="pet" data-k="104 神域魔物104 25103 4100103"><span class="fig"><img src="pets/drwmob104.png" width="69" height="97" alt="神域魔物104" loading="lazy" decoding="async"></span><b class="no">104</b><span class="nm">神域魔物104</span><span class="ids"><span>魔物 <i>25103</i></span><span>蛋 <i>4100103</i></span></span></li>
+    <li class="pet" data-k="105 神域魔物105 25104 4100104"><span class="fig"><img src="pets/drwmob105.png" width="48" height="88" alt="神域魔物105" loading="lazy" decoding="async"></span><b class="no">105</b><span class="nm">神域魔物105</span><span class="ids"><span>魔物 <i>25104</i></span><span>蛋 <i>4100104</i></span></span></li>
+    <li class="pet" data-k="106 神域魔物106 25105 4100105"><span class="fig"><img src="pets/drwmob106.png" width="38" height="48" alt="神域魔物106" loading="lazy" decoding="async"></span><b class="no">106</b><span class="nm">神域魔物106</span><span class="ids"><span>魔物 <i>25105</i></span><span>蛋 <i>4100105</i></span></span></li>
+    <li class="pet" data-k="107 神域魔物107 25106 4100106"><span class="fig"><img src="pets/drwmob107.png" width="45" height="51" alt="神域魔物107" loading="lazy" decoding="async"></span><b class="no">107</b><span class="nm">神域魔物107</span><span class="ids"><span>魔物 <i>25106</i></span><span>蛋 <i>4100106</i></span></span></li>
+    <li class="pet" data-k="108 神域魔物108 25107 4100107"><span class="fig"><img src="pets/drwmob108.png" width="58" height="74" alt="神域魔物108" loading="lazy" decoding="async"></span><b class="no">108</b><span class="nm">神域魔物108</span><span class="ids"><span>魔物 <i>25107</i></span><span>蛋 <i>4100107</i></span></span></li>
+    <li class="pet" data-k="109 神域魔物109 25108 4100108"><span class="fig"><img src="pets/drwmob109.png" width="45" height="74" alt="神域魔物109" loading="lazy" decoding="async"></span><b class="no">109</b><span class="nm">神域魔物109</span><span class="ids"><span>魔物 <i>25108</i></span><span>蛋 <i>4100108</i></span></span></li>
+    <li class="pet" data-k="110 神域魔物110 25109 4100109"><span class="fig"><img src="pets/drwmob110.png" width="68" height="78" alt="神域魔物110" loading="lazy" decoding="async"></span><b class="no">110</b><span class="nm">神域魔物110</span><span class="ids"><span>魔物 <i>25109</i></span><span>蛋 <i>4100109</i></span></span></li>
+    <li class="pet" data-k="111 神域魔物111 25110 4100110"><span class="fig"><img src="pets/drwmob111.png" width="77" height="85" alt="神域魔物111" loading="lazy" decoding="async"></span><b class="no">111</b><span class="nm">神域魔物111</span><span class="ids"><span>魔物 <i>25110</i></span><span>蛋 <i>4100110</i></span></span></li>
+    <li class="pet" data-k="112 神域魔物112 25111 4100111"><span class="fig"><img src="pets/drwmob112.png" width="99" height="86" alt="神域魔物112" loading="lazy" decoding="async"></span><b class="no">112</b><span class="nm">神域魔物112</span><span class="ids"><span>魔物 <i>25111</i></span><span>蛋 <i>4100111</i></span></span></li>
+    <li class="pet" data-k="113 神域魔物113 25112 4100112"><span class="fig"><img src="pets/drwmob113.png" width="128" height="105" alt="神域魔物113" loading="lazy" decoding="async"></span><b class="no">113</b><span class="nm">神域魔物113</span><span class="ids"><span>魔物 <i>25112</i></span><span>蛋 <i>4100112</i></span></span></li>
+    <li class="pet" data-k="114 神域魔物114 25113 4100113"><span class="fig"><img src="pets/drwmob114.png" width="93" height="113" alt="神域魔物114" loading="lazy" decoding="async"></span><b class="no">114</b><span class="nm">神域魔物114</span><span class="ids"><span>魔物 <i>25113</i></span><span>蛋 <i>4100113</i></span></span></li>
+    <li class="pet" data-k="115 神域魔物115 25114 4100114"><span class="fig"><img src="pets/drwmob115.png" width="59" height="60" alt="神域魔物115" loading="lazy" decoding="async"></span><b class="no">115</b><span class="nm">神域魔物115</span><span class="ids"><span>魔物 <i>25114</i></span><span>蛋 <i>4100114</i></span></span></li>
+    <li class="pet" data-k="116 神域魔物116 25115 4100115"><span class="fig"><img src="pets/drwmob116.png" width="59" height="61" alt="神域魔物116" loading="lazy" decoding="async"></span><b class="no">116</b><span class="nm">神域魔物116</span><span class="ids"><span>魔物 <i>25115</i></span><span>蛋 <i>4100115</i></span></span></li>
+    <li class="pet" data-k="117 神域魔物117 25116 4100116"><span class="fig"><img src="pets/drwmob117.png" width="30" height="57" alt="神域魔物117" loading="lazy" decoding="async"></span><b class="no">117</b><span class="nm">神域魔物117</span><span class="ids"><span>魔物 <i>25116</i></span><span>蛋 <i>4100116</i></span></span></li>
+    <li class="pet" data-k="118 神域魔物118 25117 4100117"><span class="fig"><img src="pets/drwmob118.png" width="85" height="62" alt="神域魔物118" loading="lazy" decoding="async"></span><b class="no">118</b><span class="nm">神域魔物118</span><span class="ids"><span>魔物 <i>25117</i></span><span>蛋 <i>4100117</i></span></span></li>
+    <li class="pet" data-k="119 神域魔物119 25118 4100118"><span class="fig"><img src="pets/drwmob119.png" width="104" height="75" alt="神域魔物119" loading="lazy" decoding="async"></span><b class="no">119</b><span class="nm">神域魔物119</span><span class="ids"><span>魔物 <i>25118</i></span><span>蛋 <i>4100118</i></span></span></li>
+    <li class="pet" data-k="120 神域魔物120 25119 4100119"><span class="fig"><img src="pets/drwmob120.png" width="126" height="128" alt="神域魔物120" loading="lazy" decoding="async"></span><b class="no">120</b><span class="nm">神域魔物120</span><span class="ids"><span>魔物 <i>25119</i></span><span>蛋 <i>4100119</i></span></span></li>
+    <li class="pet" data-k="121 神域魔物121 25120 4100120"><span class="fig"><img src="pets/drwmob121.png" width="70" height="54" alt="神域魔物121" loading="lazy" decoding="async"></span><b class="no">121</b><span class="nm">神域魔物121</span><span class="ids"><span>魔物 <i>25120</i></span><span>蛋 <i>4100120</i></span></span></li>
+    <li class="pet" data-k="122 神域魔物122 25121 4100121"><span class="fig"><img src="pets/drwmob122.png" width="30" height="60" alt="神域魔物122" loading="lazy" decoding="async"></span><b class="no">122</b><span class="nm">神域魔物122</span><span class="ids"><span>魔物 <i>25121</i></span><span>蛋 <i>4100121</i></span></span></li>
+    <li class="pet" data-k="123 神域魔物123 25122 4100122"><span class="fig"><img src="pets/drwmob123.png" width="49" height="69" alt="神域魔物123" loading="lazy" decoding="async"></span><b class="no">123</b><span class="nm">神域魔物123</span><span class="ids"><span>魔物 <i>25122</i></span><span>蛋 <i>4100122</i></span></span></li>
+    <li class="pet" data-k="124 神域魔物124 25123 4100123"><span class="fig"><img src="pets/drwmob124.png" width="65" height="73" alt="神域魔物124" loading="lazy" decoding="async"></span><b class="no">124</b><span class="nm">神域魔物124</span><span class="ids"><span>魔物 <i>25123</i></span><span>蛋 <i>4100123</i></span></span></li>
+    <li class="pet" data-k="125 神域魔物125 25124 4100124"><span class="fig"><img src="pets/drwmob125.png" width="76" height="63" alt="神域魔物125" loading="lazy" decoding="async"></span><b class="no">125</b><span class="nm">神域魔物125</span><span class="ids"><span>魔物 <i>25124</i></span><span>蛋 <i>4100124</i></span></span></li>
+    <li class="pet" data-k="126 神域魔物126 25125 4100125"><span class="fig"><img src="pets/drwmob126.png" width="42" height="54" alt="神域魔物126" loading="lazy" decoding="async"></span><b class="no">126</b><span class="nm">神域魔物126</span><span class="ids"><span>魔物 <i>25125</i></span><span>蛋 <i>4100125</i></span></span></li>
+    <li class="pet" data-k="127 神域魔物127 25126 4100126"><span class="fig"><img src="pets/drwmob127.png" width="59" height="86" alt="神域魔物127" loading="lazy" decoding="async"></span><b class="no">127</b><span class="nm">神域魔物127</span><span class="ids"><span>魔物 <i>25126</i></span><span>蛋 <i>4100126</i></span></span></li>
+    <li class="pet" data-k="128 神域魔物128 25127 4100127"><span class="fig"><img src="pets/drwmob128.png" width="69" height="58" alt="神域魔物128" loading="lazy" decoding="async"></span><b class="no">128</b><span class="nm">神域魔物128</span><span class="ids"><span>魔物 <i>25127</i></span><span>蛋 <i>4100127</i></span></span></li>
+    <li class="pet" data-k="129 神域魔物129 25128 4100128"><span class="fig"><img src="pets/drwmob129.png" width="33" height="75" alt="神域魔物129" loading="lazy" decoding="async"></span><b class="no">129</b><span class="nm">神域魔物129</span><span class="ids"><span>魔物 <i>25128</i></span><span>蛋 <i>4100128</i></span></span></li>
+    <li class="pet" data-k="130 神域魔物130 25129 4100129"><span class="fig"><img src="pets/drwmob130.png" width="56" height="79" alt="神域魔物130" loading="lazy" decoding="async"></span><b class="no">130</b><span class="nm">神域魔物130</span><span class="ids"><span>魔物 <i>25129</i></span><span>蛋 <i>4100129</i></span></span></li>
+    <li class="pet" data-k="131 神域魔物131 25130 4100130"><span class="fig"><img src="pets/drwmob131.png" width="52" height="37" alt="神域魔物131" loading="lazy" decoding="async"></span><b class="no">131</b><span class="nm">神域魔物131</span><span class="ids"><span>魔物 <i>25130</i></span><span>蛋 <i>4100130</i></span></span></li>
+    <li class="pet" data-k="132 神域魔物132 25131 4100131"><span class="fig"><img src="pets/drwmob132.png" width="73" height="128" alt="神域魔物132" loading="lazy" decoding="async"></span><b class="no">132</b><span class="nm">神域魔物132</span><span class="ids"><span>魔物 <i>25131</i></span><span>蛋 <i>4100131</i></span></span></li>
+    <li class="pet" data-k="133 神域魔物133 25132 4100132"><span class="fig"><img src="pets/drwmob133.png" width="94" height="128" alt="神域魔物133" loading="lazy" decoding="async"></span><b class="no">133</b><span class="nm">神域魔物133</span><span class="ids"><span>魔物 <i>25132</i></span><span>蛋 <i>4100132</i></span></span></li>
+    <li class="pet" data-k="134 神域魔物134 25133 4100133"><span class="fig"><img src="pets/drwmob134.png" width="29" height="61" alt="神域魔物134" loading="lazy" decoding="async"></span><b class="no">134</b><span class="nm">神域魔物134</span><span class="ids"><span>魔物 <i>25133</i></span><span>蛋 <i>4100133</i></span></span></li>
+    <li class="pet" data-k="135 神域魔物135 25134 4100134"><span class="fig"><img src="pets/drwmob135.png" width="29" height="61" alt="神域魔物135" loading="lazy" decoding="async"></span><b class="no">135</b><span class="nm">神域魔物135</span><span class="ids"><span>魔物 <i>25134</i></span><span>蛋 <i>4100134</i></span></span></li>
+    <li class="pet" data-k="136 神域魔物136 25135 4100135"><span class="fig"><img src="pets/drwmob136.png" width="128" height="91" alt="神域魔物136" loading="lazy" decoding="async"></span><b class="no">136</b><span class="nm">神域魔物136</span><span class="ids"><span>魔物 <i>25135</i></span><span>蛋 <i>4100135</i></span></span></li>
+    <li class="pet" data-k="137 神域魔物137 25136 4100136"><span class="fig"><img src="pets/drwmob137.png" width="93" height="128" alt="神域魔物137" loading="lazy" decoding="async"></span><b class="no">137</b><span class="nm">神域魔物137</span><span class="ids"><span>魔物 <i>25136</i></span><span>蛋 <i>4100136</i></span></span></li>
+    <li class="pet" data-k="138 神域魔物138 25137 4100137"><span class="fig"><img src="pets/drwmob138.png" width="84" height="120" alt="神域魔物138" loading="lazy" decoding="async"></span><b class="no">138</b><span class="nm">神域魔物138</span><span class="ids"><span>魔物 <i>25137</i></span><span>蛋 <i>4100137</i></span></span></li>
+    <li class="pet" data-k="139 神域魔物139 25138 4100138"><span class="fig"><img src="pets/drwmob139.png" width="64" height="73" alt="神域魔物139" loading="lazy" decoding="async"></span><b class="no">139</b><span class="nm">神域魔物139</span><span class="ids"><span>魔物 <i>25138</i></span><span>蛋 <i>4100138</i></span></span></li>
+    <li class="pet" data-k="140 神域魔物140 25139 4100139"><span class="fig"><img src="pets/drwmob140.png" width="63" height="54" alt="神域魔物140" loading="lazy" decoding="async"></span><b class="no">140</b><span class="nm">神域魔物140</span><span class="ids"><span>魔物 <i>25139</i></span><span>蛋 <i>4100139</i></span></span></li>
+    <li class="pet" data-k="141 神域魔物141 25140 4100140"><span class="fig"><img src="pets/drwmob141.png" width="63" height="64" alt="神域魔物141" loading="lazy" decoding="async"></span><b class="no">141</b><span class="nm">神域魔物141</span><span class="ids"><span>魔物 <i>25140</i></span><span>蛋 <i>4100140</i></span></span></li>
+    <li class="pet" data-k="142 神域魔物142 25141 4100141"><span class="fig"><img src="pets/drwmob142.png" width="62" height="64" alt="神域魔物142" loading="lazy" decoding="async"></span><b class="no">142</b><span class="nm">神域魔物142</span><span class="ids"><span>魔物 <i>25141</i></span><span>蛋 <i>4100141</i></span></span></li>
+    <li class="pet" data-k="143 神域魔物143 25142 4100142"><span class="fig"><img src="pets/drwmob143.png" width="59" height="108" alt="神域魔物143" loading="lazy" decoding="async"></span><b class="no">143</b><span class="nm">神域魔物143</span><span class="ids"><span>魔物 <i>25142</i></span><span>蛋 <i>4100142</i></span></span></li>
+    <li class="pet" data-k="144 神域魔物144 25143 4100143"><span class="fig"><img src="pets/drwmob144.png" width="54" height="125" alt="神域魔物144" loading="lazy" decoding="async"></span><b class="no">144</b><span class="nm">神域魔物144</span><span class="ids"><span>魔物 <i>25143</i></span><span>蛋 <i>4100143</i></span></span></li>
+    <li class="pet" data-k="145 神域魔物145 25144 4100144"><span class="fig"><img src="pets/drwmob145.png" width="54" height="86" alt="神域魔物145" loading="lazy" decoding="async"></span><b class="no">145</b><span class="nm">神域魔物145</span><span class="ids"><span>魔物 <i>25144</i></span><span>蛋 <i>4100144</i></span></span></li>
+    <li class="pet" data-k="146 神域魔物146 25145 4100145"><span class="fig"><img src="pets/drwmob146.png" width="40" height="86" alt="神域魔物146" loading="lazy" decoding="async"></span><b class="no">146</b><span class="nm">神域魔物146</span><span class="ids"><span>魔物 <i>25145</i></span><span>蛋 <i>4100145</i></span></span></li>
+    <li class="pet" data-k="147 神域魔物147 25146 4100146"><span class="fig"><img src="pets/drwmob147.png" width="61" height="92" alt="神域魔物147" loading="lazy" decoding="async"></span><b class="no">147</b><span class="nm">神域魔物147</span><span class="ids"><span>魔物 <i>25146</i></span><span>蛋 <i>4100146</i></span></span></li>
+    <li class="pet" data-k="148 神域魔物148 25147 4100147"><span class="fig"><img src="pets/drwmob148.png" width="50" height="77" alt="神域魔物148" loading="lazy" decoding="async"></span><b class="no">148</b><span class="nm">神域魔物148</span><span class="ids"><span>魔物 <i>25147</i></span><span>蛋 <i>4100147</i></span></span></li>
+    <li class="pet" data-k="149 神域魔物149 25148 4100148"><span class="fig"><img src="pets/drwmob149.png" width="128" height="103" alt="神域魔物149" loading="lazy" decoding="async"></span><b class="no">149</b><span class="nm">神域魔物149</span><span class="ids"><span>魔物 <i>25148</i></span><span>蛋 <i>4100148</i></span></span></li>
+    <li class="pet" data-k="150 神域魔物150 25149 4100149"><span class="fig"><img src="pets/drwmob150.png" width="56" height="82" alt="神域魔物150" loading="lazy" decoding="async"></span><b class="no">150</b><span class="nm">神域魔物150</span><span class="ids"><span>魔物 <i>25149</i></span><span>蛋 <i>4100149</i></span></span></li>
+    <li class="pet" data-k="151 神域魔物151 25150 4100150"><span class="fig"><img src="pets/drwmob151.png" width="56" height="82" alt="神域魔物151" loading="lazy" decoding="async"></span><b class="no">151</b><span class="nm">神域魔物151</span><span class="ids"><span>魔物 <i>25150</i></span><span>蛋 <i>4100150</i></span></span></li>
+    <li class="pet" data-k="152 神域魔物152 25151 4100151"><span class="fig"><img src="pets/drwmob152.png" width="56" height="82" alt="神域魔物152" loading="lazy" decoding="async"></span><b class="no">152</b><span class="nm">神域魔物152</span><span class="ids"><span>魔物 <i>25151</i></span><span>蛋 <i>4100151</i></span></span></li>
+    <li class="pet" data-k="153 神域魔物153 25152 4100152"><span class="fig"><img src="pets/drwmob153.png" width="47" height="117" alt="神域魔物153" loading="lazy" decoding="async"></span><b class="no">153</b><span class="nm">神域魔物153</span><span class="ids"><span>魔物 <i>25152</i></span><span>蛋 <i>4100152</i></span></span></li>
+    <li class="pet" data-k="154 神域魔物154 25153 4100153"><span class="fig"><img src="pets/drwmob154.png" width="47" height="117" alt="神域魔物154" loading="lazy" decoding="async"></span><b class="no">154</b><span class="nm">神域魔物154</span><span class="ids"><span>魔物 <i>25153</i></span><span>蛋 <i>4100153</i></span></span></li>
+    <li class="pet" data-k="155 神域魔物155 25154 4100154"><span class="fig"><img src="pets/drwmob155.png" width="47" height="117" alt="神域魔物155" loading="lazy" decoding="async"></span><b class="no">155</b><span class="nm">神域魔物155</span><span class="ids"><span>魔物 <i>25154</i></span><span>蛋 <i>4100154</i></span></span></li>
+    <li class="pet" data-k="156 神域魔物156 25155 4100155"><span class="fig"><img src="pets/drwmob156.png" width="40" height="86" alt="神域魔物156" loading="lazy" decoding="async"></span><b class="no">156</b><span class="nm">神域魔物156</span><span class="ids"><span>魔物 <i>25155</i></span><span>蛋 <i>4100155</i></span></span></li>
+    <li class="pet" data-k="157 神域魔物157 25156 4100156"><span class="fig"><img src="pets/drwmob157.png" width="44" height="86" alt="神域魔物157" loading="lazy" decoding="async"></span><b class="no">157</b><span class="nm">神域魔物157</span><span class="ids"><span>魔物 <i>25156</i></span><span>蛋 <i>4100156</i></span></span></li>
+    <li class="pet" data-k="158 神域魔物158 25157 4100157"><span class="fig"><img src="pets/drwmob158.png" width="56" height="79" alt="神域魔物158" loading="lazy" decoding="async"></span><b class="no">158</b><span class="nm">神域魔物158</span><span class="ids"><span>魔物 <i>25157</i></span><span>蛋 <i>4100157</i></span></span></li>
+    <li class="pet" data-k="159 神域魔物159 25158 4100158"><span class="fig"><img src="pets/drwmob159.png" width="104" height="128" alt="神域魔物159" loading="lazy" decoding="async"></span><b class="no">159</b><span class="nm">神域魔物159</span><span class="ids"><span>魔物 <i>25158</i></span><span>蛋 <i>4100158</i></span></span></li>
+    <li class="pet" data-k="160 神域魔物160 25159 4100159"><span class="fig"><img src="pets/drwmob160.png" width="49" height="73" alt="神域魔物160" loading="lazy" decoding="async"></span><b class="no">160</b><span class="nm">神域魔物160</span><span class="ids"><span>魔物 <i>25159</i></span><span>蛋 <i>4100159</i></span></span></li>
+    <li class="pet" data-k="161 神域魔物161 25160 4100160"><span class="fig"><img src="pets/drwmob161.png" width="49" height="73" alt="神域魔物161" loading="lazy" decoding="async"></span><b class="no">161</b><span class="nm">神域魔物161</span><span class="ids"><span>魔物 <i>25160</i></span><span>蛋 <i>4100160</i></span></span></li>
+    <li class="pet" data-k="162 神域魔物162 25161 4100161"><span class="fig"><img src="pets/drwmob162.png" width="101" height="112" alt="神域魔物162" loading="lazy" decoding="async"></span><b class="no">162</b><span class="nm">神域魔物162</span><span class="ids"><span>魔物 <i>25161</i></span><span>蛋 <i>4100161</i></span></span></li>
+  </ul>
+  <p class="empty" id="empty" hidden>沒有符合的寵物。</p>
+
+  <footer class="foot">
+    <p><b>編號是連號的。</b>第 N 號寵物的魔物編號是 <b>24999 + N</b>、寵物蛋編號是 <b>4099999 + N</b> —— 001 對到 25000 與 4100000，162 對到 25161 與 4100161，中間沒有跳號。</p>
+    <p><b>圖是遊戲裡的實際外觀。</b>直接取自客戶端的圖檔，抓的是站立朝南的第一格；有些外觀本身就把陰影畫進圖裡，看起來腳邊帶一塊黑影，那是原圖就有的。</p>
+    <p><b>名字是出廠名稱。</b>寵物孵出來之後可以改名，改過的名字不會反映在這裡。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var pets = Array.prototype.slice.call(document.querySelectorAll('.pet'));
+  var shown = document.getElementById('shown');
+  var empty = document.getElementById('empty');
+  function filter(){
+    var s = q.value.trim().toLowerCase(), n = 0;
+    for (var i = 0; i < pets.length; i++){
+      var hit = !s || pets[i].dataset.k.toLowerCase().indexOf(s) !== -1;
+      pets[i].hidden = !hit;
+      if (hit) n++;
+    }
+    shown.textContent = n;
+    empty.hidden = n !== 0;
+  }
+  q.addEventListener('input', filter);
+  filter();
+})();
+</script>
+</body>
+</html>

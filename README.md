@@ -11,12 +11,15 @@
 | `potential.html` | 裝備潛能詞條表 — 5 個部位池、193 條詞條、六支道具的差別 |
 | `petaffix.html` | 寵物詞條與星級 — 41 種能力、★3→★9 升階表、升等與六維配點 |
 | `daopan.html` | 大道星盤天賦樹 — 六大道 141 個節點、12 個核心天賦、56 點的配點上限 |
+| `pets.html` | 神域寵物圖鑑 — 靈獸島 162 種寵物的編號、外觀、魔物編號與蛋編號 |
 
 ---
 
 ## 結構慣例
 
-**一頁一個 `.html`，全部平放在同一層，不開子資料夾。**
+**一頁一個 `.html`，全部平放在同一層。**
+
+唯一的子資料夾是 `pets/` —— 神域寵物圖鑑的 162 張外觀圖，沒辦法像其他頁一樣塞進單一檔案。除此之外不要再開新的子資料夾。
 
 新增一頁 = 丟一支新的 `.html` 進來 + 在 `index.html` 的清單加一項。不用改結構，舊連結不會壞。
 
@@ -25,7 +28,9 @@ index.html          入口頁
 runewords.html      ┐
 potential.html      │
 petaffix.html       ├ 各工具頁，彼此獨立
-daopan.html         ┘
+daopan.html         │
+pets.html           ┘
+pets/               神域寵物圖鑑的 162 張外觀圖（drwmob001.png ~ drwmob162.png，共約 920 KB）
 logo.webp           站台 logo（去背 440px，入口頁與各頁的回首頁鈕共用）
 favicon.png         瀏覽器分頁圖示（64px）
 og.jpg              貼 Discord / 社群時的連結預覽圖（600px，紙色底）
@@ -33,6 +38,8 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 ```
 
 每一頁都是**自帶資料的單一檔案** — 資料以 JSON 直接內嵌在 `<script>` 裡，除了 Google Fonts 沒有任何外部請求。所以單獨開一支 `.html` 也能正常運作。
+
+`pets.html` 是例外：資料直接寫成靜態的 `<li>`（不靠 JS 就看得到），但外觀圖要讀同層的 `pets/`，所以它必須跟那個資料夾放在一起才看得到圖。
 
 ---
 
@@ -45,6 +52,7 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 | `runewords.html` | `2.開機擋/db/import/item_combos.yml`（290 組的符文與組合名）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（33 種符文的 ID、中文名與階級區段）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（適用裝備、定位、效果文字）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號 |
 | `potential.html` | `2.開機擋/script/04.系統/22.裝備潛能.txt` 的 `$@BGP_*` 五個詞條池與 `$@BGP_OptWeight*`；**效果文字取自同檔的 `$@BGP_OptFmt$`**（客戶端 tooltip 原文，NPC 也是印這張表）——<br>2026-08-27 之前誤用詞條池的開發註解，45 筆與遊戲內用字不符<br>同檔 `F_BGP_Enchant` 檔頭的六支道具與旗標；`db/import/blackgod/item_vipmat.yml` 是實際的呼叫端 |
 | `petaffix.html` | `2.開機擋/script/04.系統/30.寵物詞條.txt` 的 `$@PETAB_*`、`$@PETUP_*`、`$@PET_DIGI_*`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `pet_gain_exp_rate` / `pet_levelup_point` / `pet_max_level` / `pet_bonus_point_class_*`（升等與配點） |
+| `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act` |
 | `daopan.html` | `2.開機擋/script/04.系統/70.大道星盤.txt` 的 `OnInit` 八張節點表（`$@dao_name$` / `tier` / `pre` / `pre2` / `ex` / `ek1~3` / `ev1~3`）、分級表 `$@dao_tmax` `$@dao_tcost`、效果對照 `$@dao_kn$` `$@dao_ku` `$@dao_ks`、境界配點 `$@dao_grant`、常數 `$@DAO_*`<br>`2.開機擋/script/04.系統/12.境界突破.txt` 的 `$@realm_name$`（十三境的名字） |
 
 ### ⚠ 產生器已經不在了
@@ -66,6 +74,8 @@ README 原本寫「改完來源要重跑產生器」，但那支產生器**沒�
 * **大道星盤有五格效果是「填正數代表改善」。** `$@dao_ks` 裡 16（技能後延遲）、26（受到 Boss 傷害）、30（固定詠唱）、31（變動詠唱）是 `-1`，資料表填 `3` 要顯示成 `-3%`。照抄數字會把減延遲寫成加延遲，而且看起來完全正常。移動速度（17）**不在**這一組，它填正數就是正數。
 * **節點的等級上限與每級點數不在節點表裡。** 逐節點找 `max_level` 會一無所獲 —— 它們由 tier 查 `$@dao_tmax` / `$@dao_tcost` 得到，同類型一律相同。
 * **「56 點最多拿 2 個核心」是錯的，實際是 3 個。** 同一條道的兩個核心**共用整條前置鏈**，只要不同互斥群組就能一起拿（守道走到 22 點拿第一個，第二個只要再 6 點）。最省的三核心組合是不動明王＋金剛怒目＋血祭大道，合計 50 點。要下這種結論一定要實際跑組合搜尋，不要用「單一核心成本 × 個數」估。
+* **神域寵物的外觀圖是從客戶端 sprite 轉出來的，`spr` 有兩種版本、`act` 也有兩種。** 162 隻裡 `spr 2.1`（索引格 RLE 壓縮）122 隻、`spr 2.0`（索引格未壓縮）40 隻；`act 2.5` 157 隻、`act 2.3` 5 隻（差在 `scaleY` 與 `width/height` 兩個欄位）。只寫其中一種版本的解析會在中途炸掉，而且錯誤訊息長得像檔案損毀。**RGBA 格是 `ABGR` 順序而且上下顛倒**，索引格則是正常方向、索引 0 當透明。取的是 `act` 動作 0（站立朝南）第 0 格。
+* **完整的 162 隻 sprite 只在 `3.客戶端/old/data09/`。** `3.客戶端/data/sprite/` 底下只有 129~162 那批共 34 隻，前 128 隻早就打包進 `drw02.grf` 了。去 `data/sprite` 抓會只拿到五分之一，而且不會有任何錯誤。
 * **符文的階級名稱在 2026-08-25 整層錯開一格改過。** 舊的「凡符 / 仙符 / 神符 / 上古符」對到新的「凡階 / 靈階 / 仙階 / 神階」—— 注意不是單純改字，是整層平移，舊的「仙符」現在叫「靈階」。ID 區段一個沒動。頁面的 CSS class 也跟著改名成 `t-fan` / `t-ling` / `t-xian` / `t-shen`，顏色梯度（灰→綠→金→朱）維持原樣。
 
 ---
