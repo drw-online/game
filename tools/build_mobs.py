@@ -172,7 +172,7 @@ def common_drops(rows, gdrops):
     ref = {x[0]: x for x in rows[0]["d"]}
     out = [(ref[i][1], ref[i][2], "352 隻全部") for i in sorted(shared)]
     out += [(n, r, "地圖掉落") for _, n, r in gdrops]
-    return out, shared
+    return out
 
 
 # ---------------------------------------------------------------- HTML
@@ -294,7 +294,7 @@ td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:n
 .tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
 .tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
 
-#mobs{min-width:900px}
+#mobs{min-width:560px}
 tr.mob{cursor:pointer}
 tr.mob:hover{background:var(--sunk)}
 tr.mob:focus-visible{outline:2px solid var(--focus); outline-offset:-2px}
@@ -306,7 +306,6 @@ td.nm b{font-weight:500}
 .tag.mvp{background:var(--cinnabar); color:var(--on-accent)}
 .tag.drw{background:var(--sunk); color:var(--ink-soft); border:1px solid var(--rule)}
 td.el{white-space:nowrap; color:var(--ink-soft); font-size:13px}
-td.dp{font-size:13px; color:var(--ink-soft); min-width:190px}
 tr.detail > td{background:var(--sunk); padding:0}
 .dwrap{padding:16px 18px 20px}
 .grid{display:grid; gap:10px 26px; grid-template-columns:repeat(auto-fit,minmax(108px,1fr));
@@ -383,16 +382,14 @@ td.rate{color:var(--cinnabar); font-weight:500; text-align:right; font-variant-n
     <div class="tbl-wrap">
       <table id="mobs">
         <thead><tr>
-          <th class="num">編號</th><th>名稱</th><th class="num">等級</th><th class="num">HP</th>
+          <th class="num">編號</th><th>名稱</th><th class="num">等級</th>
           <th>種族</th><th>屬性</th><th>體型</th>
-          <th class="num">攻擊</th><th class="num">魔攻</th><th class="num">防禦</th>
-          <th>專屬掉落</th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
     <div class="empty" id="empty" hidden>沒有符合條件的魔物。</div>
-    <p class="note">點任一列可展開完整數值與全部掉落。「專屬掉落」欄<b>不重複列出</b>上面那 __NSHARED__ 樣全圖共通的東西。</p>
+    <p class="note">點任一列可展開 HP、攻防、六維、經驗與<b>全部掉落</b>。</p>
   </section>
 
   <footer class="foot">
@@ -407,7 +404,6 @@ td.rate{color:var(--cinnabar); font-weight:500; text-align:right; font-variant-n
 
 <script>
 const MOBS = __DATA__;
-const SHARED = new Set(__SHAREDIDS__);
 
 const F = {q:"", k:"", rc:"", el:"", sz:""};
 const $ = s => document.querySelector(s);
@@ -436,12 +432,13 @@ function detail(m){
   const tr = document.createElement("tr");
   tr.className = "detail";
   const td = document.createElement("td");
-  td.colSpan = 11;
+  td.colSpan = 6;
 
   const stats = [
+    ["HP", fmt(m.hp)], ["攻擊", fmt(m.atk)], ["魔攻", fmt(m.matk)],
+    ["防禦", fmt(m.df)], ["魔防", fmt(m.mdf)], ["射程", m.rng],
     ["STR", m.st[0]], ["AGI", m.st[1]], ["VIT", m.st[2]],
     ["INT", m.st[3]], ["DEX", m.st[4]], ["LUK", m.st[5]],
-    ["魔防", m.mdf], ["射程", m.rng], ["屬性", m.el + " Lv" + m.elv],
     ["受到傷害", m.dt + "%"], ["Base 經驗", fmt(m.exp)], ["Job 經驗", fmt(m.jexp)],
   ];
   if (m.mexp) stats.push(["MVP 經驗", fmt(m.mexp)]);
@@ -494,16 +491,9 @@ function row(m){
   tr.className = "mob";
   tr.tabIndex = 0;
 
-  const own = m.d.filter(d => !SHARED.has(d[0]));
-  const label = own.length
-    ? own.slice(0, 2).map(d => d[1]).join("、") + (own.length > 2 ? " 等 " + own.length + " 樣" : "")
-    : "—";
-
   const cells = [
-    ["num oid", m.id], ["nm", null], ["num", m.lv], ["num", fmt(m.hp)],
+    ["num oid", m.id], ["nm", null], ["num", m.lv],
     ["el", m.rc], ["el", m.el + " Lv" + m.elv], ["el", m.sz],
-    ["num", fmt(m.atk)], ["num", fmt(m.matk)], ["num", fmt(m.df)],
-    ["dp", label],
   ];
   cells.forEach(([cls, val], i) => {
     const td = document.createElement("td");
@@ -564,7 +554,7 @@ render();
 
 def build():
     rows, gdrops = collect()
-    common, shared = common_drops(rows, gdrops)
+    common = common_drops(rows, gdrops)
 
     nmvp = sum(1 for r in rows if r["k"] == "mvp")
     mvp_ids = [r["id"] for r in rows if r["k"] == "mvp"]
@@ -584,7 +574,6 @@ def build():
         ("__TOTAL__", str(len(rows))),
         ("__NMVP__", str(nmvp)),
         ("__NDRW__", str(len(rows) - nmvp)),
-        ("__NSHARED__", str(len(shared))),
         ("__MVPFROM__", str(min(mvp_ids))),
         ("__MVPTO__", str(max(mvp_ids))),
         ("__FEE__", "{:,}".format(read_entrance_fee())),
@@ -592,7 +581,6 @@ def build():
         ("__COINPCT__", pct(coin)),
         ("__COINEXP__", ("%.3f" % exp_coin).rstrip("0").rstrip(".")),
         ("__COINROUNDS__", str(round(1 / exp_coin))),
-        ("__SHAREDIDS__", json.dumps(sorted(shared))),
         ("__RACES__", pairs("rc")),
         ("__ELEMS__", pairs("el")),
         ("__SIZES__", pairs("sz")),
