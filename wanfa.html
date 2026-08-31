@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>萬法星盤 · 神域仙境</title>
+<meta name="description" content="萬法星君的萬法星盤：55 個節點，攻擊與受擊時自動觸發跨職業技能。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="萬法星盤">
+<meta property="og:description" content="55 個節點，攻擊與受擊時自動觸發跨職業技能。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.facts{list-style:none; margin:0; padding:0; display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(178px,1fr))}
+.facts li{background:var(--paper); border:1px solid var(--rule-soft); border-radius:6px;
+  padding:16px 18px; box-shadow:var(--shadow)}
+.fk{display:block; font-size:12px; letter-spacing:.18em; color:var(--ink-faint)}
+.fv{display:block; margin-top:5px; font-family:"Noto Serif TC",serif; font-size:23px;
+  font-weight:700; letter-spacing:.04em; color:var(--cinnabar); font-variant-numeric:tabular-nums}
+.fn{display:block; margin-top:3px; font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.steps li{background:var(--paper); border:1px solid var(--rule-soft); border-radius:6px;
+  padding:14px 18px; font-size:14px; display:flex; gap:14px; align-items:baseline; flex-wrap:wrap}
+.steps .rn{font-family:"Noto Serif TC",serif; font-size:15px; font-weight:700;
+  color:var(--cinnabar); letter-spacing:.06em; flex:none; min-width:5.6em}
+.steps .rd{color:var(--ink-soft); flex:1 1 260px}
+.steps .rd b{color:var(--ink); font-weight:500}
+
+.controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:14px 0 12px;
+  border-bottom:1px solid var(--rule); margin-bottom:18px}
+.ctl-row{display:flex; flex-wrap:wrap; gap:9px 16px; align-items:center}
+.ctl-row + .ctl-row{margin-top:10px}
+.glab{font-size:12px; letter-spacing:.18em; color:var(--ink-faint); flex:none; width:34px}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+
+#nodes{min-width:840px}
+tr.node{cursor:pointer}
+tr.node:hover{background:var(--sunk)}
+tr.node:focus-visible{outline:2px solid var(--focus); outline-offset:-2px}
+td.oid{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%; white-space:nowrap}
+td.nm{white-space:nowrap}
+td.nm b{font-weight:500}
+.tag{display:inline-block; margin-right:7px; padding:1px 7px; border-radius:100px;
+  font-size:11px; letter-spacing:.08em; vertical-align:1px; white-space:nowrap}
+.tag.r0{background:var(--sunk); color:var(--ink-soft); border:1px solid var(--rule)}
+.tag.r5{background:var(--cinnabar); color:var(--on-accent)}
+.tag.rn{background:var(--cinnabar-wash); color:var(--cinnabar); border:1px solid var(--cinnabar)}
+td.sk{color:var(--ink-soft); font-size:13px}
+td.sk b{color:var(--ink); font-weight:500}
+td.sk .hit{color:var(--cinnabar); font-size:12px; margin-left:8px}
+td.el{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.rate{color:var(--cinnabar); font-weight:500; text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap}
+tr.detail > td{background:var(--sunk); padding:0}
+.dwrap{padding:16px 18px 20px}
+.grid{display:grid; gap:10px 26px; grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  margin:0; padding:0; list-style:none}
+.grid li{font-size:13px}
+.grid b{display:block; font-size:11px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500}
+.grid span{color:var(--ink)}
+.empty{padding:40px 0; text-align:center; color:var(--ink-faint)}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:66ch}
+.note b{color:var(--ink-soft); font-weight:500}
+.note a{color:var(--cinnabar)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>萬法星盤</h1>
+    <p class="lede">在<b>普羅酒館</b>找<b>萬法星君</b>開啟。點亮星辰之後，你的<b>普攻、技能與受擊</b>都有機率自動放出別的職業的招式 —— 不必去學那個職業。全盤 55 個節點，但你一輩子只拿得到 50 點。</p>
+  </header>
+
+  <section>
+    <h2>先看這幾個數字</h2>
+    <ul class="facts">
+      <li><span class="fk">節點總數</span><span class="fv">55</span><span class="fn">全部點滿要 291 點</span></li>
+      <li><span class="fk">點數上限</span><span class="fv">50</span><span class="fn">一條主修 ＋ 一條副修，是刻意的設計</span></li>
+      <li><span class="fk">目前拿得到</span><span class="fv">34</span><span class="fn">境界 26 ＋ 鎖妖塔 8</span></li>
+      <li><span class="fk">開啟條件</span><span class="fv">免費</span><span class="fn">找萬法星君說一聲就開</span></li>
+    </ul>
+    <p class="note">星盤跟<a href="daopan.html">大道星盤</a>是<b>兩套完全分開</b>的東西 —— 點數、存檔、NPC 都不共用。大道給的是被動數值（ATK／血量／減傷），萬法給的是<b>主動觸發技能</b>。唯一共用的是洗點石頭。</p>
+  </section>
+
+  <section>
+    <h2>點數哪裡來</h2>
+    <ul class="steps">
+      <li><span class="rn">境界突破</span><span class="rd">每突破一境給 <b>2 點</b>，13 境全滿共 <b>26 點</b></span></li>
+      <li><span class="rn">鎖妖塔</span><span class="rd">每層<b>首次</b>通關給 <b>2 點</b>，設計 13 層共 26 點；目前開放到<b>第 4 層</b>，所以實際拿得到 <b>8 點</b></span></li>
+    </ul>
+    <p class="note">兩邊加起來 52 點，比上限 50 點多 —— 這是<b>刻意</b>的，讓你不必兩條路都走滿。鎖妖塔開放更多層之後，那 50 點才會真的用得完。點數是<b>算總額補差</b>，不會重複發，配點表調整也不會把你已經加的點洗掉。</p>
+  </section>
+
+  <section>
+    <h2>星環與花費</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>星環</th><th class="num">節點</th><th class="num">最高等級</th><th class="num">點滿要</th><th>作用</th></tr></thead>
+        <tbody><tr><td>基礎星</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="el">路線入口，本身不觸發技能</td></tr><tr><td>第一星環</td><td class="num">13</td><td class="num">5</td><td class="num">78</td><td class="el">高頻小效果，一轉技能</td></tr><tr><td>第二星環</td><td class="num">12</td><td class="num">5</td><td class="num">72</td><td class="el">流派成形，二轉技能</td></tr><tr><td>第三星環</td><td class="num">10</td><td class="num">5</td><td class="num">60</td><td class="el">強力效果，三轉技能</td></tr><tr><td>第四星環</td><td class="num">9</td><td class="num">5</td><td class="num">54</td><td class="el">核心爆發，四轉技能</td></tr><tr><td>核心主星</td><td class="num">8</td><td class="num">1</td><td class="num">24</td><td class="el">不放技能，改為加成指定路線的觸發率</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">一到四環升級的<b>累計</b>花費是 1 / 2 / 3 / 4 / 6 點（Lv1~4 各 1 點，覺醒的 Lv5 要 2 點）。升級會同時提高<b>觸發機率</b>與<b>技能等級</b>。基礎星與主星都只有 1 級。</p>
+  </section>
+
+  <section>
+    <h2>核心主星</h2>
+    <p class="note" style="margin-top:0">主星自己不放技能，而是幫<b>指定路線</b>的所有節點加觸發率。<b>同時只能啟用一顆</b>，但可以各自投資、隨時換，換的時候不用花石頭。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>主星</th><th>受惠路線</th><th class="num">觸發率</th><th>前置節點</th></tr></thead>
+        <tbody><tr><td><b>火德星君</b></td><td class="el">火</td><td class="num rate">×130%</td><td class="el">焚天星</td></tr><tr><td><b>九霄雷祖</b></td><td class="el">風雷</td><td class="num rate">×130%</td><td class="el">天雷星</td></tr><tr><td><b>玄冰真君</b></td><td class="el">水冰</td><td class="num rate">×130%</td><td class="el">極寒星</td></tr><tr><td><b>后土鎮岳</b></td><td class="el">地</td><td class="num rate">×130%</td><td class="el">鎮岳星</td></tr><tr><td><b>聖曜神君</b></td><td class="el">聖</td><td class="num rate">×130%</td><td class="el">神裁星</td></tr><tr><td><b>冥毒羅剎</b></td><td class="el">暗毒</td><td class="num rate">×130%</td><td class="el">冥蝕星</td></tr><tr><td><b>劍火共鳴</b></td><td class="el">物理近戰、火</td><td class="num rate">×120%</td><td class="el">帝劍星</td></tr><tr><td><b>雷弓共鳴</b></td><td class="el">物理遠程、風雷</td><td class="num rate">×120%</td><td class="el">神弓星</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">單系主星只吃一條路線但倍率高，雙系共鳴吃兩條路線但倍率低 —— 專精還是兼顧，自己選。主星要<b>投資過</b>才算數，退點退掉的話加成會跟著消失。</p>
+  </section>
+
+  <section>
+    <h2>全部節點</h2>
+    <div class="controls">
+      <div class="ctl-row">
+        <input id="q" class="search" type="search" placeholder="搜尋節點或技能名…　例：火、狂擊、審判、302" aria-label="搜尋節點">
+      </div>
+      <div class="ctl-row">
+        <span class="glab">星環</span>
+        <div id="ring" class="ctl-row" role="group" aria-label="星環"></div>
+      </div>
+      <div class="ctl-row">
+        <span class="glab">路線</span>
+        <div id="route" class="ctl-row" role="group" aria-label="路線"></div>
+      </div>
+      <div class="ctl-row">
+        <span class="glab">觸發</span>
+        <div id="bf" class="ctl-row" role="group" aria-label="觸發條件"></div>
+      </div>
+      <p class="tally" id="tally"></p>
+    </div>
+    <div class="tbl-wrap">
+      <table id="nodes">
+        <thead><tr>
+          <th class="num">編號</th><th>節點</th><th>路線</th>
+          <th>觸發技能</th><th>觸發條件</th>
+          <th class="num">Lv1</th><th class="num">滿級</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>沒有符合條件的節點。</div>
+    <p class="note">「Lv1／滿級」是<b>觸發機率</b>。點任一列可展開技能等級、冷卻、傷害倍率與前置節點。</p>
+  </section>
+
+  <section>
+    <h2>洗點</h2>
+    <ul class="steps">
+      <li><span class="rn">悟道石</span><span class="rd">x1 —— 指定節點<b>退 1 級</b>，退回的點數可以重點</span></li>
+      <li><span class="rn">輪迴石</span><span class="rd">x1 —— <b>整盤重置</b>，所有節點歸零、主星取消，點數全部退回</span></li>
+    </ul>
+    <p class="note">這兩顆石頭與大道星盤共用 —— 你不必記兩套材料，而兩邊的點數本來就各自獨立，洗哪一邊都不會影響另一邊。</p>
+  </section>
+
+  <footer class="foot">
+    <p><b>技能可以跨職業</b>　節點觸發的招式不需要你的職業學得會，也不吃你的 SP —— 每個節點有自己的冷卻，與你手動放技能的冷卻互不干擾。</p>
+    <p><b>觸發條件要看清楚</b>　寫「近戰普攻」的節點只有普攻能觸發，要吃技能得看到「物理技能」四個字。魔法路線一律是魔法技能觸發。</p>
+    <p><b>受擊型節點</b>　少數節點是<b>被打的時候</b>才觸發，表上會標出來 —— 有的是對自己（補血、防護），有的是反打對方。</p>
+    <p><b>傷害會打折</b>　高環技能的傷害刻意調低（四環只剩 55~60%）—— 那些招的原始倍率不是設計給自動觸發用的。展開後沒特別標的就是不打折。</p>
+    <p><b>PvP 另外算</b>　對玩家時觸發率只有 70%、傷害只有 60%。</p>
+    <p><b>技能等級有上限</b>　每個節點的技能等級最高只到該技能本身的上限，升到滿級也不會超過。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
+  </footer>
+</div>
+
+<script>
+const NODES = [{"id":10,"nm":"武之基","ring":0,"rings":"基礎星","route":1,"routes":"物理近戰","pre":0,"pren":"","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":1,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"","cr2":"","cbon":0},{"id":11,"nm":"法之基","ring":0,"rings":"基礎星","route":3,"routes":"火","pre":0,"pren":"","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":1,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"","cr2":"","cbon":0},{"id":12,"nm":"御之基","ring":0,"rings":"基礎星","route":9,"routes":"輔助防禦","pre":0,"pren":"","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":1,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"","cr2":"","cbon":0},{"id":100,"nm":"重擊星","ring":1,"rings":"第一星環","route":1,"routes":"物理近戰","pre":10,"pren":"武之基","sk":5,"skn":"狂擊","skmax":10,"bf":"近戰普攻","icd":800,"icds":"0.8 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":100,"r5":160,"r1s":"10%","r5s":"16%","l1":2,"l5":10,"rinc":15,"rincs":"1.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":101,"nm":"怒爆星","ring":1,"rings":"第一星環","route":1,"routes":"物理近戰","pre":10,"pren":"武之基","sk":7,"skn":"怒爆","skmax":10,"bf":"近戰普攻","icd":1200,"icds":"1.2 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":90,"r5":142,"r1s":"9%","r5s":"14.2%","l1":2,"l5":10,"rinc":13,"rincs":"1.3%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":102,"nm":"鷹眼星","ring":1,"rings":"第一星環","route":2,"routes":"物理遠程","pre":10,"pren":"武之基","sk":46,"skn":"二連矢","skmax":10,"bf":"遠程普攻","icd":1000,"icds":"1 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":100,"r5":152,"r1s":"10%","r5s":"15.2%","l1":2,"l5":10,"rinc":13,"rincs":"1.3%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":103,"nm":"箭雨星","ring":1,"rings":"第一星環","route":2,"routes":"物理遠程","pre":10,"pren":"武之基","sk":47,"skn":"箭雨","skmax":10,"bf":"遠程普攻 · 物理技能","icd":1500,"icds":"1.5 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":128,"r1s":"8%","r5s":"12.8%","l1":2,"l5":10,"rinc":12,"rincs":"1.2%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":104,"nm":"火箭星","ring":1,"rings":"第一星環","route":3,"routes":"火","pre":11,"pren":"法之基","sk":19,"skn":"火箭術","skmax":10,"bf":"魔法技能","icd":700,"icds":"0.7 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":152,"r1s":"8%","r5s":"15.2%","l1":2,"l5":10,"rinc":18,"rincs":"1.8%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":105,"nm":"冰箭星","ring":1,"rings":"第一星環","route":4,"routes":"水冰","pre":11,"pren":"法之基","sk":14,"skn":"冰箭術","skmax":10,"bf":"魔法技能","icd":700,"icds":"0.7 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":152,"r1s":"8%","r5s":"15.2%","l1":2,"l5":10,"rinc":18,"rincs":"1.8%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":106,"nm":"雷擊星","ring":1,"rings":"第一星環","route":5,"routes":"風雷","pre":11,"pren":"法之基","sk":20,"skn":"雷擊術","skmax":10,"bf":"魔法技能","icd":800,"icds":"0.8 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":152,"r1s":"8%","r5s":"15.2%","l1":2,"l5":10,"rinc":18,"rincs":"1.8%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":107,"nm":"地裂星","ring":1,"rings":"第一星環","route":6,"routes":"地","pre":11,"pren":"法之基","sk":90,"skn":"地震術","skmax":5,"bf":"魔法技能","icd":1000,"icds":"1 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":140,"r1s":"8%","r5s":"14%","l1":1,"l5":5,"rinc":15,"rincs":"1.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":108,"nm":"聖光星","ring":1,"rings":"第一星環","route":7,"routes":"聖","pre":11,"pren":"法之基","sk":156,"skn":"神聖之光","skmax":1,"bf":"魔法技能","icd":1200,"icds":"1.2 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":140,"r1s":"8%","r5s":"14%","l1":1,"l5":1,"rinc":15,"rincs":"1.5%","sinc":0,"cr1":"","cr2":"","cbon":0},{"id":109,"nm":"施毒星","ring":1,"rings":"第一星環","route":8,"routes":"暗毒","pre":10,"pren":"武之基","sk":52,"skn":"施毒","skmax":10,"bf":"近戰普攻","icd":2000,"icds":"2 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":70,"r5":118,"r1s":"7%","r5s":"11.8%","l1":2,"l5":10,"rinc":12,"rincs":"1.2%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":110,"nm":"靈擊星","ring":1,"rings":"第一星環","route":3,"routes":"火","pre":11,"pren":"法之基","sk":13,"skn":"聖靈召喚","skmax":10,"bf":"魔法技能","icd":900,"icds":"0.9 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":80,"r5":140,"r1s":"8%","r5s":"14%","l1":2,"l5":10,"rinc":15,"rincs":"1.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":111,"nm":"治癒星","ring":1,"rings":"第一星環","route":9,"routes":"輔助防禦","pre":12,"pren":"御之基","sk":28,"skn":"治癒術","skmax":10,"bf":"任何攻擊","icd":5000,"icds":"5 秒","dmg":1000,"flag":8,"lvmax":5,"cost":6,"r1":80,"r5":128,"r1s":"8%","r5s":"12.8%","l1":2,"l5":10,"rinc":12,"rincs":"1.2%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":112,"nm":"光壁星","ring":1,"rings":"第一星環","route":9,"routes":"輔助防禦","pre":12,"pren":"御之基","sk":25,"skn":"光之障壁","skmax":1,"bf":"任何攻擊","icd":12000,"icds":"12 秒","dmg":1000,"flag":8,"lvmax":5,"cost":6,"r1":60,"r5":100,"r1s":"6%","r5s":"10%","l1":1,"l5":1,"rinc":10,"rincs":"1%","sinc":0,"cr1":"","cr2":"","cbon":0},{"id":200,"nm":"連刺星","ring":2,"rings":"第二星環","route":1,"routes":"物理近戰","pre":100,"pren":"重擊星","sk":56,"skn":"連刺攻擊","skmax":10,"bf":"近戰普攻 · 物理技能","icd":1800,"icds":"1.8 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":60,"r5":100,"r1s":"6%","r5s":"10%","l1":2,"l5":10,"rinc":10,"rincs":"1%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":201,"nm":"盾擊星","ring":2,"rings":"第二星環","route":1,"routes":"物理近戰","pre":101,"pren":"怒爆星","sk":250,"skn":"盾擊","skmax":5,"bf":"近戰普攻","icd":2500,"icds":"2.5 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":55,"r5":91,"r1s":"5.5%","r5s":"9.1%","l1":1,"l5":5,"rinc":9,"rincs":"0.9%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":202,"nm":"音速星","ring":2,"rings":"第二星環","route":1,"routes":"物理近戰","pre":100,"pren":"重擊星","sk":136,"skn":"音速投擲","skmax":10,"bf":"近戰普攻","icd":2500,"icds":"2.5 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":55,"r5":91,"r1s":"5.5%","r5s":"9.1%","l1":2,"l5":10,"rinc":9,"rincs":"0.9%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":203,"nm":"閃電星","ring":2,"rings":"第二星環","route":2,"routes":"物理遠程","pre":102,"pren":"鷹眼星","sk":129,"skn":"閃電衝擊","skmax":5,"bf":"遠程普攻","icd":2000,"icds":"2 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":60,"r5":100,"r1s":"6%","r5s":"10%","l1":1,"l5":5,"rinc":10,"rincs":"1%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":204,"nm":"銳射星","ring":2,"rings":"第二星環","route":2,"routes":"物理遠程","pre":103,"pren":"箭雨星","sk":382,"skn":"銳利射擊","skmax":5,"bf":"遠程普攻 · 物理技能","icd":2500,"icds":"2.5 秒","dmg":950,"flag":1,"lvmax":5,"cost":6,"r1":55,"r5":91,"r1s":"5.5%","r5s":"9.1%","l1":1,"l5":5,"rinc":9,"rincs":"0.9%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":205,"nm":"隕火星","ring":2,"rings":"第二星環","route":3,"routes":"火","pre":104,"pren":"火箭星","sk":83,"skn":"隕石術","skmax":10,"bf":"魔法技能","icd":3000,"icds":"3 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":50,"r5":90,"r1s":"5%","r5s":"9%","l1":2,"l5":10,"rinc":10,"rincs":"1%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":206,"nm":"暴風星","ring":2,"rings":"第二星環","route":4,"routes":"水冰","pre":105,"pren":"冰箭星","sk":89,"skn":"暴風雪","skmax":10,"bf":"魔法技能","icd":4000,"icds":"4 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":45,"r5":81,"r1s":"4.5%","r5s":"8.1%","l1":2,"l5":10,"rinc":9,"rincs":"0.9%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":207,"nm":"雷鳴星","ring":2,"rings":"第二星環","route":5,"routes":"風雷","pre":106,"pren":"雷擊星","sk":84,"skn":"雷鳴術","skmax":10,"bf":"魔法技能","icd":2500,"icds":"2.5 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":55,"r5":95,"r1s":"5.5%","r5s":"9.5%","l1":2,"l5":10,"rinc":10,"rincs":"1%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":208,"nm":"崩岩星","ring":2,"rings":"第二星環","route":6,"routes":"地","pre":107,"pren":"地裂星","sk":91,"skn":"崩裂術","skmax":5,"bf":"魔法技能","icd":2500,"icds":"2.5 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":55,"r5":95,"r1s":"5.5%","r5s":"9.5%","l1":1,"l5":5,"rinc":10,"rincs":"1%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":209,"nm":"聖十字星","ring":2,"rings":"第二星環","route":7,"routes":"聖","pre":108,"pren":"聖光星","sk":253,"skn":"聖十字攻擊","skmax":10,"bf":"近戰普攻 · 物理技能","icd":3000,"icds":"3 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":50,"r5":90,"r1s":"5%","r5s":"9%","l1":2,"l5":10,"rinc":10,"rincs":"1%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":210,"nm":"毒牙星","ring":2,"rings":"第二星環","route":8,"routes":"暗毒","pre":109,"pren":"施毒星","sk":137,"skn":"無影之牙","skmax":5,"bf":"近戰普攻","icd":3000,"icds":"3 秒","dmg":1000,"flag":1,"lvmax":5,"cost":6,"r1":50,"r5":90,"r1s":"5%","r5s":"9%","l1":1,"l5":5,"rinc":10,"rincs":"1%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":211,"nm":"反擊星","ring":2,"rings":"第二星環","route":9,"routes":"輔助防禦","pre":12,"pren":"御之基","sk":13,"skn":"聖靈召喚","skmax":10,"bf":"任何攻擊","icd":4000,"icds":"4 秒","dmg":1000,"flag":9,"lvmax":5,"cost":6,"r1":60,"r5":100,"r1s":"6%","r5s":"10%","l1":2,"l5":10,"rinc":10,"rincs":"1%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":300,"nm":"旋風星","ring":3,"rings":"第三星環","route":1,"routes":"物理近戰","pre":200,"pren":"連刺星","sk":2280,"skn":"戰斧颶風","skmax":5,"bf":"近戰普攻 · 物理技能","icd":4000,"icds":"4 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":301,"nm":"修羅星","ring":3,"rings":"第三星環","route":1,"routes":"物理近戰","pre":202,"pren":"音速星","sk":2336,"skn":"修羅身彈","skmax":10,"bf":"近戰普攻","icd":6000,"icds":"6 秒","dmg":700,"flag":1,"lvmax":5,"cost":6,"r1":25,"r5":45,"r1s":"2.5%","r5s":"4.5%","l1":2,"l5":10,"rinc":5,"rincs":"0.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":302,"nm":"箭暴星","ring":3,"rings":"第三星環","route":2,"routes":"物理遠程","pre":204,"pren":"銳射星","sk":2233,"skn":"箭雨風暴","skmax":10,"bf":"遠程普攻 · 物理技能","icd":5000,"icds":"5 秒","dmg":800,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":2,"l5":10,"rinc":6,"rincs":"0.6%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":303,"nm":"三角星","ring":3,"rings":"第三星環","route":2,"routes":"物理遠程","pre":203,"pren":"閃電星","sk":2288,"skn":"三角射擊","skmax":10,"bf":"遠程普攻 · 物理技能","icd":3500,"icds":"3.5 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":35,"r5":59,"r1s":"3.5%","r5s":"5.9%","l1":2,"l5":10,"rinc":6,"rincs":"0.6%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":304,"nm":"獄火星","ring":3,"rings":"第三星環","route":3,"routes":"火","pre":205,"pren":"隕火星","sk":2212,"skn":"地獄火焰","skmax":5,"bf":"魔法技能","icd":5000,"icds":"5 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":305,"nm":"鑽石星","ring":3,"rings":"第三星環","route":4,"routes":"水冰","pre":206,"pren":"暴風星","sk":2447,"skn":"鑽石星塵","skmax":5,"bf":"魔法技能","icd":5000,"icds":"5 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":306,"nm":"連鎖星","ring":3,"rings":"第三星環","route":5,"routes":"風雷","pre":207,"pren":"雷鳴星","sk":2214,"skn":"連鎖電擊","skmax":5,"bf":"魔法技能","icd":4500,"icds":"4.5 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":307,"nm":"墳場星","ring":3,"rings":"第三星環","route":6,"routes":"地","pre":208,"pren":"崩岩星","sk":2446,"skn":"大地墳場","skmax":5,"bf":"魔法技能","icd":5000,"icds":"5 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":308,"nm":"審判星","ring":3,"rings":"第三星環","route":7,"routes":"聖","pre":209,"pren":"聖十字星","sk":2038,"skn":"審判","skmax":10,"bf":"魔法技能","icd":5000,"icds":"5 秒","dmg":850,"flag":1,"lvmax":5,"cost":6,"r1":30,"r5":54,"r1s":"3%","r5s":"5.4%","l1":2,"l5":10,"rinc":6,"rincs":"0.6%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":309,"nm":"十字斬星","ring":3,"rings":"第三星環","route":8,"routes":"暗毒","pre":210,"pren":"毒牙星","sk":2022,"skn":"十字斬","skmax":5,"bf":"近戰普攻 · 物理技能","icd":4000,"icds":"4 秒","dmg":900,"flag":1,"lvmax":5,"cost":6,"r1":35,"r5":59,"r1s":"3.5%","r5s":"5.9%","l1":1,"l5":5,"rinc":6,"rincs":"0.6%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":400,"nm":"帝劍星","ring":4,"rings":"第四星環","route":1,"routes":"物理近戰","pre":300,"pren":"旋風星","sk":5208,"skn":"橫揮斬","skmax":10,"bf":"近戰普攻 · 物理技能","icd":8000,"icds":"8 秒","dmg":600,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":2,"l5":10,"rinc":5,"rincs":"0.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":401,"nm":"影襲星","ring":4,"rings":"第四星環","route":1,"routes":"物理近戰","pre":301,"pren":"修羅星","sk":5287,"skn":"野蠻衝擊","skmax":10,"bf":"近戰普攻","icd":8000,"icds":"8 秒","dmg":600,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":2,"l5":10,"rinc":5,"rincs":"0.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":402,"nm":"神弓星","ring":4,"rings":"第四星環","route":2,"routes":"物理遠程","pre":302,"pren":"箭暴星","sk":5329,"skn":"獵鷹狙擊","skmax":5,"bf":"遠程普攻 · 物理技能","icd":8000,"icds":"8 秒","dmg":600,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":403,"nm":"焚天星","ring":4,"rings":"第四星環","route":3,"routes":"火","pre":304,"pren":"獄火星","sk":5229,"skn":"焰火之徑","skmax":5,"bf":"魔法技能","icd":10000,"icds":"10 秒","dmg":550,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":404,"nm":"極寒星","ring":4,"rings":"第四星環","route":4,"routes":"水冰","pre":305,"pren":"鑽石星","sk":5216,"skn":"冰晶飛瀑","skmax":5,"bf":"魔法技能","icd":10000,"icds":"10 秒","dmg":550,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":405,"nm":"天雷星","ring":4,"rings":"第四星環","route":5,"routes":"風雷","pre":306,"pren":"連鎖星","sk":5234,"skn":"暴風加農砲","skmax":5,"bf":"魔法技能","icd":8000,"icds":"8 秒","dmg":600,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":406,"nm":"鎮岳星","ring":4,"rings":"第四星環","route":6,"routes":"地","pre":307,"pren":"墳場星","sk":5233,"skn":"巨石降臨","skmax":5,"bf":"魔法技能","icd":10000,"icds":"10 秒","dmg":550,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":407,"nm":"神裁星","ring":4,"rings":"第四星環","route":7,"routes":"聖","pre":308,"pren":"審判星","sk":5273,"skn":"制裁謳歌","skmax":10,"bf":"魔法技能","icd":10000,"icds":"10 秒","dmg":550,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":2,"l5":10,"rinc":5,"rincs":"0.5%","sinc":2,"cr1":"","cr2":"","cbon":0},{"id":408,"nm":"冥蝕星","ring":4,"rings":"第四星環","route":8,"routes":"暗毒","pre":309,"pren":"十字斬星","sk":5314,"skn":"深淵匕首","skmax":5,"bf":"近戰普攻 · 物理技能","icd":10000,"icds":"10 秒","dmg":550,"flag":1,"lvmax":5,"cost":6,"r1":10,"r5":30,"r1s":"1%","r5s":"3%","l1":1,"l5":5,"rinc":5,"rincs":"0.5%","sinc":1,"cr1":"","cr2":"","cbon":0},{"id":500,"nm":"火德星君","ring":5,"rings":"核心主星","route":3,"routes":"火","pre":403,"pren":"焚天星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"火","cr2":"","cbon":1300},{"id":501,"nm":"九霄雷祖","ring":5,"rings":"核心主星","route":5,"routes":"風雷","pre":405,"pren":"天雷星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"風雷","cr2":"","cbon":1300},{"id":502,"nm":"玄冰真君","ring":5,"rings":"核心主星","route":4,"routes":"水冰","pre":404,"pren":"極寒星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"水冰","cr2":"","cbon":1300},{"id":503,"nm":"后土鎮岳","ring":5,"rings":"核心主星","route":6,"routes":"地","pre":406,"pren":"鎮岳星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"地","cr2":"","cbon":1300},{"id":504,"nm":"聖曜神君","ring":5,"rings":"核心主星","route":7,"routes":"聖","pre":407,"pren":"神裁星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"聖","cr2":"","cbon":1300},{"id":505,"nm":"冥毒羅剎","ring":5,"rings":"核心主星","route":8,"routes":"暗毒","pre":408,"pren":"冥蝕星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"暗毒","cr2":"","cbon":1300},{"id":506,"nm":"劍火共鳴","ring":5,"rings":"核心主星","route":1,"routes":"物理近戰","pre":400,"pren":"帝劍星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"物理近戰","cr2":"火","cbon":1200},{"id":507,"nm":"雷弓共鳴","ring":5,"rings":"核心主星","route":2,"routes":"物理遠程","pre":402,"pren":"神弓星","sk":0,"skn":"","skmax":0,"bf":null,"icd":0,"icds":"","dmg":1000,"flag":0,"lvmax":1,"cost":3,"r1":0,"r5":0,"r1s":"0%","r5s":"0%","l1":0,"l5":0,"rinc":0,"rincs":"0%","sinc":0,"cr1":"物理遠程","cr2":"風雷","cbon":1200}];
+
+const F = {q:"", ring:"", route:"", bf:""};
+const $ = s => document.querySelector(s);
+const rowsEl = $("#rows"), emptyEl = $("#empty"), tallyEl = $("#tally");
+
+function chips(host, key, list, allLabel){
+  const mk = (label, val) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = label;
+    b.dataset.v = String(val);
+    b.setAttribute("aria-pressed", String(F[key] === val));
+    b.onclick = () => {
+      F[key] = F[key] === val ? "" : val;
+      host.querySelectorAll(".chip").forEach(c =>
+        c.setAttribute("aria-pressed", String(c.dataset.v === String(F[key]))));
+      render();
+    };
+    return b;
+  };
+  host.appendChild(mk(allLabel, ""));
+  list.forEach(([label, val]) => host.appendChild(mk(label, val)));
+}
+
+function detail(n){
+  const tr = document.createElement("tr");
+  tr.className = "detail";
+  const td = document.createElement("td");
+  td.colSpan = 7;
+
+  const rows = [["前置節點", n.pre ? n.pren + "（#" + n.pre + "）" : "起點，沒有前置"]];
+  if (n.sk){
+    rows.push(
+      ["技能等級", n.l1 === n.l5 ? "Lv" + n.l1 + "（升級不加等級）" : "Lv" + n.l1 + " → Lv" + n.l5],
+      ["冷卻", n.icd ? n.icds : "無"],
+      ["傷害倍率", n.dmg === 1000 ? "100%（不打折）" : (n.dmg / 10) + "%"],
+      ["觸發時機", (n.flag & 8) ? "受擊時" : "攻擊時"],
+      ["施放對象", (n.flag & 1) ? "對敵人" : "對自己"],
+      ["每級提升", "機率 +" + n.rincs + (n.sinc ? "、技能等級 +" + n.sinc : "")],
+    );
+  } else if (n.ring === 5){
+    rows.push(["共鳴效果",
+      n.cr1 + (n.cr2 ? "、" + n.cr2 : "") + " 路線的觸發率 ×" + (n.cbon / 10) + "%"]);
+  } else {
+    rows.push(["效果", "路線入口，本身不觸發技能"]);
+  }
+  rows.push(["點滿花費",
+    n.cost + " 點" + (n.lvmax > 1 ? "（Lv" + n.lvmax + "）" : "（只有 1 級）")]);
+
+  const ul = document.createElement("ul");
+  ul.className = "grid";
+  for (const [k, v] of rows){
+    const li = document.createElement("li");
+    const b = document.createElement("b"); b.textContent = k;
+    const s = document.createElement("span"); s.textContent = v;
+    li.append(b, s); ul.appendChild(li);
+  }
+
+  const box = document.createElement("div");
+  box.className = "dwrap";
+  box.appendChild(ul);
+  td.appendChild(box); tr.appendChild(td);
+  return tr;
+}
+
+function row(n){
+  const tr = document.createElement("tr");
+  tr.className = "node";
+  tr.tabIndex = 0;
+
+  const cells = [
+    ["num oid", n.id], ["nm", null], ["el", n.routes],
+    ["sk", null], ["el", n.bf || "—"],
+    ["rate", n.sk ? n.r1s : "—"], ["rate", n.sk ? n.r5s : "—"],
+  ];
+  cells.forEach(([cls, val], i) => {
+    const td = document.createElement("td");
+    td.className = cls;
+    if (i === 1){
+      const tag = document.createElement("span");
+      tag.className = "tag " + (n.ring === 0 ? "r0" : n.ring === 5 ? "r5" : "rn");
+      tag.textContent = n.rings;
+      const b = document.createElement("b");
+      b.textContent = n.nm;
+      td.append(tag, b);
+    } else if (i === 3){
+      if (n.sk){
+        const b = document.createElement("b");
+        b.textContent = n.skn;
+        td.append(b);
+        if (n.flag & 8){
+          const s = document.createElement("span");
+          s.className = "hit";
+          s.textContent = "受擊觸發";
+          td.append(s);
+        }
+      } else {
+        td.textContent = n.ring === 5 ? "共鳴加成" : "路線入口";
+      }
+    } else {
+      td.textContent = val;
+    }
+    tr.appendChild(td);
+  });
+
+  let open = null;
+  const toggle = () => {
+    if (open){ open.remove(); open = null; return; }
+    open = detail(n);
+    tr.after(open);
+  };
+  tr.onclick = toggle;
+  tr.onkeydown = e => {
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+  };
+  return tr;
+}
+
+function render(){
+  const q = F.q.trim().toLowerCase();
+  const list = NODES.filter(n =>
+    (F.ring === "" || n.ring === F.ring) &&
+    (!F.route || n.routes === F.route) &&
+    (!F.bf || n.bf === F.bf) &&
+    (!q || n.nm.toLowerCase().includes(q) || (n.skn || "").toLowerCase().includes(q)
+        || n.routes.includes(q) || String(n.id).includes(q))
+  );
+  rowsEl.replaceChildren(...list.map(row));
+  emptyEl.hidden = list.length > 0;
+  const cost = list.reduce((a, n) => a + n.cost, 0);
+  tallyEl.innerHTML = "顯示 <b>" + list.length + "</b> 個節點　（全部點滿要 " + cost + " 點）";
+}
+
+chips($("#ring"),  "ring",  [["基礎星", 0], ["第一星環", 1], ["第二星環", 2], ["第三星環", 3], ["第四星環", 4], ["核心主星", 5]],  "全部");
+chips($("#route"), "route", [["物理近戰", "物理近戰"], ["物理遠程", "物理遠程"], ["火", "火"], ["水冰", "水冰"], ["風雷", "風雷"], ["地", "地"], ["聖", "聖"], ["暗毒", "暗毒"], ["輔助防禦", "輔助防禦"]], "全部");
+chips($("#bf"),    "bf",    [["近戰普攻", "近戰普攻"], ["遠程普攻", "遠程普攻"], ["遠程普攻 · 物理技能", "遠程普攻 · 物理技能"], ["魔法技能", "魔法技能"], ["任何攻擊", "任何攻擊"], ["近戰普攻 · 物理技能", "近戰普攻 · 物理技能"]],    "全部");
+$("#q").addEventListener("input", e => { F.q = e.target.value; render(); });
+render();
+</script>
+</body>
+</html>
