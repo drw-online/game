@@ -12,6 +12,7 @@
 | `petaffix.html` | 寵物詞條與星級 — 41 種能力、★3→★9 升階表、升等與六維配點 |
 | `daopan.html` | 大道星盤天賦樹 — 六大道 141 個節點、12 個核心天賦、56 點的配點上限 |
 | `pets.html` | 神域寵物圖鑑 — 靈獸島 162 種寵物的編號、外觀、魔物編號與蛋編號 |
+| `mobs.html` | 靈獸島魔物圖鑑 — 352 隻的數值與掉落（190 隻 MVP + 162 種神域魔物）、全圖共通掉落 |
 
 ---
 
@@ -29,9 +30,10 @@ runewords.html      ┐
 potential.html      │
 petaffix.html       ├ 各工具頁，彼此獨立
 daopan.html         │
-pets.html           ┘
+pets.html           │
+mobs.html           ┘
 pets/               神域寵物圖鑑的 162 張外觀圖（drwmob001.png ~ drwmob162.png，共約 920 KB）
-tools/              產生器。目前只有 build_pets.py（產 pets.html 與 pets/）
+tools/              產生器。build_pets.py（產 pets.html 與 pets/）、build_mobs.py（產 mobs.html）
 logo.webp           站台 logo（去背 440px，入口頁與各頁的回首頁鈕共用）
 favicon.png         瀏覽器分頁圖示（64px）
 og.jpg              貼 Discord / 社群時的連結預覽圖（600px，紙色底）
@@ -55,10 +57,13 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 | `petaffix.html` | `2.開機擋/script/04.系統/30.寵物詞條.txt` 的 `$@PETAB_*`、`$@PETUP_*`、`$@PET_DIGI_*`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `pet_gain_exp_rate` / `pet_levelup_point` / `pet_max_level` / `pet_bonus_point_class_*`（升等與配點） |
 | `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act`<br>**這一頁有產生器**：`python tools/build_pets.py` |
 | `daopan.html` | `2.開機擋/script/04.系統/70.大道星盤.txt` 的 `OnInit` 八張節點表（`$@dao_name$` / `tier` / `pre` / `pre2` / `ex` / `ek1~3` / `ev1~3`）、分級表 `$@dao_tmax` `$@dao_tcost`、效果對照 `$@dao_kn$` `$@dao_ku` `$@dao_ks`、境界配點 `$@dao_grant`、常數 `$@DAO_*`<br>`2.開機擋/script/04.系統/12.境界突破.txt` 的 `$@realm_name$`（十三境的名字） |
+| `mobs.html` | `2.開機擋/script/05.魔物/13.靈獸島.txt`（352 隻的生成清單，這是權威名單）<br>`2.開機擋/script/04.系統/56.靈獸島入口.txt` 的 `$@BN_FEE`（入場費）<br>`2.開機擋/db/import/blackgod/mob_bossnia.yml`（190 隻 MVP 本體）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（162 種神域魔物本體）<br>**掉落是四層疊加**：本體的 `Drops` + `mob_skillstone.yml`（1轉技能石）+ `mob_drwmob_mvpcoin.yml`（MVP硬幣）+ `db/import/map_drops.yml` 的 `bossnia_01`（2~4轉技能石）—— 少讀一支就會漏，`Drops` 是附加不是取代<br>物品中文名取自 `db/re/item_db_*.yml` 與 `db/import/blackgod/item_*.yml`（本服的 item_db 本身就是中文）<br>⚠ 兩邊 Rate 分母不同：mob_db 是 10000，map_drops 看 `Header.Version`（2=十萬 3=百萬）<br>**這一頁有產生器**：`python tools/build_mobs.py` |
 
-### ⚠ 產生器已經不在了（`pets.html` 除外）
+### ⚠ 產生器已經不在了（`pets.html` 與 `mobs.html` 除外）
 
 **`pets.html` 有產生器**，在 `tools/build_pets.py`：解析三支 YAML → 把客戶端 sprite 轉成 PNG → 寫出 `pets.html` → **自己反向解析驗證一次**。輸出是決定性的，來源沒變的話重跑一次 `git status` 應該是乾淨的 —— 這同時就是它的回歸測試，改完務必跑一次確認。
+
+**`mobs.html` 也有產生器**，在 `tools/build_mobs.py`（需要 PyYAML）：解析生成清單與四層掉落 → 寫出 `mobs.html` → 跑完自己驗證一次（352 隻、機率、掉落物是否全部對到中文名）。同樣是決定性輸出，改完重跑一次確認。
 
 其餘四頁沒有。README 原本寫「改完來源要重跑產生器」，但那支產生器**沒有留下來** —— repo 裡沒有，專案其他地方也沒有。
 2026-08-25 這次更新是**逐頁寫一次性腳本、直接改 `.html`** 完成的：解析來源 → 覆寫內嵌 JSON 或表格 → 再反過來解析改完的 `.html` 與來源逐項比對。
