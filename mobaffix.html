@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>萬妖詞綴 — 神域仙境</title>
+<meta name="description" content="十二洞天的魔物有機率帶詞綴。五階機率、十二境上限、28 條詞綴的數值與取得條件。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="萬妖詞綴">
+<meta property="og:description" content="十二洞天的魔物有機率帶詞綴。五階機率、十二境上限、28 條詞綴的數值與取得條件。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A; --on-accent:#F8F9F6;
+  --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22; --on-accent:#121615;
+    --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22; --on-accent:#121615;
+  --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:32px 0 22px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-size:30px; font-weight:900; letter-spacing:.06em}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+section{margin-top:42px}
+.facts{list-style:none; margin:0; padding:0; display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(178px,1fr))}
+.facts li{background:var(--paper); border:1px solid var(--rule-soft); border-radius:6px;
+  padding:16px 18px; box-shadow:var(--shadow)}
+.fk{display:block; font-size:12px; letter-spacing:.14em; color:var(--ink-faint)}
+.fv{display:block; margin-top:5px; font-family:"Noto Serif TC",serif;
+  font-size:23px; font-weight:700; color:var(--cinnabar); font-variant-numeric:tabular-nums}
+.fn{display:block; margin-top:3px; font-size:12.5px; color:var(--ink-soft)}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+td.nm{white-space:nowrap}
+td.nm b{font-weight:500}
+td.el{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.st{color:var(--ink-soft); font-size:13px}
+td.rate{color:var(--cinnabar); font-weight:500; text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap}
+tr.off td{color:var(--ink-faint)}
+.controls{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:0 0 14px}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:66ch}
+.note b{color:var(--ink-soft); font-weight:500}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px;
+  letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>萬妖詞綴</h1>
+    <p class="lede"><b>十二洞天</b>的魔物出生時有機率帶上<b>詞綴</b> —— 數值會變強，掉落也跟著變多。滑鼠移到怪身上，名字底下那行 <b>[巨靈,金剛]</b> 就是牠帶的詞綴。境界越高，一隻身上疊得越多。</p>
+  </header>
+
+  <section>
+    <h2>一眼</h2>
+    <ul class="facts">
+      <li><span class="fk">詞綴總數</span><span class="fv">28</span><span class="fn">分 5 類，同類互斥</span></li>
+      <li><span class="fk">帶詞綴的機率</span><span class="fv">30%</span><span class="fn">其餘 70% 是普通怪</span></li>
+      <li><span class="fk">啟用地圖</span><span class="fv">13</span><span class="fn">十二洞天全境</span></li>
+      <li><span class="fk">一隻最多帶</span><span class="fv">6 條</span><span class="fn">亥境；子境只有 1 條</span></li>
+    </ul>
+    <p class="note"><b>目前已啟用。</b>只有十二洞天的自然生成魔物會抽詞綴，其他地圖一律不掛。</p>
+  </section>
+
+  <section>
+    <h2>階級</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>階級</th><th class="num">出現率</th><th class="num">詞綴數</th><th class="num">掉落倍率</th></tr></thead>
+        <tbody><tr class="off"><td><b>普通</b></td><td class="num">70.00%</td><td class="num">0</td><td class="num rate">×1.00</td></tr><tr><td><b>強化</b></td><td class="num">15.00%</td><td class="num">1</td><td class="num rate">×1.15</td></tr><tr><td><b>精英</b></td><td class="num">9.00%</td><td class="num">2</td><td class="num rate">×1.35</td></tr><tr><td><b>稀有</b></td><td class="num">5.00%</td><td class="num">3～4</td><td class="num rate">×1.80</td></tr><tr><td><b>天命</b></td><td class="num">1.00%</td><td class="num">5～6</td><td class="num rate">×3.00</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note"><b>詞綴數會被境界砍</b>　抽到天命本來有 5～6 條，但子境上限是 1 條，就只帶 1 條。掉落倍率不受影響，該是 ×3.00 就是 ×3.00。</p>
+  </section>
+
+  <section>
+    <h2>十二境</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>境</th><th>地圖</th><th class="num">詞綴上限</th><th class="num">可抽詞綴</th></tr></thead>
+        <tbody><tr><td><b>子</b> 境</td><td class="el">dongtian1_1、dongtian1_2</td><td class="num">1 條</td><td class="num">8 條</td></tr><tr><td><b>丑</b> 境</td><td class="el">dongtian02</td><td class="num">1 條</td><td class="num">8 條</td></tr><tr><td><b>寅</b> 境</td><td class="el">dongtian03</td><td class="num">2 條</td><td class="num">11 條</td></tr><tr><td><b>卯</b> 境</td><td class="el">dongtian04</td><td class="num">2 條</td><td class="num">11 條</td></tr><tr><td><b>辰</b> 境</td><td class="el">dongtian05</td><td class="num">3 條</td><td class="num">16 條</td></tr><tr><td><b>巳</b> 境</td><td class="el">dongtian06</td><td class="num">3 條</td><td class="num">16 條</td></tr><tr><td><b>午</b> 境</td><td class="el">dongtian07</td><td class="num">4 條</td><td class="num">21 條</td></tr><tr><td><b>未</b> 境</td><td class="el">dongtian08</td><td class="num">4 條</td><td class="num">21 條</td></tr><tr><td><b>申</b> 境</td><td class="el">dongtian09</td><td class="num">4 條</td><td class="num">21 條</td></tr><tr><td><b>酉</b> 境</td><td class="el">dongtian10</td><td class="num">5 條</td><td class="num">25 條</td></tr><tr><td><b>戌</b> 境</td><td class="el">dongtian11</td><td class="num">5 條</td><td class="num">25 條</td></tr><tr><td><b>亥</b> 境</td><td class="el">dongtian12</td><td class="num">6 條</td><td class="num">28 條</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note"><b>可抽詞綴</b>是該境解鎖了幾條。低境抽不到高境的詞綴 —— 例如【萬妖之主】要到酉境以上才出得來。</p>
+  </section>
+
+  <section>
+    <h2>詞綴一覽</h2>
+    <div class="controls">
+      <input id="q" class="search" type="search" placeholder="搜尋詞綴名稱或效果…" autocomplete="off">
+      <button class="chip" data-g="" aria-pressed="true">全部</button>
+      <button class="chip" data-g="S" aria-pressed="false">強生存</button><button class="chip" data-g="D" aria-pressed="false">高傷</button><button class="chip" data-g="B" aria-pressed="false">迴避</button><button class="chip" data-g="MY" aria-pressed="false">神話</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">最低境</th><th>效果</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <p class="tally" id="tally"></p>
+    <p class="note"><b>同一類只會有一條</b>　強生存、高傷、迴避、神話各自互斥 —— 不會出現「巨靈 + 金剛 + 厚土」這種純堆血的組合。命中類刻意不互斥，亥境要湊滿 6 條得靠它們。</p>
+  </section>
+
+  <footer class="foot">
+    <p><b>怎麼看牠帶了什麼</b>　滑鼠移到怪身上，名字下面會列出詞綴，例如 <b>[巨靈,金剛][稀有]</b> —— 前面是詞綴，後面方括號是階級。怪物名字本身不會變。</p>
+    <p><b>詞綴不是永久的</b>　每一隻怪出生時各自抽一次，死了重生會重抽。同一種怪，這隻是天命、下一隻可能是普通。</p>
+    <p><b>掉落倍率只加原本會掉的</b>　卡片、MVP 掉落，以及固定掉率的物品都不吃詞綴倍率 —— 不會因為打到天命怪就掉出本來掉不到的東西。</p>
+    <p><b>召喚物不帶詞綴</b>　怪召出來的小怪、分身一律不抽，也不會給額外掉落。</p>
+    <p><b>Boss 另有規矩</b>　MVP 最多 1 條、Mini Boss 最多 2 條，而且只吃少數允許用在 Boss 身上的詞綴。</p>
+    <a class="back" href="index.html">← 回神域仙境玩家工具</a>
+  </footer>
+
+</div>
+<script>
+const DATA = [{"nm":"巨靈","g":"S","gn":"強生存","st":"最大HP +100%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"狂暴","g":"D","gn":"高傷","st":"攻擊 +30% · 魔攻 +30%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"金剛","g":"S","gn":"強生存","st":"防禦 +30% · RES +100","rankn":"強化","realm":1,"realmn":"子"},{"nm":"玄法","g":"S","gn":"強生存","st":"魔防 +30% · MRES +100","rankn":"強化","realm":1,"realmn":"子"},{"nm":"迅猛","g":"","gn":"命中","st":"命中 +15% · 移動速度 +15%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"破軍","g":"D","gn":"高傷","st":"攻擊 +60%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"法煞","g":"D","gn":"高傷","st":"魔攻 +60%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"靈壁","g":"B","gn":"迴避","st":"迴避 +25%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"厚土","g":"S","gn":"強生存","st":"最大HP +50% · 防禦 +15%","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"致命","g":"D","gn":"高傷","st":"暴擊 +30","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"鬼影","g":"B","gn":"迴避","st":"迴避 +40% · 移動速度 +25%","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"磐石","g":"S","gn":"強生存","st":"防禦 +60% · RES +200","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"玄冥","g":"S","gn":"強生存","st":"魔防 +60% · MRES +200","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"血刃","g":"D","gn":"高傷","st":"攻擊 +120%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"焚天","g":"D","gn":"高傷","st":"魔攻 +120%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"洞察","g":"","gn":"命中","st":"命中 +60%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"屠戮","g":"D","gn":"高傷","st":"攻擊 +150% · 暴擊 +40","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"滅法","g":"D","gn":"高傷","st":"魔攻 +150%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"不滅","g":"S","gn":"強生存","st":"最大HP +200% · 防禦 +20% · 魔防 +20%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"疾風","g":"B","gn":"迴避","st":"迴避 +60% · 移動速度 +40%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"妖王之威","g":"MY","gn":"神話","st":"最大HP +300% · 攻擊 +80% · 魔攻 +80% · RES +150 · MRES +150","rankn":"天命","realm":7,"realmn":"午"},{"nm":"混元","g":"S","gn":"強生存","st":"RES +400 · MRES +400","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"天眼","g":"","gn":"命中","st":"暴擊 +20 · 命中 +120%","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"弒神","g":"D","gn":"高傷","st":"攻擊 +250% · 魔攻 +250%","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"太古凶威","g":"MY","gn":"神話","st":"最大HP +600% · 攻擊 +150% · 魔攻 +150% · RES +300 · MRES +300","rankn":"天命","realm":10,"realmn":"酉"},{"nm":"神體","g":"S","gn":"強生存","st":"最大HP +500% · 防禦 +40% · 魔防 +40%","rankn":"天命","realm":12,"realmn":"亥"},{"nm":"天譴","g":"D","gn":"高傷","st":"攻擊 +400% · 魔攻 +400% · 暴擊 +60","rankn":"天命","realm":12,"realmn":"亥"},{"nm":"萬妖之主","g":"MY","gn":"神話","st":"最大HP +1000% · 攻擊 +250% · 魔攻 +250% · RES +500 · MRES +500 · 暴擊 +50","rankn":"天命","realm":12,"realmn":"亥"}];
+const tb = document.getElementById("tb"), q = document.getElementById("q"),
+      tally = document.getElementById("tally");
+let gsel = "";
+
+function draw(){
+  const kw = q.value.trim().toLowerCase();
+  const hit = DATA.filter(r =>
+    (!gsel || r.g === gsel) &&
+    (!kw || (r.nm + " " + r.st + " " + r.gn).toLowerCase().includes(kw)));
+  tb.innerHTML = hit.map(r =>
+    '<tr><td class="nm"><b>' + r.nm + '</b></td>' +
+    '<td class="el">' + r.gn + '</td>' +
+    '<td class="num">' + r.rankn + '</td>' +
+    '<td class="num">' + (r.realm ? r.realmn + ' 境' : '不限') + '</td>' +
+    '<td class="st">' + (r.st || '—') + '</td></tr>').join("")
+    || '<tr><td colspan="5" class="st">沒有符合的詞綴。</td></tr>';
+  tally.innerHTML = "顯示 <b>" + hit.length + "</b> / " + DATA.length + " 條";
+}
+
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  gsel = b.dataset.g;
+  document.querySelectorAll(".chip").forEach(o =>
+    o.setAttribute("aria-pressed", o === b ? "true" : "false"));
+  draw();
+}));
+q.addEventListener("input", draw);
+draw();
+</script>
+</body>
+</html>
