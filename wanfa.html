@@ -63,8 +63,15 @@ h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
 .lede b{color:var(--ink); font-weight:500}
 h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
 section{margin-top:38px}
-.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
-table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+/* [2026-09-07] 依指示：這一頁不要有左右滑的內容。
+   原本是 .tbl-wrap{overflow-x:auto} + table{min-width:460px} + #nodes{min-width:840px},
+   窄螢幕就變成橫向捲動。改成兩段式：
+     寬螢幕  照常是表格, 但不再撐 min-width, 長文字改成換行
+     窄螢幕  整個表拆成一列一張卡(見下面的 @media), 徹底沒有橫向捲動
+   ★ overflow-x 保留 hidden 而不是拿掉 —— 萬一哪天有人加了撐寬的東西,
+     寧可被裁掉也不要又冒出捲軸。 */
+.tbl-wrap{overflow-x:hidden}
+table{border-collapse:collapse; width:100%; font-size:14px; table-layout:auto}
 th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
 th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
   border-bottom:1px solid var(--rule)}
@@ -114,7 +121,8 @@ td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:n
 .tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
 .tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
 
-#nodes{min-width:840px}
+/* #nodes 原本是 min-width:840px, 八欄硬撐出橫向捲動。拿掉之後靠
+   下面的 td.el 換行與窄螢幕卡片版面自己收斂。 */
 tr.node{cursor:pointer}
 tr.node:hover{background:var(--sunk)}
 tr.node:focus-visible{outline:2px solid var(--focus); outline-offset:-2px}
@@ -129,7 +137,11 @@ td.nm b{font-weight:500}
 td.sk{color:var(--ink-soft); font-size:13px}
 td.sk b{color:var(--ink); font-weight:500}
 td.sk .hit{color:var(--cinnabar); font-size:12px; margin-left:8px}
-td.el{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+/* 前置那一欄放的是「靈刃星（#213）Lv3↑／破魂星（#214）Lv3↑　任一即可」
+   這種長句, nowrap 等於直接把表格撐爆。改成允許換行, 並在全形頓號與
+   斜線處也能斷。 */
+td.el{white-space:normal; overflow-wrap:anywhere; line-height:1.6;
+  color:var(--ink-soft); font-size:13px}
 td.rate{color:var(--cinnabar); font-weight:500; text-align:right;
   font-variant-numeric:tabular-nums; white-space:nowrap}
 tr.detail > td{background:var(--sunk); padding:0}
@@ -143,6 +155,37 @@ tr.detail > td{background:var(--sunk); padding:0}
 .note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:66ch}
 .note b{color:var(--ink-soft); font-weight:500}
 .note a{color:var(--cinnabar)}
+
+/* ---- 窄螢幕：表格改成一列一張卡 ---------------------------------------
+   [2026-09-07] 依指示這一頁不要有左右滑的內容。八欄的節點表在手機上
+   無論怎麼壓都塞不下, 所以窄螢幕直接放棄表格排版:
+     thead 收起來, 每個 td 變成一行「欄位名 值」
+   欄位名取自 td 的 data-label(由產生器與前端一起填), 沒填就只顯示值。
+   ★ 斷點 780px 是算出來的不是猜的: .wrap 是 max-width:1080px 加左右各
+     20px padding, 所以 780px 視窗的內容寬度是 740px; 而節點表在允許換行
+     之後的自然最小寬度約 614px(節點欄的星環標籤+名稱約 163px 最寬,
+     兩個機率欄各約 66px)。740 > 614 留了足夠餘裕。
+   ★ 這個餘裕很重要 —— 上面的 .tbl-wrap 是 overflow-x:hidden, 塞不下會被
+     「裁掉」而不是變成捲軸, 那比捲動更糟。斷點寧可訂寬一點。 */
+@media (max-width:780px){
+  .tbl-wrap table, .tbl-wrap thead, .tbl-wrap tbody,
+  .tbl-wrap tr, .tbl-wrap th, .tbl-wrap td{display:block; width:auto}
+  .tbl-wrap thead{position:absolute; width:1px; height:1px;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .tbl-wrap tbody tr{padding:12px 0; border-bottom:1px solid var(--rule)}
+  .tbl-wrap tbody td{border:0; padding:3px 0; text-align:left}
+  .tbl-wrap td[data-label]::before{
+    content:attr(data-label) "　"; color:var(--ink-faint);
+    font-size:11px; letter-spacing:.14em}
+  /* 數字欄在卡片裡靠左比較好讀, 覆蓋掉桌機的靠右 */
+  .tbl-wrap td.num, .tbl-wrap td.rate{text-align:left; white-space:normal}
+  td.oid{width:auto}
+  td.nm{white-space:normal}
+  /* 展開的明細本來就是整列一格, 不要被上面的 display:block 弄壞 */
+  .tbl-wrap tr.detail{padding:0; border:0}
+  .tbl-wrap tr.detail > td{padding:0}
+  .tbl-wrap tr.detail > td::before{content:none}
+}
 </style>
 </head>
 <body>
@@ -181,7 +224,7 @@ tr.detail > td{background:var(--sunk); padding:0}
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>星環</th><th class="num">節點</th><th class="num">最高等級</th><th class="num">點滿要</th><th>作用</th></tr></thead>
-        <tbody><tr><td>基礎星</td><td class="num">6</td><td class="num">1</td><td class="num">6</td><td class="el">路線入口，本身不觸發技能</td></tr><tr><td>第一星環</td><td class="num">14</td><td class="num">5</td><td class="num">84</td><td class="el">高頻小效果，一轉技能</td></tr><tr><td>第二星環</td><td class="num">16</td><td class="num">5</td><td class="num">96</td><td class="el">流派成形，二轉技能</td></tr><tr><td>第三星環</td><td class="num">14</td><td class="num">5</td><td class="num">84</td><td class="el">強力效果，三轉技能</td></tr><tr><td>第四星環</td><td class="num">13</td><td class="num">5</td><td class="num">78</td><td class="el">核心爆發，四轉技能</td></tr><tr><td>核心主星</td><td class="num">9</td><td class="num">1</td><td class="num">27</td><td class="el">不放技能，改為加成指定路線的觸發率</td></tr></tbody>
+        <tbody><tr><td data-label="星環">基礎星</td><td class="num" data-label="節點">6</td><td class="num" data-label="最高等級">1</td><td class="num" data-label="點滿要">6</td><td class="el" data-label="作用">路線入口，本身不觸發技能</td></tr><tr><td data-label="星環">第一星環</td><td class="num" data-label="節點">14</td><td class="num" data-label="最高等級">5</td><td class="num" data-label="點滿要">84</td><td class="el" data-label="作用">高頻小效果，一轉技能</td></tr><tr><td data-label="星環">第二星環</td><td class="num" data-label="節點">16</td><td class="num" data-label="最高等級">5</td><td class="num" data-label="點滿要">96</td><td class="el" data-label="作用">流派成形，二轉技能</td></tr><tr><td data-label="星環">第三星環</td><td class="num" data-label="節點">14</td><td class="num" data-label="最高等級">5</td><td class="num" data-label="點滿要">84</td><td class="el" data-label="作用">強力效果，三轉技能</td></tr><tr><td data-label="星環">第四星環</td><td class="num" data-label="節點">13</td><td class="num" data-label="最高等級">5</td><td class="num" data-label="點滿要">78</td><td class="el" data-label="作用">核心爆發，四轉技能</td></tr><tr><td data-label="星環">核心主星</td><td class="num" data-label="節點">9</td><td class="num" data-label="最高等級">1</td><td class="num" data-label="點滿要">27</td><td class="el" data-label="作用">不放技能，改為加成指定路線的觸發率</td></tr></tbody>
       </table>
     </div>
     <p class="note">一到四環升級的<b>累計</b>花費是 1 / 2 / 3 / 4 / 6 點（Lv1~4 各 1 點，覺醒的 Lv5 要 2 點）。升級會同時提高<b>觸發機率</b>與<b>技能等級</b>。基礎星與主星都只有 1 級。</p>
@@ -193,7 +236,7 @@ tr.detail > td{background:var(--sunk); padding:0}
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>主星</th><th>受惠路線</th><th class="num">觸發率</th><th>前置節點</th></tr></thead>
-        <tbody><tr><td><b>火德星君</b></td><td class="el">火</td><td class="num rate">×130%</td><td class="el">焚天星（#403）</td></tr><tr><td><b>九霄雷祖</b></td><td class="el">風雷</td><td class="num rate">×130%</td><td class="el">天雷星（#405）</td></tr><tr><td><b>玄冰真君</b></td><td class="el">水冰</td><td class="num rate">×130%</td><td class="el">極寒星（#404）</td></tr><tr><td><b>后土鎮岳</b></td><td class="el">地</td><td class="num rate">×130%</td><td class="el">鎮岳星（#406）</td></tr><tr><td><b>聖曜神君</b></td><td class="el">聖</td><td class="num rate">×130%</td><td class="el">神裁星（#407）</td></tr><tr><td><b>冥毒羅剎</b></td><td class="el">暗毒</td><td class="num rate">×130%</td><td class="el">冥蝕星（#408）</td></tr><tr><td><b>劍火共鳴</b></td><td class="el">物理近戰、火</td><td class="num rate">×120%</td><td class="el">帝劍星（#400）</td></tr><tr><td><b>雷弓共鳴</b></td><td class="el">物理遠程、風雷</td><td class="num rate">×120%</td><td class="el">神弓星（#402）</td></tr><tr><td><b>太虛靈尊</b></td><td class="el">念靈</td><td class="num rate">×130%</td><td class="el">太虛破界星（#409）／太虛靈刃星（#410）／太虛斷魂星（#411）／太虛護界星（#412）　任一即可</td></tr></tbody>
+        <tbody><tr><td data-label="主星"><b>火德星君</b></td><td class="el" data-label="受惠路線">火</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">焚天星（#403）</td></tr><tr><td data-label="主星"><b>九霄雷祖</b></td><td class="el" data-label="受惠路線">風雷</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">天雷星（#405）</td></tr><tr><td data-label="主星"><b>玄冰真君</b></td><td class="el" data-label="受惠路線">水冰</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">極寒星（#404）</td></tr><tr><td data-label="主星"><b>后土鎮岳</b></td><td class="el" data-label="受惠路線">地</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">鎮岳星（#406）</td></tr><tr><td data-label="主星"><b>聖曜神君</b></td><td class="el" data-label="受惠路線">聖</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">神裁星（#407）</td></tr><tr><td data-label="主星"><b>冥毒羅剎</b></td><td class="el" data-label="受惠路線">暗毒</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">冥蝕星（#408）</td></tr><tr><td data-label="主星"><b>劍火共鳴</b></td><td class="el" data-label="受惠路線">物理近戰、火</td><td class="num rate" data-label="觸發率">×120%</td><td class="el" data-label="前置節點">帝劍星（#400）</td></tr><tr><td data-label="主星"><b>雷弓共鳴</b></td><td class="el" data-label="受惠路線">物理遠程、風雷</td><td class="num rate" data-label="觸發率">×120%</td><td class="el" data-label="前置節點">神弓星（#402）</td></tr><tr><td data-label="主星"><b>太虛靈尊</b></td><td class="el" data-label="受惠路線">念靈</td><td class="num rate" data-label="觸發率">×130%</td><td class="el" data-label="前置節點">太虛破界星（#409）／太虛靈刃星（#410）／太虛斷魂星（#411）／太虛護界星（#412）　任一即可</td></tr></tbody>
       </table>
     </div>
     <p class="note">單系主星只吃一條路線但倍率高，雙系共鳴吃兩條路線但倍率低 —— 專精還是兼顧，自己選。主星要<b>投資過</b>才算數，退點退掉的話加成會跟著消失。</p>
@@ -325,6 +368,11 @@ function row(n){
   tr.className = "node";
   tr.tabIndex = 0;
 
+  // 窄螢幕會把表格拆成一列一張卡, 那時 thead 是收起來的 ——
+  // 欄位名改由每個 td 的 data-label 帶著走, 順序要跟 thead 一致。
+  const LABEL = ["編號", "節點", "路線", "前置",
+                 "觸發技能", "觸發條件", "Lv1 觸發率", "滿級觸發率"];
+
   const cells = [
     ["num oid", n.id], ["nm", null], ["el", n.routes],
     ["el", n.pretxt], ["sk", null], ["el", n.bf || "—"],
@@ -333,6 +381,7 @@ function row(n){
   cells.forEach(([cls, val], i) => {
     const td = document.createElement("td");
     td.className = cls;
+    td.setAttribute("data-label", LABEL[i]);
     if (i === 1){
       const tag = document.createElement("span");
       tag.className = "tag " + (n.ring === 0 ? "r0" : n.ring === 5 ? "r5" : "rn");

@@ -354,8 +354,15 @@ h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
 .lede b{color:var(--ink); font-weight:500}
 h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
 section{margin-top:38px}
-.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
-table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+/* [2026-09-07] 依指示：這一頁不要有左右滑的內容。
+   原本是 .tbl-wrap{overflow-x:auto} + table{min-width:460px} + #nodes{min-width:840px},
+   窄螢幕就變成橫向捲動。改成兩段式：
+     寬螢幕  照常是表格, 但不再撐 min-width, 長文字改成換行
+     窄螢幕  整個表拆成一列一張卡(見下面的 @media), 徹底沒有橫向捲動
+   ★ overflow-x 保留 hidden 而不是拿掉 —— 萬一哪天有人加了撐寬的東西,
+     寧可被裁掉也不要又冒出捲軸。 */
+.tbl-wrap{overflow-x:hidden}
+table{border-collapse:collapse; width:100%; font-size:14px; table-layout:auto}
 th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
 th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
   border-bottom:1px solid var(--rule)}
@@ -405,7 +412,8 @@ td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:n
 .tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
 .tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
 
-#nodes{min-width:840px}
+/* #nodes 原本是 min-width:840px, 八欄硬撐出橫向捲動。拿掉之後靠
+   下面的 td.el 換行與窄螢幕卡片版面自己收斂。 */
 tr.node{cursor:pointer}
 tr.node:hover{background:var(--sunk)}
 tr.node:focus-visible{outline:2px solid var(--focus); outline-offset:-2px}
@@ -420,7 +428,11 @@ td.nm b{font-weight:500}
 td.sk{color:var(--ink-soft); font-size:13px}
 td.sk b{color:var(--ink); font-weight:500}
 td.sk .hit{color:var(--cinnabar); font-size:12px; margin-left:8px}
-td.el{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+/* 前置那一欄放的是「靈刃星（#213）Lv3↑／破魂星（#214）Lv3↑　任一即可」
+   這種長句, nowrap 等於直接把表格撐爆。改成允許換行, 並在全形頓號與
+   斜線處也能斷。 */
+td.el{white-space:normal; overflow-wrap:anywhere; line-height:1.6;
+  color:var(--ink-soft); font-size:13px}
 td.rate{color:var(--cinnabar); font-weight:500; text-align:right;
   font-variant-numeric:tabular-nums; white-space:nowrap}
 tr.detail > td{background:var(--sunk); padding:0}
@@ -434,6 +446,37 @@ tr.detail > td{background:var(--sunk); padding:0}
 .note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:66ch}
 .note b{color:var(--ink-soft); font-weight:500}
 .note a{color:var(--cinnabar)}
+
+/* ---- 窄螢幕：表格改成一列一張卡 ---------------------------------------
+   [2026-09-07] 依指示這一頁不要有左右滑的內容。八欄的節點表在手機上
+   無論怎麼壓都塞不下, 所以窄螢幕直接放棄表格排版:
+     thead 收起來, 每個 td 變成一行「欄位名 值」
+   欄位名取自 td 的 data-label(由產生器與前端一起填), 沒填就只顯示值。
+   ★ 斷點 780px 是算出來的不是猜的: .wrap 是 max-width:1080px 加左右各
+     20px padding, 所以 780px 視窗的內容寬度是 740px; 而節點表在允許換行
+     之後的自然最小寬度約 614px(節點欄的星環標籤+名稱約 163px 最寬,
+     兩個機率欄各約 66px)。740 > 614 留了足夠餘裕。
+   ★ 這個餘裕很重要 —— 上面的 .tbl-wrap 是 overflow-x:hidden, 塞不下會被
+     「裁掉」而不是變成捲軸, 那比捲動更糟。斷點寧可訂寬一點。 */
+@media (max-width:780px){
+  .tbl-wrap table, .tbl-wrap thead, .tbl-wrap tbody,
+  .tbl-wrap tr, .tbl-wrap th, .tbl-wrap td{display:block; width:auto}
+  .tbl-wrap thead{position:absolute; width:1px; height:1px;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .tbl-wrap tbody tr{padding:12px 0; border-bottom:1px solid var(--rule)}
+  .tbl-wrap tbody td{border:0; padding:3px 0; text-align:left}
+  .tbl-wrap td[data-label]::before{
+    content:attr(data-label) "　"; color:var(--ink-faint);
+    font-size:11px; letter-spacing:.14em}
+  /* 數字欄在卡片裡靠左比較好讀, 覆蓋掉桌機的靠右 */
+  .tbl-wrap td.num, .tbl-wrap td.rate{text-align:left; white-space:normal}
+  td.oid{width:auto}
+  td.nm{white-space:normal}
+  /* 展開的明細本來就是整列一格, 不要被上面的 display:block 弄壞 */
+  .tbl-wrap tr.detail{padding:0; border:0}
+  .tbl-wrap tr.detail > td{padding:0}
+  .tbl-wrap tr.detail > td::before{content:none}
+}
 </style>
 </head>
 <body>
@@ -616,6 +659,11 @@ function row(n){
   tr.className = "node";
   tr.tabIndex = 0;
 
+  // 窄螢幕會把表格拆成一列一張卡, 那時 thead 是收起來的 ——
+  // 欄位名改由每個 td 的 data-label 帶著走, 順序要跟 thead 一致。
+  const LABEL = ["編號", "節點", "路線", "前置",
+                 "觸發技能", "觸發條件", "Lv1 觸發率", "滿級觸發率"];
+
   const cells = [
     ["num oid", n.id], ["nm", null], ["el", n.routes],
     ["el", n.pretxt], ["sk", null], ["el", n.bf || "—"],
@@ -624,6 +672,7 @@ function row(n){
   cells.forEach(([cls, val], i) => {
     const td = document.createElement("td");
     td.className = cls;
+    td.setAttribute("data-label", LABEL[i]);
     if (i === 1){
       const tag = document.createElement("span");
       tag.className = "tag " + (n.ring === 0 ? "r0" : n.ring === 5 ? "r5" : "rn");
@@ -697,16 +746,22 @@ def build():
     for n in rows:
         by_ring.setdefault(n["ring"], []).append(n)
 
+    # data-label 是給窄螢幕的卡片版面用的 —— 那時 thead 收起來, 欄位名
+    # 由 td 自己帶。順序要跟上面 thead 的 th 一致。
     rings_html = "".join(
-        '<tr><td>%s</td><td class="num">%d</td><td class="num">%d</td>'
-        '<td class="num">%d</td><td class="el">%s</td></tr>'
+        '<tr><td data-label="星環">%s</td><td class="num" data-label="節點">%d</td>'
+        '<td class="num" data-label="最高等級">%d</td>'
+        '<td class="num" data-label="點滿要">%d</td>'
+        '<td class="el" data-label="作用">%s</td></tr>'
         % (esc(meta["ring$"][r]), len(ns), ns[0]["lvmax"],
            sum(n["cost"] for n in ns), esc(RING_DESC[r]))
         for r, ns in sorted(by_ring.items()))
 
     cores_html = "".join(
-        '<tr><td><b>%s</b></td><td class="el">%s</td>'
-        '<td class="num rate">×%d%%</td><td class="el">%s</td></tr>'
+        '<tr><td data-label="主星"><b>%s</b></td>'
+        '<td class="el" data-label="受惠路線">%s</td>'
+        '<td class="num rate" data-label="觸發率">×%d%%</td>'
+        '<td class="el" data-label="前置節點">%s</td></tr>'
         % (esc(n["nm"]), esc(n["cr1"] + ("、" + n["cr2"] if n["cr2"] else "")),
            n["cbon"] // 10, esc(n["pretxt"]))
         for n in rows if n["ring"] == 5)
