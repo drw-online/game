@@ -84,6 +84,21 @@ def setarrays(t, name):
     return out
 
 
+def assigns(t, name):
+    """抓單格賦值 $@<name>[索引] = 值;  回傳 {索引: 原始字串}。
+
+    ★ 延伸前置那一段(規格 §6)是稀疏的, 用單格賦值而不是 setarray ——
+      只認 setarray 會把它們全部漏掉, 而且不報錯, 只是前置欄顯示舊值。
+      例如 $@wf_pre[110] 在 setarray 裡是 11(法之基), 後面被改成 13(靈識)
+      並補上 pre2/pre3 變成「靈識/附靈/靈光 三選一」。
+    ★ 索引的左中括號負責錨定, 所以 $@wf_pre 不會誤抓到 $@wf_prelv。
+    """
+    out = {}
+    for m in re.finditer(re.escape("$@" + name) + r"\[(\d+)\]\s*=\s*([^;]+);", t):
+        out[int(m.group(1))] = m.group(2).strip()
+    return out
+
+
 def scalar(t, name):
     m = re.search(re.escape("$@" + name) + r"\s*=\s*([^;]+);", t)
     if not m:
@@ -93,16 +108,30 @@ def scalar(t, name):
 
 def parse_script():
     t = re.sub(r"//[^\n]*", "", read(WF))          # 去掉行註解再解析
-    ints = lambda n: {k: int(v) for k, v in setarrays(t, n).items()}
-    strs = lambda n: {k: v.strip('"') for k, v in setarrays(t, n).items()}
+    def merged(n):
+        """setarray 先鋪底, 單格賦值再覆寫 —— 順序不能反。"""
+        d = setarrays(t, n)
+        d.update(assigns(t, n))
+        return d
+
+    ints = lambda n: {k: int(v) for k, v in merged(n).items()}
+    strs = lambda n: {k: v.strip('"') for k, v in merged(n).items()}
 
     node = {
         "nm":    strs("wf_name$"),
         "ring":  ints("wf_ring"),
         "route": ints("wf_route"),
         "pre":   ints("wf_pre"),
+        "prelv":  ints("wf_prelv"),
+        "pre2":   ints("wf_pre2"),
+        "pre2lv": ints("wf_pre2lv"),
+        "pre3":   ints("wf_pre3"),
+        "pre3lv": ints("wf_pre3lv"),
+        "pre4":   ints("wf_pre4"),
+        "pre4lv": ints("wf_pre4lv"),
+        "preor":  ints("wf_preor"),
         "sk":    ints("wf_skill"),
-        "bf":    setarrays(t, "wf_bf"),            # 常數名, 保持字串
+        "bf":    merged("wf_bf"),            # 常數名, 保持字串
         "icd":   ints("wf_icd"),
         "dmg":   ints("wf_dmg"),
         "flag":  ints("wf_flag"),
@@ -199,6 +228,23 @@ def collect():
         r1 = min(rate, 1000)
         r5 = min(rate + rinc * (lvmax - 1), 1000)
 
+        # 前置四槽(規格 §6)。$@wf_preNlv 沒填就是 1 = 「有點就行」,
+        # 所以 Lv1 不印出來, 只有 >= 2 才標等級。
+        slots = []
+        for k, klv in (("pre", "prelv"), ("pre2", "pre2lv"),
+                       ("pre3", "pre3lv"), ("pre4", "pre4lv")):
+            p = node[k].get(nid, 0)
+            if p > 0:
+                slots.append((p, node["nm"].get(p, "#%d" % p),
+                              max(1, node[klv].get(nid, 0))))
+        if not slots:
+            pretxt = "起點，沒有前置"
+        else:
+            parts = ["%s（#%d）%s" % (nm, p, "Lv%d↑" % lv if lv > 1 else "")
+                     for p, nm, lv in slots]
+            pretxt = ("／".join(parts) + "　任一即可"
+                      if node["preor"].get(nid, 0) else "＋".join(parts))
+
         rows.append({
             "id": nid,
             "nm": node["nm"][nid],
@@ -206,8 +252,9 @@ def collect():
             "rings": meta["ring$"][ring],
             "route": node["route"][nid],
             "routes": meta["route$"][node["route"][nid]],
-            "pre": node["pre"][nid],
-            "pren": node["nm"].get(node["pre"][nid], ""),
+            "pre": node["pre"].get(nid, 0),
+            "preids": [p for p, _, _ in slots],
+            "pretxt": pretxt,
             "sk": sk,
             "skn": skills.get(sk, {}).get("Description", ""),
             "skmax": skills.get(sk, {}).get("MaxLevel", 0),
@@ -467,6 +514,7 @@ tr.detail > td{background:var(--sunk); padding:0}
       <table id="nodes">
         <thead><tr>
           <th class="num">編號</th><th>節點</th><th>路線</th>
+          <th>前置</th>
           <th>觸發技能</th><th>觸發條件</th>
           <th class="num">Lv1</th><th class="num">滿級</th>
         </tr></thead>
@@ -474,7 +522,7 @@ tr.detail > td{background:var(--sunk); padding:0}
       </table>
     </div>
     <div class="empty" id="empty" hidden>沒有符合條件的節點。</div>
-    <p class="note">「Lv1／滿級」是<b>觸發機率</b>。點任一列可展開技能等級、冷卻、傷害倍率與前置節點。</p>
+    <p class="note">「Lv1／滿級」是<b>觸發機率</b>。點任一列可展開技能等級、冷卻、傷害倍率與點滿花費。</p>
   </section>
 
   <section>
@@ -526,9 +574,9 @@ function detail(n){
   const tr = document.createElement("tr");
   tr.className = "detail";
   const td = document.createElement("td");
-  td.colSpan = 7;
+  td.colSpan = 8;
 
-  const rows = [["前置節點", n.pre ? n.pren + "（#" + n.pre + "）" : "起點，沒有前置"]];
+  const rows = [["前置節點", n.pretxt]];
   if (n.sk){
     rows.push(
       ["技能等級", n.l1 === n.l5 ? "Lv" + n.l1 + "（升級不加等級）" : "Lv" + n.l1 + " → Lv" + n.l5],
@@ -570,7 +618,7 @@ function row(n){
 
   const cells = [
     ["num oid", n.id], ["nm", null], ["el", n.routes],
-    ["sk", null], ["el", n.bf || "—"],
+    ["el", n.pretxt], ["sk", null], ["el", n.bf || "—"],
     ["rate", n.sk ? n.r1s : "—"], ["rate", n.sk ? n.r5s : "—"],
   ];
   cells.forEach(([cls, val], i) => {
@@ -583,7 +631,7 @@ function row(n){
       const b = document.createElement("b");
       b.textContent = n.nm;
       td.append(tag, b);
-    } else if (i === 3){
+    } else if (i === 4){
       if (n.sk){
         const b = document.createElement("b");
         b.textContent = n.skn;
@@ -660,7 +708,7 @@ def build():
         '<tr><td><b>%s</b></td><td class="el">%s</td>'
         '<td class="num rate">×%d%%</td><td class="el">%s</td></tr>'
         % (esc(n["nm"]), esc(n["cr1"] + ("、" + n["cr2"] if n["cr2"] else "")),
-           n["cbon"] // 10, esc(n["pren"]))
+           n["cbon"] // 10, esc(n["pretxt"]))
         for n in rows if n["ring"] == 5)
 
     bfs = []
@@ -723,21 +771,31 @@ def verify(dest, rows, meta, out):
             ("ring", "route", "pre", "sk", "bf", "icd", "dmg",
              "flag", "rate", "rinc", "slv", "sinc")),
         "13 張表逐格對齊 (%d 個節點)" % len(keys))
-    chk(len(rows) == 55, "節點 55 個 (實得 %d)" % len(rows))
+    # ★ 下面幾個是「快照預期值」不是推導值 —— 星盤擴充時本來就會 FAIL,
+    #   那正是它們的用途(擋住漏抓與多抓)。擴充後手動更新, 但更新前一定要先
+    #   確認數字是真的長出來的, 不是解析器誤抓。
+    #   [2026-09-06] 55 -> 72 個節點。查證過: 來源用額外的 setarray 補在稀疏
+    #   索引(13/113/212/310…), 而 $@wf_name$ / $@wf_ring / $@wf_skill 的單格
+    #   賦值都是 0 筆 —— 節點身分純由 setarray 決定, 沒有踩到本檔開頭寫的
+    #   「把使用當成定義抓進來」那個坑。新增的是念靈路線那一批(返魂星/
+    #   念爆星/靈刃星/破魂星/靈盾星/靈魂擴張/靈暴星/玄靈護體…)。
+    chk(len(rows) == 72, "節點 72 個 (實得 %d)" % len(rows))
 
     cnt = {}
     for n in rows:
         cnt[n["ring"]] = cnt.get(n["ring"], 0) + 1
-    chk(cnt == {0: 3, 1: 13, 2: 12, 3: 10, 4: 9, 5: 8},
-        "各環 3/13/12/10/9/8 (實得 %s)" % cnt)
+    chk(cnt == {0: 6, 1: 14, 2: 16, 3: 14, 4: 13, 5: 9},
+        "各環 6/14/16/14/13/9 (實得 %s)" % cnt)
 
     # 星環/路線名稱抓錯時是「一段程式碼碎片」不是空值, 所以要正面比對內容
     chk(meta["ring$"] == ["基礎星", "第一星環", "第二星環",
                           "第三星環", "第四星環", "核心主星"],
         "星環名稱正確 (%s)" % "/".join(meta["ring$"]))
-    chk(len(meta["route$"]) == 9
+    # [2026-09-06] 9 -> 10 條: 新增「念靈」。名稱本身一直都是正常中文,
+    #   先前 FAIL 純粹是條數對不上, 不是抓到程式碼碎片。
+    chk(len(meta["route$"]) == 10
         and all(re.fullmatch(r"[一-鿿]+", v) for v in meta["route$"].values()),
-        "9 條路線名稱都是中文 (%s)" % "/".join(meta["route$"].values()))
+        "10 條路線名稱都是中文 (%s)" % "/".join(meta["route$"].values()))
     chk(all(n["bf"] for n in rows if n["sk"]), "BF 遮罩全部對到中文標籤")
     chk(all(n["skn"] for n in rows if n["sk"]), "觸發技能全部有中文名")
     over = [(n["id"], n["nm"], n["l5"], n["skmax"])
@@ -745,7 +803,7 @@ def verify(dest, rows, meta, out):
     chk(not over, "技能等級不超過 MaxLevel" + (" — 超出 %s" % over if over else ""))
 
     chk(all(n["r5"] <= 1000 for n in rows), "觸發率不超過 100%")
-    chk(all(n["pre"] == 0 or n["pre"] in keys for n in rows), "前置節點都存在")
+    chk(all(all(p in keys for p in n["preids"]) for n in rows), "前置節點都存在")
     roots = [n for n in rows if n["pre"] == 0]
     chk(len(roots) == 3 and all(n["ring"] == 0 for n in roots), "只有 3 個基礎星是起點")
     chk(all(n["sk"] == 0 for n in rows if n["ring"] in (0, 5)),
@@ -753,7 +811,10 @@ def verify(dest, rows, meta, out):
 
     chk(meta["pt_realm"] == 26 and meta["pt_tower_all"] == 26,
         "配點 境界 %d + 鎖妖塔 %d" % (meta["pt_realm"], meta["pt_tower_all"]))
-    chk(meta["pt_now"] == 34,
+    # [2026-09-06] 34 -> 50。鎖妖塔開放層數增加使 pt_tower_now 由 8 變 26,
+    #   26 + 26 = 52 已經超過 $@WF_PT_MAX = 50, 所以 pt_now 被上限夾成 50 ——
+    #   星盤到這裡開始「點數封頂」, 多出來的 2 點拿不到。這不是解析錯誤。
+    chk(meta["pt_now"] == 50,
         "目前可得 %d 點 (境界 %d + 塔 %d 層 %d)"
         % (meta["pt_now"], meta["pt_realm"], meta["floors"], meta["pt_tower_now"]))
     chk(meta["respec$"] and meta["reset$"],
