@@ -54,12 +54,38 @@ RANK_COUNT = ["0", "1", "2", "3～4", "5～6"]
 RANK_KEY   = ["n", "e", "el", "r", "f"]
 
 GROUP_NAME = {
+    # 0831 規格(十二洞天)的互斥組
     "S":  "強生存",
     "D":  "高傷",
     "B":  "迴避",
     "MY": "神話",
     "":   "命中",
+    # 0901 規格(共通 C 池)的互斥組。yml 只給英文代號沒給中文, 下面的譯名是
+    # 照各組實際的 Stats 取的, 不是從來源讀來的:
+    #   SURV_HARD  = MaxHPRate            -> 厚血
+    #   SURV_ARMOR = Def/Mdef + Res/Mres  -> 護甲
+    #   BURST      = Atk/Matk 或 Crit     -> 爆發
+    #   SPEED      = HitRate              -> 敏捷
+    #     (規格 C-D08 原本是 ASPD +10% + HIT +12%, 但 Stats 的 SpeedRate 是
+    #      移動速度不是攻速, 實作只做得出 HIT —— 譯名跟著實作走而不是規格)
+    "SURV_HARD":  "厚血",
+    "SURV_ARMOR": "護甲",
+    "BURST":      "爆發",
+    "SPEED":      "敏捷",
 }
+
+# 0901 規格 §11 的危險值分段, 對應 mob_affix_danger_rate()
+# (1.原始碼/add/src/blackgod_mob_affix.inc:1188)。
+# ★ 這寫死在 C++, 與 REALM_CAP 同屬「改了 C++ 這裡不會自動跟上」的耦合,
+#   verify() 偵測不到。
+DANGER_BAND = [
+    ("0",      1.00),
+    ("1～5",   1.10),
+    ("6～10",  1.25),
+    ("11～15", 1.45),
+    ("16～20", 1.70),
+    ("21 以上", 2.00),
+]
 
 # Stats 欄位 -> (顯示名, 是不是百分比)。順序就是顯示順序。
 STAT_LABEL = [
@@ -132,8 +158,14 @@ def collect():
             "w":     int(e.get("Weight", 100)),
             "boss":  bool(e.get("BossAllowed", False)),
             "st":    stat_text(e.get("Stats")),
+            # ★ 判別兩套規格用 Pool 的「有無」, 不要用 MinRealm 是不是 0。
+            #   0901 那批根本沒有 MinRealm 欄位, 讀出來是 0, 若拿 0 當
+            #   「不限境界」就會把它們算進每一境的池子 —— 子境會從 8 條
+            #   變成 14 條, 而且完全不報錯。
+            "pool":  (e.get("Pool") or "").strip(),
+            "ds":    int(e.get("DangerScore", 0)),
         })
-    rows.sort(key=lambda r: (r["realm"], r["rank"], -r["w"], r["id"]))
+    rows.sort(key=lambda r: (r["pool"], r["realm"], r["rank"], -r["w"], r["id"]))
 
     maps = []
     for e in load_yaml(MAPDB):
@@ -142,22 +174,49 @@ def collect():
             "mode":  e.get("Mode", "OFF"),
             "realm": int(e.get("Realm", 0)),
             "cap":   int(e.get("MaxAffixes", 0)),
+            "pools": list(e.get("Pools") or []),
+            "dcaps": list(e.get("DangerCaps") or []),
+            "deny":  list(e.get("MobDeny") or []),
+            # 極道異種(0901 規格 §22)。十二洞天那 13 張也有 —— 一般怪照舊
+            # 只抽 REALM 池, 極道另走 ExtremePools 的 C 池, 兩者互不影響。
+            "ex_pools": list(e.get("ExtremePools") or []),
+            "ex_rate":  int(e.get("ExtremeRate", 0)),
+            "ex_cap":   int(e.get("ExtremeCap", 0)),
+            "ex_cd":    int(e.get("ExtremeCooldown", 0)),
+            "ex_cnt":   int(e.get("ExtremeCount", 0)),
+            "ex_ds":    int(e.get("ExtremeDanger", 0)),
+            "ex_hp":    int(e.get("ExtremeHP", 0)),
+            "ex_atk":   int(e.get("ExtremeAtk", 0)),
         })
-    maps.sort(key=lambda m: (m["realm"], m["map"]))
+    maps.sort(key=lambda m: (m["realm"] == 0, m["realm"], m["map"]))
 
     return rows, maps, conf
 
 
+def dt_rows(rows):
+    """十二洞天(0831 規格)那 28 條 —— 用 MinRealm 分境。"""
+    return [r for r in rows if not r["pool"]]
+
+
+def pool_rows(rows, pool=None):
+    """0901 規格的共通池。pool=None 取全部。"""
+    return [r for r in rows if r["pool"] and (pool is None or r["pool"] == pool)]
+
+
 def pool_size(rows, realm, rank=4):
-    """該境該階, 扣掉互斥組之後最多能塞幾條。"""
-    ok = [r for r in rows if r["rank"] <= rank and r["realm"] <= realm]
+    """該境該階, 扣掉互斥組之後最多能塞幾條。
+
+    ★ 這裡的 "pool" 是「候選池大小」的意思, 與 0901 規格的 Pool 欄位無關 ——
+      只算十二洞天那 28 條。C 池那批不分境, 混進來會讓每一境都虛胖 6 條。
+    """
+    ok = [r for r in dt_rows(rows) if r["rank"] <= rank and r["realm"] <= realm]
     grouped = {r["g"] for r in ok if r["g"]}
     free = len([r for r in ok if not r["g"]])
     return len(grouped) + free
 
 
 def avail(rows, realm):
-    return len([r for r in rows if r["realm"] <= realm])
+    return len([r for r in dt_rows(rows) if r["realm"] <= realm])
 
 
 # ---------------------------------------------------------------- 樣板
@@ -285,9 +344,9 @@ tr.off td{color:var(--ink-faint)}
   <section>
     <h2>一眼</h2>
     <ul class="facts">
-      <li><span class="fk">詞綴總數</span><span class="fv">__NAFFIX__</span><span class="fn">分 __NGROUP__ 類，同類互斥</span></li>
+      <li><span class="fk">詞綴總數</span><span class="fv">__NAFFIX__</span><span class="fn">洞天 __NDT__ 條＋共通 __NPOOL__ 條，同類互斥</span></li>
       <li><span class="fk">帶詞綴的機率</span><span class="fv">__PCTANY__%</span><span class="fn">其餘 __PCTNONE__% 是普通怪</span></li>
-      <li><span class="fk">啟用地圖</span><span class="fv">__NMAP__</span><span class="fn">十二洞天全境</span></li>
+      <li><span class="fk">啟用地圖</span><span class="fv">__NMAP__</span><span class="fn">十二洞天 __NDTMAP__ 張＋靈獸島／鎖妖塔 __NPOOLMAP__ 張</span></li>
       <li><span class="fk">一隻最多帶</span><span class="fv">__MAXCAP__ 條</span><span class="fn">亥境；子境只有 1 條</span></li>
     </ul>
     <p class="note">__ENABLENOTE__</p>
@@ -316,6 +375,44 @@ tr.off td{color:var(--ink-faint)}
   </section>
 
   <section>
+    <h2>極道異種</h2>
+    <p class="note">十二洞天的怪除了照舊抽境界詞綴，還有一小部分會變成<b>極道異種</b> —— 血量與攻擊大幅提高，詞綴改抽下面的<b>共通池</b>，而且同一張圖同時存在的數量有上限。牠們跟一般帶詞綴的怪是兩套獨立機制，不會互相影響。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>境</th><th class="num">出現率</th><th class="num">同時上限</th><th class="num">詞綴數</th><th class="num">危險值上限</th><th class="num">血量</th><th class="num">攻擊</th></tr></thead>
+        <tbody>__EXROWS__</tbody>
+      </table>
+    </div>
+    <p class="note"><b>出現率</b>是該圖的怪變成極道的機率，<b>同時上限</b>是全圖同一時間最多幾隻 —— 打掉之後要等冷卻（洞天 10 分鐘、靈獸島 15 分鐘）才會再出。<b>血量／攻擊</b>是在原本數值上再加的百分比。</p>
+  </section>
+
+  <section>
+    <h2>靈獸島與鎖妖塔</h2>
+    <p class="note">這三張圖不吃境界制，改用<b>共通池</b>與<b>危險值</b>。差別在於：十二洞天是「境界決定解鎖到哪一條」，這裡是「抽幾條由危險值總分決定」—— 所以不會出現低階怪一次帶滿高強度詞綴的情況。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>地圖</th><th>內容</th><th class="num">詞綴上限</th><th>危險值上限（普通→天命）</th></tr></thead>
+        <tbody>__POOLMAPROWS__</tbody>
+      </table>
+    </div>
+    <p class="note"><b>詞綴上限</b>管「幾條」，<b>危險值上限</b>管「多凶」—— 兩道閘取先碰到的那一個。4 條危險值 1 的詞綴與 1 條危險值 5 的，條數差很多但凶險程度相近，只用條數擋不住後者。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">危險值</th><th>效果</th></tr></thead>
+        <tbody>__POOLROWS__</tbody>
+      </table>
+    </div>
+    <p class="note">目前共通池只有這 __NPOOL__ 條。靈獸島與鎖妖塔各自的專屬池已經掛上去了但還是空的 —— 規格裡那些「生態、群獵、追跡、伏擊」不是單純加數值，要等事件與排程器做出來才加得進去。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">危險值總分</th><th class="num">掉落倍率</th></tr></thead>
+        <tbody>__DANGERROWS__</tbody>
+      </table>
+    </div>
+    <p class="note">這三張圖的掉落倍率<b>看危險值總分，不看階級</b>，跟十二洞天那張階級表是兩套。卡片、MVP 掉落與固定掉率的物品一樣不吃倍率。</p>
+  </section>
+
+  <section>
     <h2>詞綴一覽</h2>
     <div class="controls">
       <input id="q" class="search" type="search" placeholder="搜尋詞綴名稱或效果…" autocomplete="off">
@@ -324,7 +421,7 @@ tr.off td{color:var(--ink-faint)}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">最低境</th><th>效果</th></tr></thead>
+        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">出現於</th><th>效果</th></tr></thead>
         <tbody id="tb"></tbody>
       </table>
     </div>
@@ -357,7 +454,7 @@ function draw(){
     '<tr><td class="nm"><b>' + r.nm + '</b></td>' +
     '<td class="el">' + r.gn + '</td>' +
     '<td class="num">' + r.rankn + '</td>' +
-    '<td class="num">' + (r.realm ? r.realmn + ' 境' : '不限') + '</td>' +
+    '<td class="num">' + r.where + '</td>' +
     '<td class="st">' + (r.st || '—') + '</td></tr>').join("")
     || '<tr><td colspan="5" class="st">沒有符合的詞綴。</td></tr>';
   tally.innerHTML = "顯示 <b>" + hit.length + "</b> / " + DATA.length + " 條";
@@ -416,18 +513,81 @@ def build():
         "rankn": RANK_NAME[r["rank"]],
         "realm": r["realm"],
         "realmn": REALM_NAME[r["realm"] - 1] if r["realm"] else "",
+        # ★ 共通池那批的 realm 是 0, 但那不等於「不限」—— 它們只出現在
+        #   靈獸島/鎖妖塔, 以及十二洞天的極道異種身上。直接算好要顯示的字,
+        #   不要讓前端用 realm 去猜。
+        "where": (REALM_NAME[r["realm"] - 1] + " 境↑") if r["realm"]
+                 else ("共通池 · 危險值 %d" % r["ds"]),
     } for r in rows]
 
+    # 子境是 dongtian1_1 / dongtian1_2 兩張分流圖, 參數完全相同 ——
+    # 逐圖列會變成兩列一模一樣的「子 境」。同境同參數的只留一列。
+    ex_maps, _seen = [], set()
+    for m in maps:
+        if not m["ex_rate"]:
+            continue
+        key = (m["realm"], m["ex_rate"], m["ex_cap"], m["ex_cnt"],
+               m["ex_ds"], m["ex_hp"], m["ex_atk"]) if m["realm"] else m["map"]
+        if key in _seen:
+            continue
+        _seen.add(key)
+        ex_maps.append(m)
+
+    ex_rows = "".join(
+        '<tr><td><b>%s</b></td><td class="num">%.4g%%</td><td class="num">%d 隻</td>'
+        '<td class="num">%d 條</td><td class="num">%d</td>'
+        '<td class="num rate">+%d%%</td><td class="num rate">+%d%%</td></tr>'
+        % (esc(REALM_NAME[m["realm"] - 1] + " 境" if m["realm"]
+                else {"bossnia_01": "靈獸島 MVP", "bossnia_02": "靈獸島魔物"}
+                     .get(m["map"], m["map"])),
+           m["ex_rate"] / 100.0, m["ex_cap"], m["ex_cnt"], m["ex_ds"],
+           m["ex_hp"], m["ex_atk"])
+        for m in ex_maps)
+
+    MAP_DESC = {
+        "bossnia_01": "靈獸島 · 190 隻 MVP",
+        "bossnia_02": "靈獸島 · 162 種神域魔物",
+        "suoyao01":   "鎖妖塔",
+    }
+    poolmap_rows = "".join(
+        '<tr><td class="el">%s</td><td>%s</td><td class="num">%d 條</td>'
+        '<td class="num">%s</td></tr>'
+        % (esc(m["map"]), esc(MAP_DESC.get(m["map"], "—")), m["cap"],
+           esc(" / ".join(str(c) for c in m["dcaps"]) or "—"))
+        for m in maps if m["realm"] == 0)
+
+    pool_list = pool_rows(rows)
+    poolrows_html = "".join(
+        '<tr><td class="nm"><b>%s</b></td><td class="el">%s</td>'
+        '<td class="num">%s</td><td class="num">%d</td><td class="st">%s</td></tr>'
+        % (esc(r["nm"]), esc(r["gn"]), esc(RANK_NAME[r["rank"]]), r["ds"],
+           esc(r["st"] or "—"))
+        for r in pool_list)
+
+    danger_rows = "".join(
+        '<tr><td class="num">%s</td><td class="num rate">×%.2f</td></tr>'
+        % (esc(lo), mult) for lo, mult in DANGER_BAND)
+
+    where = "十二洞天、靈獸島與鎖妖塔"
     if conf["enable"]:
-        note = "<b>目前已啟用。</b>只有十二洞天的自然生成魔物會抽詞綴，其他地圖一律不掛。"
+        note = ("<b>目前已啟用。</b>只有%s的自然生成魔物會抽詞綴，"
+                "主城、新手村、任務圖與 PVP／GVG 一律不掛。" % where)
     else:
-        note = "<b>目前尚未啟用。</b>設定已就位，開啟後只有十二洞天的魔物會抽詞綴。"
+        note = "<b>目前尚未啟用。</b>設定已就位，開啟後%s的魔物會抽詞綴。" % where
 
     out = TPL
     for k, v in [
         ("__NAFFIX__",     str(len(rows))),
+        ("__NDT__",        str(len(dt_rows(rows)))),
+        ("__NPOOL__",      str(len(pool_list))),
         ("__NGROUP__",     str(len(groups))),
         ("__NMAP__",       str(len(maps))),
+        ("__NDTMAP__",     str(len([m for m in maps if m["realm"]]))),
+        ("__NPOOLMAP__",   str(len([m for m in maps if not m["realm"]]))),
+        ("__EXROWS__",       ex_rows),
+        ("__POOLMAPROWS__",  poolmap_rows),
+        ("__POOLROWS__",     poolrows_html),
+        ("__DANGERROWS__",   danger_rows),
         ("__MAXCAP__",     str(max(REALM_CAP))),
         ("__PCTANY__",     "%g" % round(100.0 - pct[0], 2)),
         ("__PCTNONE__",    "%g" % round(pct[0], 2)),
@@ -472,12 +632,47 @@ def verify(dest, rows, maps, conf, out):
         "十二境上限與規格 §1.2 相同")
 
     chk(len(maps) == len({m["map"] for m in maps}), "地圖不重複 (%d 張)" % len(maps))
-    chk({m["realm"] for m in maps} == set(range(1, 13)), "十二境都有地圖")
+    # ★ 只拿境界制那批比對。0901 規格的三張圖 Realm 一律是 0, 混進來會讓
+    #   集合變成 {0,1..12} 而永遠不等於 {1..12} —— 那不是資料錯。
+    chk({m["realm"] for m in maps if m["realm"]} == set(range(1, 13)),
+        "十二境都有地圖")
     chk(all(m["mode"] in ("OFF", "OPT_IN", "MAP_ALL") for m in maps), "地圖模式合法")
 
     short = [r for r in range(1, 13) if pool_size(rows, r) < REALM_CAP[r]]
     chk(not short,
         "每境的詞綴池湊得滿上限" + ("" if not short else " — 不足: %s" % short))
+
+    # ---- 0901 規格(共通池 / 危險值 / 極道異種) ----
+    pl = pool_rows(rows)
+    dt = dt_rows(rows)
+    chk(len(dt) + len(pl) == len(rows) and pl and dt,
+        "兩套規格都解析到 (洞天 %d + 共通池 %d)" % (len(dt), len(pl)))
+    chk(all(r["realm"] == 0 for r in pl),
+        "共通池那批沒有 MinRealm (有的話代表兩套規格混用了)")
+    chk(all(r["ds"] > 0 for r in pl), "共通池每一條都有 DangerScore")
+    chk(all(r["ds"] == 0 for r in dt),
+        "洞天那批沒有 DangerScore (它們走階級掉落表)")
+    chk(all(GROUP_NAME.get(r["g"]) for r in pl),
+        "共通池的互斥組都有中文譯名 (%s)"
+        % "/".join(sorted({r["gn"] for r in pl})))
+
+    pmaps = [m for m in maps if not m["realm"]]
+    chk(len(pmaps) == 3 and all(m["pools"] and m["dcaps"] for m in pmaps),
+        "0901 那 3 張圖都有 Pools 與 DangerCaps (實得 %d 張)" % len(pmaps))
+    chk(all(len(m["dcaps"]) == 5 for m in pmaps),
+        "DangerCaps 都是 5 格 (普通~天命)")
+    chk(all(m["dcaps"] == sorted(m["dcaps"]) for m in pmaps),
+        "DangerCaps 隨階級遞增")
+
+    # 極道異種在十二洞天也有 —— 這條就是防止「以為只有新圖才有」而漏寫
+    ex = [m for m in maps if m["ex_rate"]]
+    chk(len(ex) == 15,
+        "15 張圖有極道異種 (13 洞天 + 靈獸島 2, 實得 %d)" % len(ex))
+    dt_ex = sorted((m["realm"], m["ex_rate"]) for m in ex if m["realm"])
+    chk([r for _, r in dt_ex] == sorted(r for _, r in dt_ex),
+        "洞天的極道出現率隨境遞增")
+    chk(all(m["ex_hp"] and m["ex_atk"] and m["ex_cnt"] for m in ex),
+        "極道的血量/攻擊/詞綴數都有填")
 
     chk(not re.search(r"__[A-Z]+__", out), "樣板佔位全部替換")
     chk("<script>" in out and "DATA" in out, "資料已嵌入")

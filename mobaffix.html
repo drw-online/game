@@ -121,12 +121,12 @@ tr.off td{color:var(--ink-faint)}
   <section>
     <h2>一眼</h2>
     <ul class="facts">
-      <li><span class="fk">詞綴總數</span><span class="fv">28</span><span class="fn">分 5 類，同類互斥</span></li>
+      <li><span class="fk">詞綴總數</span><span class="fv">34</span><span class="fn">洞天 28 條＋共通 6 條，同類互斥</span></li>
       <li><span class="fk">帶詞綴的機率</span><span class="fv">30%</span><span class="fn">其餘 70% 是普通怪</span></li>
-      <li><span class="fk">啟用地圖</span><span class="fv">13</span><span class="fn">十二洞天全境</span></li>
+      <li><span class="fk">啟用地圖</span><span class="fv">16</span><span class="fn">十二洞天 13 張＋靈獸島／鎖妖塔 3 張</span></li>
       <li><span class="fk">一隻最多帶</span><span class="fv">6 條</span><span class="fn">亥境；子境只有 1 條</span></li>
     </ul>
-    <p class="note"><b>目前已啟用。</b>只有十二洞天的自然生成魔物會抽詞綴，其他地圖一律不掛。</p>
+    <p class="note"><b>目前已啟用。</b>只有十二洞天、靈獸島與鎖妖塔的自然生成魔物會抽詞綴，主城、新手村、任務圖與 PVP／GVG 一律不掛。</p>
   </section>
 
   <section>
@@ -152,15 +152,53 @@ tr.off td{color:var(--ink-faint)}
   </section>
 
   <section>
+    <h2>極道異種</h2>
+    <p class="note">十二洞天的怪除了照舊抽境界詞綴，還有一小部分會變成<b>極道異種</b> —— 血量與攻擊大幅提高，詞綴改抽下面的<b>共通池</b>，而且同一張圖同時存在的數量有上限。牠們跟一般帶詞綴的怪是兩套獨立機制，不會互相影響。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>境</th><th class="num">出現率</th><th class="num">同時上限</th><th class="num">詞綴數</th><th class="num">危險值上限</th><th class="num">血量</th><th class="num">攻擊</th></tr></thead>
+        <tbody><tr><td><b>子 境</b></td><td class="num">5%</td><td class="num">1 隻</td><td class="num">3 條</td><td class="num">8</td><td class="num rate">+60%</td><td class="num rate">+18%</td></tr><tr><td><b>丑 境</b></td><td class="num">8%</td><td class="num">1 隻</td><td class="num">4 條</td><td class="num">10</td><td class="num rate">+71%</td><td class="num rate">+20%</td></tr><tr><td><b>寅 境</b></td><td class="num">12%</td><td class="num">1 隻</td><td class="num">4 條</td><td class="num">12</td><td class="num rate">+82%</td><td class="num rate">+22%</td></tr><tr><td><b>卯 境</b></td><td class="num">16%</td><td class="num">1 隻</td><td class="num">4 條</td><td class="num">14</td><td class="num rate">+93%</td><td class="num rate">+24%</td></tr><tr><td><b>辰 境</b></td><td class="num">20%</td><td class="num">2 隻</td><td class="num">5 條</td><td class="num">16</td><td class="num rate">+104%</td><td class="num rate">+26%</td></tr><tr><td><b>巳 境</b></td><td class="num">25%</td><td class="num">2 隻</td><td class="num">5 條</td><td class="num">18</td><td class="num rate">+115%</td><td class="num rate">+28%</td></tr><tr><td><b>午 境</b></td><td class="num">30%</td><td class="num">2 隻</td><td class="num">5 條</td><td class="num">20</td><td class="num rate">+125%</td><td class="num rate">+30%</td></tr><tr><td><b>未 境</b></td><td class="num">35%</td><td class="num">2 隻</td><td class="num">6 條</td><td class="num">22</td><td class="num rate">+136%</td><td class="num rate">+32%</td></tr><tr><td><b>申 境</b></td><td class="num">40%</td><td class="num">2 隻</td><td class="num">6 條</td><td class="num">24</td><td class="num rate">+147%</td><td class="num rate">+34%</td></tr><tr><td><b>酉 境</b></td><td class="num">50%</td><td class="num">3 隻</td><td class="num">6 條</td><td class="num">26</td><td class="num rate">+158%</td><td class="num rate">+36%</td></tr><tr><td><b>戌 境</b></td><td class="num">65%</td><td class="num">3 隻</td><td class="num">7 條</td><td class="num">28</td><td class="num rate">+169%</td><td class="num rate">+38%</td></tr><tr><td><b>亥 境</b></td><td class="num">80%</td><td class="num">3 隻</td><td class="num">7 條</td><td class="num">30</td><td class="num rate">+180%</td><td class="num rate">+40%</td></tr><tr><td><b>靈獸島 MVP</b></td><td class="num">30%</td><td class="num">1 隻</td><td class="num">6 條</td><td class="num">28</td><td class="num rate">+150%</td><td class="num rate">+35%</td></tr><tr><td><b>靈獸島魔物</b></td><td class="num">30%</td><td class="num">1 隻</td><td class="num">6 條</td><td class="num">28</td><td class="num rate">+150%</td><td class="num rate">+35%</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note"><b>出現率</b>是該圖的怪變成極道的機率，<b>同時上限</b>是全圖同一時間最多幾隻 —— 打掉之後要等冷卻（洞天 10 分鐘、靈獸島 15 分鐘）才會再出。<b>血量／攻擊</b>是在原本數值上再加的百分比。</p>
+  </section>
+
+  <section>
+    <h2>靈獸島與鎖妖塔</h2>
+    <p class="note">這三張圖不吃境界制，改用<b>共通池</b>與<b>危險值</b>。差別在於：十二洞天是「境界決定解鎖到哪一條」，這裡是「抽幾條由危險值總分決定」—— 所以不會出現低階怪一次帶滿高強度詞綴的情況。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>地圖</th><th>內容</th><th class="num">詞綴上限</th><th>危險值上限（普通→天命）</th></tr></thead>
+        <tbody><tr><td class="el">bossnia_01</td><td>靈獸島 · 190 隻 MVP</td><td class="num">4 條</td><td class="num">0 / 5 / 10 / 15 / 20</td></tr><tr><td class="el">bossnia_02</td><td>靈獸島 · 162 種神域魔物</td><td class="num">4 條</td><td class="num">0 / 5 / 10 / 15 / 20</td></tr><tr><td class="el">suoyao01</td><td>鎖妖塔</td><td class="num">3 條</td><td class="num">0 / 6 / 10 / 15 / 15</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note"><b>詞綴上限</b>管「幾條」，<b>危險值上限</b>管「多凶」—— 兩道閘取先碰到的那一個。4 條危險值 1 的詞綴與 1 條危險值 5 的，條數差很多但凶險程度相近，只用條數擋不住後者。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">危險值</th><th>效果</th></tr></thead>
+        <tbody><tr><td class="nm"><b>巨靈</b></td><td class="el">厚血</td><td class="num">強化</td><td class="num">2</td><td class="st">最大HP +35%</td></tr><tr><td class="nm"><b>狂暴</b></td><td class="el">爆發</td><td class="num">強化</td><td class="num">3</td><td class="st">攻擊 +18% · 魔攻 +18%</td></tr><tr><td class="nm"><b>金剛</b></td><td class="el">護甲</td><td class="num">強化</td><td class="num">2</td><td class="st">防禦 +20% · RES +60</td></tr><tr><td class="nm"><b>玄法</b></td><td class="el">護甲</td><td class="num">強化</td><td class="num">2</td><td class="st">魔防 +20% · MRES +60</td></tr><tr><td class="nm"><b>迅猛</b></td><td class="el">敏捷</td><td class="num">強化</td><td class="num">2</td><td class="st">命中 +12%</td></tr><tr><td class="nm"><b>致命</b></td><td class="el">爆發</td><td class="num">精英</td><td class="num">3</td><td class="st">暴擊 +25</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">目前共通池只有這 6 條。靈獸島與鎖妖塔各自的專屬池已經掛上去了但還是空的 —— 規格裡那些「生態、群獵、追跡、伏擊」不是單純加數值，要等事件與排程器做出來才加得進去。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">危險值總分</th><th class="num">掉落倍率</th></tr></thead>
+        <tbody><tr><td class="num">0</td><td class="num rate">×1.00</td></tr><tr><td class="num">1～5</td><td class="num rate">×1.10</td></tr><tr><td class="num">6～10</td><td class="num rate">×1.25</td></tr><tr><td class="num">11～15</td><td class="num rate">×1.45</td></tr><tr><td class="num">16～20</td><td class="num rate">×1.70</td></tr><tr><td class="num">21 以上</td><td class="num rate">×2.00</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">這三張圖的掉落倍率<b>看危險值總分，不看階級</b>，跟十二洞天那張階級表是兩套。卡片、MVP 掉落與固定掉率的物品一樣不吃倍率。</p>
+  </section>
+
+  <section>
     <h2>詞綴一覽</h2>
     <div class="controls">
       <input id="q" class="search" type="search" placeholder="搜尋詞綴名稱或效果…" autocomplete="off">
       <button class="chip" data-g="" aria-pressed="true">全部</button>
-      <button class="chip" data-g="S" aria-pressed="false">強生存</button><button class="chip" data-g="D" aria-pressed="false">高傷</button><button class="chip" data-g="B" aria-pressed="false">迴避</button><button class="chip" data-g="MY" aria-pressed="false">神話</button>
+      <button class="chip" data-g="S" aria-pressed="false">強生存</button><button class="chip" data-g="D" aria-pressed="false">高傷</button><button class="chip" data-g="B" aria-pressed="false">迴避</button><button class="chip" data-g="MY" aria-pressed="false">神話</button><button class="chip" data-g="SURV_HARD" aria-pressed="false">厚血</button><button class="chip" data-g="BURST" aria-pressed="false">爆發</button><button class="chip" data-g="SURV_ARMOR" aria-pressed="false">護甲</button><button class="chip" data-g="SPEED" aria-pressed="false">敏捷</button>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">最低境</th><th>效果</th></tr></thead>
+        <thead><tr><th>詞綴</th><th>類型</th><th class="num">最低階級</th><th class="num">出現於</th><th>效果</th></tr></thead>
         <tbody id="tb"></tbody>
       </table>
     </div>
@@ -179,7 +217,7 @@ tr.off td{color:var(--ink-faint)}
 
 </div>
 <script>
-const DATA = [{"nm":"巨靈","g":"S","gn":"強生存","st":"最大HP +100%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"狂暴","g":"D","gn":"高傷","st":"攻擊 +30% · 魔攻 +30%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"金剛","g":"S","gn":"強生存","st":"防禦 +30% · RES +100","rankn":"強化","realm":1,"realmn":"子"},{"nm":"玄法","g":"S","gn":"強生存","st":"魔防 +30% · MRES +100","rankn":"強化","realm":1,"realmn":"子"},{"nm":"迅猛","g":"","gn":"命中","st":"命中 +15% · 移動速度 +15%","rankn":"強化","realm":1,"realmn":"子"},{"nm":"破軍","g":"D","gn":"高傷","st":"攻擊 +60%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"法煞","g":"D","gn":"高傷","st":"魔攻 +60%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"靈壁","g":"B","gn":"迴避","st":"迴避 +25%","rankn":"精英","realm":1,"realmn":"子"},{"nm":"厚土","g":"S","gn":"強生存","st":"最大HP +50% · 防禦 +15%","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"致命","g":"D","gn":"高傷","st":"暴擊 +30","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"鬼影","g":"B","gn":"迴避","st":"迴避 +40% · 移動速度 +25%","rankn":"精英","realm":3,"realmn":"寅"},{"nm":"磐石","g":"S","gn":"強生存","st":"防禦 +60% · RES +200","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"玄冥","g":"S","gn":"強生存","st":"魔防 +60% · MRES +200","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"血刃","g":"D","gn":"高傷","st":"攻擊 +120%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"焚天","g":"D","gn":"高傷","st":"魔攻 +120%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"洞察","g":"","gn":"命中","st":"命中 +60%","rankn":"精英","realm":5,"realmn":"辰"},{"nm":"屠戮","g":"D","gn":"高傷","st":"攻擊 +150% · 暴擊 +40","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"滅法","g":"D","gn":"高傷","st":"魔攻 +150%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"不滅","g":"S","gn":"強生存","st":"最大HP +200% · 防禦 +20% · 魔防 +20%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"疾風","g":"B","gn":"迴避","st":"迴避 +60% · 移動速度 +40%","rankn":"稀有","realm":7,"realmn":"午"},{"nm":"妖王之威","g":"MY","gn":"神話","st":"最大HP +300% · 攻擊 +80% · 魔攻 +80% · RES +150 · MRES +150","rankn":"天命","realm":7,"realmn":"午"},{"nm":"混元","g":"S","gn":"強生存","st":"RES +400 · MRES +400","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"天眼","g":"","gn":"命中","st":"暴擊 +20 · 命中 +120%","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"弒神","g":"D","gn":"高傷","st":"攻擊 +250% · 魔攻 +250%","rankn":"稀有","realm":10,"realmn":"酉"},{"nm":"太古凶威","g":"MY","gn":"神話","st":"最大HP +600% · 攻擊 +150% · 魔攻 +150% · RES +300 · MRES +300","rankn":"天命","realm":10,"realmn":"酉"},{"nm":"神體","g":"S","gn":"強生存","st":"最大HP +500% · 防禦 +40% · 魔防 +40%","rankn":"天命","realm":12,"realmn":"亥"},{"nm":"天譴","g":"D","gn":"高傷","st":"攻擊 +400% · 魔攻 +400% · 暴擊 +60","rankn":"天命","realm":12,"realmn":"亥"},{"nm":"萬妖之主","g":"MY","gn":"神話","st":"最大HP +1000% · 攻擊 +250% · 魔攻 +250% · RES +500 · MRES +500 · 暴擊 +50","rankn":"天命","realm":12,"realmn":"亥"}];
+const DATA = [{"nm":"巨靈","g":"S","gn":"強生存","st":"最大HP +100%","rankn":"強化","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"狂暴","g":"D","gn":"高傷","st":"攻擊 +30% · 魔攻 +30%","rankn":"強化","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"金剛","g":"S","gn":"強生存","st":"防禦 +30% · RES +100","rankn":"強化","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"玄法","g":"S","gn":"強生存","st":"魔防 +30% · MRES +100","rankn":"強化","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"迅猛","g":"","gn":"命中","st":"命中 +15% · 移動速度 +15%","rankn":"強化","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"破軍","g":"D","gn":"高傷","st":"攻擊 +60%","rankn":"精英","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"法煞","g":"D","gn":"高傷","st":"魔攻 +60%","rankn":"精英","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"靈壁","g":"B","gn":"迴避","st":"迴避 +25%","rankn":"精英","realm":1,"realmn":"子","where":"子 境↑"},{"nm":"厚土","g":"S","gn":"強生存","st":"最大HP +50% · 防禦 +15%","rankn":"精英","realm":3,"realmn":"寅","where":"寅 境↑"},{"nm":"致命","g":"D","gn":"高傷","st":"暴擊 +30","rankn":"精英","realm":3,"realmn":"寅","where":"寅 境↑"},{"nm":"鬼影","g":"B","gn":"迴避","st":"迴避 +40% · 移動速度 +25%","rankn":"精英","realm":3,"realmn":"寅","where":"寅 境↑"},{"nm":"磐石","g":"S","gn":"強生存","st":"防禦 +60% · RES +200","rankn":"精英","realm":5,"realmn":"辰","where":"辰 境↑"},{"nm":"玄冥","g":"S","gn":"強生存","st":"魔防 +60% · MRES +200","rankn":"精英","realm":5,"realmn":"辰","where":"辰 境↑"},{"nm":"血刃","g":"D","gn":"高傷","st":"攻擊 +120%","rankn":"精英","realm":5,"realmn":"辰","where":"辰 境↑"},{"nm":"焚天","g":"D","gn":"高傷","st":"魔攻 +120%","rankn":"精英","realm":5,"realmn":"辰","where":"辰 境↑"},{"nm":"洞察","g":"","gn":"命中","st":"命中 +60%","rankn":"精英","realm":5,"realmn":"辰","where":"辰 境↑"},{"nm":"屠戮","g":"D","gn":"高傷","st":"攻擊 +150% · 暴擊 +40","rankn":"稀有","realm":7,"realmn":"午","where":"午 境↑"},{"nm":"滅法","g":"D","gn":"高傷","st":"魔攻 +150%","rankn":"稀有","realm":7,"realmn":"午","where":"午 境↑"},{"nm":"不滅","g":"S","gn":"強生存","st":"最大HP +200% · 防禦 +20% · 魔防 +20%","rankn":"稀有","realm":7,"realmn":"午","where":"午 境↑"},{"nm":"疾風","g":"B","gn":"迴避","st":"迴避 +60% · 移動速度 +40%","rankn":"稀有","realm":7,"realmn":"午","where":"午 境↑"},{"nm":"妖王之威","g":"MY","gn":"神話","st":"最大HP +300% · 攻擊 +80% · 魔攻 +80% · RES +150 · MRES +150","rankn":"天命","realm":7,"realmn":"午","where":"午 境↑"},{"nm":"混元","g":"S","gn":"強生存","st":"RES +400 · MRES +400","rankn":"稀有","realm":10,"realmn":"酉","where":"酉 境↑"},{"nm":"天眼","g":"","gn":"命中","st":"暴擊 +20 · 命中 +120%","rankn":"稀有","realm":10,"realmn":"酉","where":"酉 境↑"},{"nm":"弒神","g":"D","gn":"高傷","st":"攻擊 +250% · 魔攻 +250%","rankn":"稀有","realm":10,"realmn":"酉","where":"酉 境↑"},{"nm":"太古凶威","g":"MY","gn":"神話","st":"最大HP +600% · 攻擊 +150% · 魔攻 +150% · RES +300 · MRES +300","rankn":"天命","realm":10,"realmn":"酉","where":"酉 境↑"},{"nm":"神體","g":"S","gn":"強生存","st":"最大HP +500% · 防禦 +40% · 魔防 +40%","rankn":"天命","realm":12,"realmn":"亥","where":"亥 境↑"},{"nm":"天譴","g":"D","gn":"高傷","st":"攻擊 +400% · 魔攻 +400% · 暴擊 +60","rankn":"天命","realm":12,"realmn":"亥","where":"亥 境↑"},{"nm":"萬妖之主","g":"MY","gn":"神話","st":"最大HP +1000% · 攻擊 +250% · 魔攻 +250% · RES +500 · MRES +500 · 暴擊 +50","rankn":"天命","realm":12,"realmn":"亥","where":"亥 境↑"},{"nm":"巨靈","g":"SURV_HARD","gn":"厚血","st":"最大HP +35%","rankn":"強化","realm":0,"realmn":"","where":"共通池 · 危險值 2"},{"nm":"狂暴","g":"BURST","gn":"爆發","st":"攻擊 +18% · 魔攻 +18%","rankn":"強化","realm":0,"realmn":"","where":"共通池 · 危險值 3"},{"nm":"金剛","g":"SURV_ARMOR","gn":"護甲","st":"防禦 +20% · RES +60","rankn":"強化","realm":0,"realmn":"","where":"共通池 · 危險值 2"},{"nm":"玄法","g":"SURV_ARMOR","gn":"護甲","st":"魔防 +20% · MRES +60","rankn":"強化","realm":0,"realmn":"","where":"共通池 · 危險值 2"},{"nm":"迅猛","g":"SPEED","gn":"敏捷","st":"命中 +12%","rankn":"強化","realm":0,"realmn":"","where":"共通池 · 危險值 2"},{"nm":"致命","g":"BURST","gn":"爆發","st":"暴擊 +25","rankn":"精英","realm":0,"realmn":"","where":"共通池 · 危險值 3"}];
 const tb = document.getElementById("tb"), q = document.getElementById("q"),
       tally = document.getElementById("tally");
 let gsel = "";
@@ -193,7 +231,7 @@ function draw(){
     '<tr><td class="nm"><b>' + r.nm + '</b></td>' +
     '<td class="el">' + r.gn + '</td>' +
     '<td class="num">' + r.rankn + '</td>' +
-    '<td class="num">' + (r.realm ? r.realmn + ' 境' : '不限') + '</td>' +
+    '<td class="num">' + r.where + '</td>' +
     '<td class="st">' + (r.st || '—') + '</td></tr>').join("")
     || '<tr><td colspan="5" class="st">沒有符合的詞綴。</td></tr>';
   tally.innerHTML = "顯示 <b>" + hit.length + "</b> / " + DATA.length + " 條";
