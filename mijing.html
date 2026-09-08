@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>天地大秘境玩法</title>
+<meta name="description" content="神域仙境 天地大秘境：入口何時出現、五個階級、六個模板、40 條法則、20 項祭壇、18 條詞綴與獎勵兌換。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="天地大秘境玩法">
+<meta property="og:description" content="入口隨機現世，公告只給地圖名。找到它、決定進不進、把它打完。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:hover{background:var(--sunk)}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:14px 0 12px;
+  border-bottom:1px solid var(--rule); margin-bottom:18px}
+.ctl-row{display:flex; flex-wrap:wrap; gap:9px 16px; align-items:center}
+.glab{font-size:12px; letter-spacing:.18em; color:var(--ink-faint)}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+td.oid{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%; white-space:nowrap}
+td.pos{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.rng{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--cinnabar); font-weight:500}
+td.roll{color:var(--cinnabar); font-weight:500; white-space:nowrap}
+td.keep{color:var(--ink-faint); white-space:nowrap}
+td.lim{font-size:13px; color:var(--ink-soft)}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:64ch}
+.empty{padding:40px 0; text-align:center; color:var(--ink-faint)}
+</style>
+
+<style>
+.nm{font-weight:700}
+h3.sub{font-family:"Noto Serif TC",serif; font-size:16px; margin:24px 0 0}
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:14px;
+       grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.steps li{border:1px solid var(--rule); border-radius:10px; padding:14px 16px}
+.steps b{display:block; font-family:"Noto Serif TC",serif; font-size:17px;
+         margin-bottom:6px}
+.steps i{font-style:normal; color:var(--cinnabar); font-weight:700;
+         margin-right:.45em}
+.steps p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.75}
+.maps{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0}
+.maps .chip{cursor:default}
+.bn{display:inline-block; padding:1px 7px; margin-left:6px; border-radius:6px;
+    font-size:.82em; white-space:nowrap; font-weight:700;
+    background:#c6503022; color:#c65030}
+.callout{border-left:3px solid var(--cinnabar); padding:2px 0 2px 14px;
+         margin:18px 0 0; color:var(--ink-soft); font-size:14.5px;
+         line-height:1.85; max-width:72ch}
+.callout b{color:var(--ink)}
+.two{display:grid; gap:24px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.two .note{max-width:none}
+.keep{color:#3a8f5a; font-weight:500}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>天地大秘境玩法</h1>
+    <p class="lede">秘境的入口<b>不是固定的 NPC</b> —— 它隨機出現在十二洞天的某一張圖上，全服公告<b>只給地圖名，不給座標</b>。找到那道裂隙、決定要不要踏進去、把 <b>3~4 層</b>打完，就是這套玩法的全部。</p>
+  </header>
+
+  <section>
+    <h2>三句話</h2>
+    <ol class="steps">
+      <li><b><i>一</i>找到它</b><p>公告會說「某某階・某某秘境 於 <b>某張洞天</b> 現世」。座標要自己找，裂隙只存在 15 分鐘。</p></li>
+      <li><b><i>二</i>決定進不進</b><p>點下裂隙可以先進<b>預備廳</b>看完整資訊 —— 首領是誰、有什麼陷阱、幾盞魂燈。這裡不扣任何東西，看完可以退回。</p></li>
+      <li><b><i>三</i>打完它</b><p>一層一層清，最後一層是首領。中途有<b>風險祭壇</b>可以拿難度換收益。撐不住也沒關係，已經到手的獎勵不會被收回。</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>入口什麼時候出現</h2>
+    <div class="tbl-wrap">
+      <table><tbody><tr><th scope="row">檢查頻率</th><td>每 60 秒一次</td></tr><tr><th scope="row">在線門檻</th><td>1 人</td></tr><tr><th scope="row">冷卻</th><td>上一個入口關閉後 <b>45 分鐘</b>內不會再開</td></tr><tr><th scope="row">出現機率</th><td>基礎 6%，每次沒抽中 +2 個百分點，最高 30%</td></tr><tr><th scope="row">保底</th><td>第 120 次有效檢查必定開啟</td></tr><tr><th scope="row">存在多久</th><td><b>15 分鐘</b>（剩 5 分、1 分各公告一次）</td></tr></tbody></table>
+    </div>
+    <p class="note">平均一輪約 <b>52 分鐘</b>（冷卻 45 分 + 抽中所需的時間）。沒有固定時段，也沒有預告。</p>
+
+    <h3 class="sub">會開在這 13 張圖裡</h3>
+    <div class="maps"><span class="chip">子·玄冥洞天 一區</span><span class="chip">子·玄冥洞天 二區</span><span class="chip">丑·厚土洞天</span><span class="chip">寅·青木洞天</span><span class="chip">卯·雷波洞天</span><span class="chip">辰·蒼龍洞天</span><span class="chip">巳·赤炎洞天</span><span class="chip">午·離火洞天</span><span class="chip">未·坤德洞天</span><span class="chip">申·庚金洞天</span><span class="chip">酉·太白洞天</span><span class="chip">戌·戊土洞天</span><span class="chip">亥·玄水洞天</span></div>
+    <p class="note">位置每次都不一樣 —— 是隨機取點再驗證能不能站人，不是固定幾個點輪流。公告被聊天洗掉的話，可以去問崑崙的<b>秘境守望者</b>開在哪張圖（他一樣不給座標）。</p>
+  </section>
+
+  <section>
+    <h2>五個階級</h2>
+    <p class="note">公告裡的第一個詞。階級決定這一場的長度、強度與收益，<b>進去之前就知道</b>。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>階級</th><th class="num">抽中機率</th><th class="num">層數</th><th class="num">時限</th><th class="num">每分鐘扣穩</th><th class="num">魂燈 1人／6人</th><th class="num">怪物血量</th><th class="num">隱藏層基率</th><th>玩家輸出壓制</th></tr></thead>
+        <tbody><tr><td class="nm">凡</td><td class="num roll">50%</td><td class="num">3</td><td class="num">25 分</td><td class="num">3</td><td class="num">3 ／ 8</td><td class="num">×1</td><td class="num">5%</td><td class="lim">—</td></tr><tr><td class="nm">靈</td><td class="num roll">30%</td><td class="num">4</td><td class="num">32 分</td><td class="num">2.60</td><td class="num">2 ／ 7</td><td class="num">×1.35</td><td class="num">8%</td><td class="lim">—</td></tr><tr><td class="nm">仙</td><td class="num roll">15%</td><td class="num">4</td><td class="num">43 分</td><td class="num">2</td><td class="num">1 ／ 6</td><td class="num">×3</td><td class="num">12%</td><td class="lim">最終傷害 ÷ 50,000、抗性 +50%</td></tr><tr><td class="nm">神</td><td class="num roll">4.5%</td><td class="num">4</td><td class="num">50 分</td><td class="num">1.60</td><td class="num">1 ／ 5</td><td class="num">×10</td><td class="num">18%</td><td class="lim">最終傷害 ÷ 100,000、抗性 +90%</td></tr><tr><td class="nm">太初</td><td class="num roll">0.5%</td><td class="num">4</td><td class="num">60 分</td><td class="num">1.35</td><td class="num">1 ／ 3</td><td class="num">×10</td><td class="num">25%</td><td class="lim">最終傷害 ÷ 100,000、抗性 +90%</td></tr></tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <b>仙階以上會壓制玩家輸出。</b>那不是你的裝備出問題 —— 裂隙的對話框會用紅字寫明倍率。凡與靈完全走正常計算，沒有任何壓制。<br>
+      高階的每分鐘扣穩<b>反而更慢</b>，因為路更長。高階的壓力來自魂燈變少、機制變多，不是逼你超時。
+    </div>
+  </section>
+
+  <section>
+    <h2>六個模板</h2>
+    <p class="note">公告裡的第二個詞。模板決定怪、事件、陷阱與首領 —— <b>地形是同一張</b>，差別不在地圖長什麼樣子。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>模板</th><th class="num">抽中機率</th><th>事件</th><th>陷阱</th><th>可能的首領</th></tr></thead>
+        <tbody><tr><td class="nm">靈藥秘境</td><td class="num roll">22%</td><td>靈草成熟了——守住它，期間完成三次採集。</td><td>毒芽先閃再噴，拔芽可清除。</td><td class="lim">萬毒青蘿王、枯榮丹君、九葉護園獸</td></tr><tr><td class="nm">劍塚秘境</td><td class="num roll">22%</td><td>劍陣按亮起先後走三節。</td><td>紅線亮起後斬擊，安全扇區含近身。</td><td class="lim">無名劍仙殘魂、葬鋒劍主、七星劍獄使</td></tr><tr><td class="nm">上古洞府</td><td class="num roll">22%</td><td>兩把鑰匙選三門，看清圖示順序。</td><td>地磚發亮後噴火，注意避難凹槽。</td><td class="lim">玄機府主、百鍊銅皇、封陣石母</td></tr><tr><td class="nm">妖帝陵墓</td><td class="num roll">18%</td><td>超度三名亡魂，各需要一點時間。</td><td>屍痕預警後化為暗魔法地板。</td><td class="lim">妖帝殘軀、九幽引魂后、鎮墓血角皇</td></tr><tr><td class="nm">悟道秘境</td><td class="num roll">14%</td><td>道途二選一：走位問道或守陣問道。</td><td>錯印會生成一名心魔。</td><td class="lim">兩儀問道尊、萬念心魔、無相法師</td></tr><tr><td class="nm">太虛秘境</td><td class="num roll">2%</td><td>三平台導流，按星圖接線。</td><td>空間裂縫預告後封格，回路永遠保留。</td><td class="lim">太虛織界者、逆星龍君、虛無守門人</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">每個模板有 3 隻首領等權抽 1，所以同一個模板進去兩次不一定打到同一隻。</p>
+  </section>
+
+  <section>
+    <h2>踏進去之前</h2>
+    <div class="two">
+      <div>
+        <h3 class="sub" style="margin-top:0">人數在預備廳就鎖定</h3>
+        <p class="note">只算<b>同一張圖、你身邊 8 格內</b>的隊友，最多 6 人。踏進去的那一刻名單就鎖死 —— 之後退隊、掉線、死亡都<b>不會</b>降低難度。要一起打就得先站在一起。</p>
+      </div>
+      <div>
+        <h3 class="sub" style="margin-top:0">預備廳不扣任何東西</h3>
+        <p class="note">在預備廳看得到首領名字與招式、事件與陷阱、魂燈數與怪物倍率。看完覺得打不過，直接退回，裂隙還在原處。</p>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:18px">
+      <table>
+        <thead><tr><th class="num">人數</th><th class="num">怪物血量</th><th class="num">怪物攻擊</th><th class="num">每精英層的精英數</th><th class="num">被點名人數</th><th class="num">扣穩速度</th></tr></thead>
+        <tbody><tr><td class="nm">1 人</td><td class="num">×1</td><td class="num">×1</td><td class="num">2</td><td class="num">1</td><td class="num">×0.9</td></tr><tr><td class="nm">2 人</td><td class="num">×1.65</td><td class="num">×1.03</td><td class="num">2</td><td class="num">1</td><td class="num">×0.95</td></tr><tr><td class="nm">3 人</td><td class="num">×2.35</td><td class="num">×1.06</td><td class="num">3</td><td class="num">2</td><td class="num">×1</td></tr><tr><td class="nm">4 人</td><td class="num">×3.1</td><td class="num">×1.09</td><td class="num">3</td><td class="num">2</td><td class="num">×1</td></tr><tr><td class="nm">5 人</td><td class="num">×3.9</td><td class="num">×1.12</td><td class="num">4</td><td class="num">3</td><td class="num">×1</td></tr><tr><td class="nm">6 人</td><td class="num">×4.75</td><td class="num">×1.15</td><td class="num">4</td><td class="num">3</td><td class="num">×1</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>兩條各自獨立的失敗線</h2>
+    <div class="two">
+      <div>
+        <h3 class="sub" style="margin-top:0">穩定度</h3>
+        <p class="note">從 <b>100</b> 開始，隨時間自然往下掉，歸零就崩塌。低於 20 與 10 時各提示一次 —— <b>提示本身不附加任何懲罰</b>，不會越掉越快。</p>
+      </div>
+      <div>
+        <h3 class="sub" style="margin-top:0">絕對時限</h3>
+        <p class="note">依階級 25 ~ 60 分鐘。<b>任何回穩都不會把時間買回來</b>，這兩條互不相干。</p>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:18px">
+      <table>
+        <thead><tr><th>發生什麼</th><th class="num">穩定度</th><th>備註</th></tr></thead>
+        <tbody><tr><td>每分鐘自然消耗</td><td class="num roll">−1.35 ~ −3</td><td class="lim">階級越高掉得越慢；單人再 ×0.90</td></tr><tr><td>角色死亡</td><td class="num roll">−5</td><td class="lim">人多時每人扣得少一些，最少 −2</td></tr><tr><td>踩到陷阱</td><td class="num roll">−2</td><td class="lim">同一個陷阱 3 秒內全隊只扣一次</td></tr><tr><td>事件失敗</td><td class="num roll">−5</td><td class="lim">同一個事件只扣一次</td></tr><tr><td>首領破解失敗</td><td class="num roll">−3</td><td class="lim">每次</td></tr><tr><td>完成事件</td><td class="num keep">＋4</td><td class="lim">每場最多加 3 次</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>魂燈 —— 全隊共用的復活次數</h2>
+    <p class="note">死了以後 <b>10 秒</b>可以復起，恢復 <b>50%</b> 的血與魔，並帶 <b>3 秒</b>保護（一出手就取消）。每個人自己還有本場復活上限：凡靈 3 次、仙神 2 次、太初 1 次。<b>燈燒完就只能看著。</b></p>
+    <div class="callout">
+      死亡扣穩定度與熄魂燈是<b>兩件事</b> —— 一死就扣穩，用復活技能也躲不掉；魂燈則是「真的站起來」才熄。
+    </div>
+  </section>
+
+  <section>
+    <h2>19 隻首領</h2>
+    <p class="note">最後一層。三階段，血量 70% 與 35% 各一道破解閘門，轉階時有 <b>3%</b> 血量的盾。破解方式是打機關或按符石 —— <b>單人也做得到</b>，不需要第二個人站位。拖過 10 ~ 12 分鐘進狂暴。</p>
+    <div class="controls">
+      <div class="ctl-row">
+        <input id="q-boss" class="search" type="search" placeholder="搜尋首領或招式…" aria-label="搜尋首領" data-target="#t-boss">
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="t-boss">
+        <thead><tr><th>編號</th><th>首領</th><th>招式特徵</th><th>模板</th></tr></thead>
+        <tbody><tr><td class="oid">B01</td><td class="nm">萬毒青蘿王</td><td>藥毒同源：採集淨露可清一圈</td><td class="lim">靈藥秘境</td></tr><tr><td class="oid">B02</td><td class="nm">枯榮丹君</td><td>枯榮循環：枯段短暫治療 -15%，生段恢復正常</td><td class="lim">靈藥秘境</td></tr><tr><td class="oid">B03</td><td class="nm">九葉護園獸</td><td>九葉回環：走對水環讓首領露出弱點 8 秒</td><td class="lim">靈藥秘境</td></tr><tr><td class="oid">B04</td><td class="nm">無名劍仙殘魂</td><td>一劍留生：每輪至少一個近身安全扇區</td><td class="lim">劍塚秘境</td></tr><tr><td class="oid">B05</td><td class="nm">葬鋒劍主</td><td>藏鋒：正面盾由移動與機關破解，不是法系免疫</td><td class="lim">劍塚秘境</td></tr><tr><td class="oid">B06</td><td class="nm">七星劍獄使</td><td>步罡踏斗：停步與移動提示不與硬控同時</td><td class="lim">劍塚秘境</td></tr><tr><td class="oid">B07</td><td class="nm">玄機府主</td><td>千門一解：兩種職能皆可完成的破關方式</td><td class="lim">上古洞府</td></tr><tr><td class="oid">B08</td><td class="nm">百鍊銅皇</td><td>鍛爐脈動：過載可透過機關降低，不能純堆血磨</td><td class="lim">上古洞府</td></tr><tr><td class="oid">B09</td><td class="nm">封陣石母</td><td>石脈共振：機關方向以圖示和文字雙提示</td><td class="lim">上古洞府</td></tr><tr><td class="oid">B10</td><td class="nm">妖帝殘軀</td><td>帝魂敕令：召喚來源可拆，子代無掉落</td><td class="lim">妖帝陵墓</td></tr><tr><td class="oid">B11</td><td class="nm">九幽引魂后</td><td>返魂之路：生者也能完成全部救援</td><td class="lim">妖帝陵墓</td></tr><tr><td class="oid">B12</td><td class="nm">鎮墓血角皇</td><td>不餵死者：死亡不提供首領回血或更多收益</td><td class="lim">妖帝陵墓</td></tr><tr><td class="oid">B13</td><td class="nm">兩儀問道尊</td><td>問道不問職：交替技能可用普攻或符石替代</td><td class="lim">悟道秘境</td></tr><tr><td class="oid">B14</td><td class="nm">萬念心魔</td><td>執念可解：連用技能的懲罰可由符石清除</td><td class="lim">悟道秘境</td></tr><tr><td class="oid">B15</td><td class="nm">無相法師</td><td>萬法有隙：任何元素段都保留正常可傷害通道</td><td class="lim">悟道秘境</td></tr><tr><td class="oid">B16</td><td class="nm">太虛織界者</td><td>織界：不把玩家傳入地板或不可達區</td><td class="lim">太虛秘境</td></tr><tr><td class="oid">B17</td><td class="nm">逆星龍君</td><td>逆星巡天：元素與位移不在同一秒切換</td><td class="lim">太虛秘境</td></tr><tr><td class="oid">B18</td><td class="nm">虛無守門人</td><td>虛實雙門：真門的文字與形狀可辨識，不臨時換</td><td class="lim">太虛秘境</td></tr><tr><td class="oid">B19</td><td class="nm">太初道影</td><td>太初道影：四階段規則整合，不具任何全傷害免疫</td><td class="lim">太虛秘境</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">最後那隻<b>太初道影</b>只在太初階的隱藏層出現，是唯一的四階段首領。</p>
+  </section>
+
+  <section>
+    <h2>40 條地圖法則</h2>
+    <p class="note">每一場開場就抽好，<b>戰鬥中不會偷換</b>。階級越高抽越多條（凡 1 條 → 太初 5 條），每一類最多 2 條。法則同時加難度也加獎勵。</p>
+    <div class="controls">
+      <div class="ctl-row">
+        <input id="q-rule" class="search" type="search" placeholder="搜尋法則…　例：治療、召喚、精英" aria-label="搜尋法則" data-target="#t-rule">
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="t-rule">
+        <thead><tr><th>編號</th><th>名稱</th><th>類別</th><th>效果</th><th class="num">獎勵加成</th><th class="num">危險度</th></tr></thead>
+        <tbody><tr><td class="oid">D01</td><td class="nm">鋒芒</td><td class="lim">攻擊</td><td>怪物攻擊力與魔攻 +15%（地圖加成合計上限 50%）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D02</td><td class="nm">戰意</td><td class="lim">攻擊</td><td>怪物攻擊力與魔攻 +35%（地圖加成合計上限 50%）</td><td class="num roll">＋10%</td><td class="num">5</td></tr><tr><td class="oid">D03</td><td class="nm">獵首</td><td class="lim">攻擊</td><td>每 30 秒發動一次定時危害，威力 200%　—　「有人被盯上了——三秒後一道直線。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D04</td><td class="nm">反攻節律</td><td class="lim">攻擊</td><td>怪物攻擊力與魔攻 +20%（地圖加成合計上限 50%）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D05</td><td class="nm">巨軀</td><td class="lim">防禦</td><td>怪物血量 +80%（地圖加成合計上限 100%）</td><td class="num roll">＋8%</td><td class="num">4</td></tr><tr><td class="oid">D06</td><td class="nm">金鐵</td><td class="lim">防禦</td><td>怪物物理防禦 +20%</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D07</td><td class="nm">靈障</td><td class="lim">防禦</td><td>怪物魔法防禦 +20%</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D08</td><td class="nm">古老抗性</td><td class="lim">防禦</td><td>首領的物抗與魔抗 +100（合計上限 220）</td><td class="num roll">＋8%</td><td class="num">4</td></tr><tr><td class="oid">D09</td><td class="nm">流火</td><td class="lim">元素</td><td>每 30 秒發動一次定時危害，威力 150%　—　「地面燒起來了。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D10</td><td class="nm">雷行</td><td class="lim">元素</td><td>每 30 秒發動一次定時危害，威力 220%　—　「雷雲聚集。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D11</td><td class="nm">寒潮</td><td class="lim">元素</td><td>每 30 秒發動一次定時危害，威力 150%　—　「寒潮壓境，區外才安全。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D12</td><td class="nm">五行輪值</td><td class="lim">元素</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋8%</td><td class="num">4</td></tr><tr><td class="oid">D13</td><td class="nm">靈力稅</td><td class="lim">資源</td><td>主動技能的 SP 消耗 +15%（全場合計上限 25%）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D14</td><td class="nm">斷補</td><td class="lim">資源</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D15</td><td class="nm">耗靈晶</td><td class="lim">資源</td><td>受到的治療 −30%（全場合計上限 40%）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D16</td><td class="nm">儉用</td><td class="lim">資源</td><td>補給次數 −1 次</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D17</td><td class="nm">薄生</td><td class="lim">恢復</td><td>受到的治療 −15%（全場合計上限 40%）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D18</td><td class="nm">枯榮</td><td class="lim">恢復</td><td>受到的治療 −30%（全場合計上限 40%）</td><td class="num roll">＋8%</td><td class="num">4</td></tr><tr><td class="oid">D19</td><td class="nm">藥障</td><td class="lim">恢復</td><td>受到的治療 −20%（全場合計上限 40%）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D20</td><td class="nm">離陣</td><td class="lim">恢復</td><td>受到的治療 −20%（全場合計上限 40%）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D21</td><td class="nm">急漏</td><td class="lim">時間</td><td>穩定度的自然消耗 +15%</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D22</td><td class="nm">促戰</td><td class="lim">時間</td><td>首領提前 1 分鐘進入狂暴（最低 8 分鐘）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D23</td><td class="nm">速解</td><td class="lim">時間</td><td>事件的限制時間 −15%</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D24</td><td class="nm">餘震</td><td class="lim">時間</td><td>踩到陷阱多扣 1 點穩定度</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D25</td><td class="nm">斷橋</td><td class="lim">移動</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D26</td><td class="nm">逆風</td><td class="lim">移動</td><td>受到的治療 −15%（全場合計上限 40%）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D27</td><td class="nm">移形</td><td class="lim">移動</td><td>每 40 秒發動一次定時危害，威力 0%　—　「安全的地方要換了。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D28</td><td class="nm">追星</td><td class="lim">移動</td><td>每 30 秒發動一次定時危害，威力 180%　—　「追星球鎖定了目標。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D29</td><td class="nm">雙生妖紋</td><td class="lim">怪物強化</td><td>精英與稀有怪各多帶 2 條詞綴</td><td class="num roll">＋10%</td><td class="num">5</td></tr><tr><td class="oid">D30</td><td class="nm">群英</td><td class="lim">怪物強化</td><td>精英怪數量 +50%</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D31</td><td class="nm">稀兆</td><td class="lim">怪物強化</td><td>稀有怪數量 +50%</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D32</td><td class="nm">妖將旗</td><td class="lim">怪物強化</td><td>怪物攻擊力與魔攻 +15%（地圖加成合計上限 50%）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D33</td><td class="nm">靜步印</td><td class="lim">玩家限制</td><td>每 30 秒發動一次定時危害，威力 0%　—　「靜步印落下——停下來互動兩秒可解。」</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D34</td><td class="nm">交替法門</td><td class="lim">玩家限制</td><td>受到的治療 −10%（全場合計上限 40%）</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D35</td><td class="nm">孤絕印</td><td class="lim">玩家限制</td><td>每 30 秒發動一次定時危害，威力 160%　—　「孤絕印——離其他人遠一點。」</td><td class="num roll">＋6%</td><td class="num">3</td></tr><tr><td class="oid">D36</td><td class="nm">問心印</td><td class="lim">玩家限制</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋4%</td><td class="num">2</td></tr><tr><td class="oid">D37</td><td class="nm">守財妖</td><td class="lim">獎勵加成</td><td>稀有怪數量 +1%</td><td class="num roll">＋8%</td><td class="num">3</td></tr><tr><td class="oid">D38</td><td class="nm">負寶前行</td><td class="lim">獎勵加成</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋8%</td><td class="num">3</td></tr><tr><td class="oid">D39</td><td class="nm">契命寶庫</td><td class="lim">獎勵加成</td><td>只改變場景與路線，不改數值（獎勵加成照給）</td><td class="num roll">＋10%</td><td class="num">4</td></tr><tr><td class="oid">D40</td><td class="nm">太初劫契<span class="bn t5">限太初</span></td><td class="lim">獎勵加成</td><td>每 45 秒發動一次定時危害，威力 220%　—　「劫輪轉動，安全區只有一塊。」</td><td class="num roll">＋14%</td><td class="num">6</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>20 項風險祭壇</h2>
+    <p class="note">過層時會進轉層廳，<b>3 選 1 或跳過</b>，一場最多 3 個。<b>選了不能反悔。</b>成本會先攤在你面前 —— 獎勵倍率最多加到 ＋30%。資格不符的祭壇根本不會出現在選單上，那不是壞了。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>編號</th><th>名稱</th><th>做什麼</th><th class="num">獎勵倍率</th><th class="num">立即扣穩</th><th>出現條件</th></tr></thead>
+        <tbody><tr><td class="oid">A01</td><td class="nm">添律</td><td>從下一層起，天地多加一條律。</td><td class="num roll">—</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A02</td><td class="nm">獻穩</td><td>把一部分穩定獻出去，換取更高的收益。</td><td class="num roll">＋8%</td><td class="num">10</td><td class="lim">剩餘穩定度 ≥ 30</td></tr><tr><td class="oid">A03</td><td class="nm">妖潮</td><td>妖氣翻湧，下一個精英層會多一名精英。</td><td class="num roll">＋6%</td><td class="num">—</td><td class="lim">尚未達到密度上限</td></tr><tr><td class="oid">A04</td><td class="nm">稀世</td><td>稀世之物將現，下一層多一隻稀有。</td><td class="num roll">＋6%</td><td class="num">—</td><td class="lim">尚未達到密度上限</td></tr><tr><td class="oid">A05</td><td class="nm">斷燈</td><td>熄一盞魂燈。復起的機會少一次。</td><td class="num roll">＋10%</td><td class="num">—</td><td class="lim">至少留下 1 盞魂燈</td></tr><tr><td class="oid">A06</td><td class="nm">惜藥</td><td>少一次補給。</td><td class="num roll">＋5%</td><td class="num">—</td><td class="lim">還有補給次數</td></tr><tr><td class="oid">A07</td><td class="nm">長夜</td><td>長夜將至——下一層多兩組普通怪，必須全清。</td><td class="num roll">＋5%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A08</td><td class="nm">染劫</td><td>染上一分劫氣。污染越高，詞綴與法則越多。</td><td class="num roll">＋3%</td><td class="num">—</td><td class="lim">尚未跨過污染門檻</td></tr><tr><td class="oid">A09</td><td class="nm">催隙</td><td>裂隙擴大，往後的自然消耗更快。</td><td class="num roll">＋8%</td><td class="num">—</td><td class="lim">只在第 1 層之前</td></tr><tr><td class="oid">A10</td><td class="nm">守火</td><td>護住火種走完全程。不能用瞬移攜帶。</td><td class="num roll">＋6%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A11</td><td class="nm">血誓</td><td>以血立誓——下個首領的首輪危險招更重。</td><td class="num roll">＋5%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A12</td><td class="nm">雙衛</td><td>下個首領開場就帶著兩名護衛。</td><td class="num roll">＋6%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A13</td><td class="nm">禁補</td><td>首領現身前的一段時間，補給封閉。</td><td class="num roll">＋3%</td><td class="num">—</td><td class="lim">還有補給次數</td></tr><tr><td class="oid">A14</td><td class="nm">迅解</td><td>下一個事件的時間縮短。</td><td class="num roll">＋4%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A15</td><td class="nm">破甲試煉</td><td>下個首領的抗性提高，考驗你的破甲。</td><td class="num roll">＋5%</td><td class="num">—</td><td class="lim">額外抗性 ≤ 220</td></tr><tr><td class="oid">A16</td><td class="nm">追影</td><td>下一層的稀有會追加「追獵」。</td><td class="num roll">—</td><td class="num">—</td><td class="lim">尚未達到密度上限</td></tr><tr><td class="oid">A17</td><td class="nm">護脈</td><td>守住節點一分鐘。成功回穩定，失敗再扣。</td><td class="num roll">—</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A18</td><td class="nm">解咒</td><td>解掉一條法則——代價是立刻扣穩定。</td><td class="num roll">—</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A19</td><td class="nm">負寶</td><td>帶著寶匣走到出口。半分鐘後會有兩波伏擊。</td><td class="num roll">＋7%</td><td class="num">—</td><td class="lim">無條件</td></tr><tr><td class="oid">A20</td><td class="nm">孤注</td><td>孤注一擲：本場首領不能重試，失敗直接崩塌。</td><td class="num roll">＋10%</td><td class="num">—</td><td class="lim">只在首領之前</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">獎勵倍率寫「—」的那幾項不是沒好處 —— 它們是<b>直接多給你一條法則或一次翻盤機會</b>，收益是從那條法則本身的獎勵加成來的，不再另外加一次。</p>
+  </section>
+
+  <section>
+    <h2>18 條萬妖詞綴</h2>
+    <p class="note">掛在怪物身上的額外能力，發動前會在畫面上預警。有三條硬規則擋著：<b>回血與護盾最多一種</b>、<b>瞬移不與硬控同場</b>、<b>死亡地板最多一個來源</b> —— 不會出現無解組合。</p>
+    <div class="controls">
+      <div class="ctl-row">
+        <input id="q-aff" class="search" type="search" placeholder="搜尋詞綴…" aria-label="搜尋詞綴" data-target="#t-aff">
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="t-aff">
+        <thead><tr><th>編號</th><th>名稱</th><th>效果</th><th class="num">危險度</th></tr></thead>
+        <tbody><tr><td class="oid">W01</td><td class="nm">巨靈</td><td>血量 +30%</td><td class="num">2</td></tr><tr><td class="oid">W02</td><td class="nm">狂暴</td><td>攻擊力與魔攻 +15%</td><td class="num">3</td></tr><tr><td class="oid">W03</td><td class="nm">玄甲</td><td>物理抗性 +30</td><td class="num">2</td></tr><tr><td class="oid">W04</td><td class="nm">法殼</td><td>魔法抗性 +30</td><td class="num">2</td></tr><tr><td class="oid">W05</td><td class="nm">再生</td><td>每 10 秒回復自身 1% 血量</td><td class="num">4</td></tr><tr><td class="oid">W06</td><td class="nm">護體</td><td>每 20 秒獲得一層護盾（自身血量的 5%）</td><td class="num">3</td></tr><tr><td class="oid">W07</td><td class="nm">雷劫</td><td>每 20 秒放一次地板，威力 180%　—　「三秒後落雷。」</td><td class="num">3</td></tr><tr><td class="oid">W08</td><td class="nm">烈焰</td><td>每 24 秒放一次地板，威力 160%　—　「火焰揚起，注意安全扇區。」</td><td class="num">3</td></tr><tr><td class="oid">W09</td><td class="nm">毒潭</td><td>死亡後在原地留下地板 3 秒，威力 100%</td><td class="num">3</td></tr><tr><td class="oid">W10</td><td class="nm">屍爆</td><td>死亡後在原地留下地板 3 秒，威力 220%</td><td class="num">3</td></tr><tr><td class="oid">W11</td><td class="nm">末劫</td><td>死亡後在原地留下地板 3 秒，威力 150%</td><td class="num">4</td></tr><tr><td class="oid">W12</td><td class="nm">瞬影</td><td>每 20 秒瞬移一次　—　「它要換位置了。」</td><td class="num">3</td></tr><tr><td class="oid">W13</td><td class="nm">寒縛</td><td>每 20 秒放一次減速（不是暈眩）　—　「寒縛——會慢一下，不會暈。」</td><td class="num">2</td></tr><tr><td class="oid">W14</td><td class="nm">喚靈</td><td>每 25 秒召喚 2 隻同伴</td><td class="num">3</td></tr><tr><td class="oid">W15</td><td class="nm">追獵</td><td>每 20 秒點名一人，威力 180%　—　「最遠的那個被盯上了。」</td><td class="num">3</td></tr><tr><td class="oid">W16</td><td class="nm">妖霧</td><td>霧區內命中率 −5%</td><td class="num">2</td></tr><tr><td class="oid">W17</td><td class="nm">神話・劫輪</td><td>每 30 秒輪轉安全扇區，威力 220%　—　「劫輪：兩個安全扇區輪轉。」</td><td class="num">5</td></tr><tr><td class="oid">W18</td><td class="nm">神話・道鏡</td><td>場上出現鏡核，打破它可以讓首領承受更高傷害</td><td class="num">5</td></tr></tbody>
+      </table>
+    </div>
+    <h3 class="sub">每一場會掛幾條</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>階級</th><th class="num">普通怪</th><th class="num">精英</th><th class="num">稀有</th><th class="num">首領</th></tr></thead>
+        <tbody><tr><td class="nm">凡</td><td class="num">0</td><td class="num">2</td><td class="num">3</td><td class="num">2</td></tr><tr><td class="nm">靈</td><td class="num">0~1</td><td class="num">2</td><td class="num">3</td><td class="num">2</td></tr><tr><td class="nm">仙</td><td class="num">1</td><td class="num">3</td><td class="num">4</td><td class="num">3</td></tr><tr><td class="nm">神</td><td class="num">1~2</td><td class="num">3</td><td class="num">4</td><td class="num">3</td></tr><tr><td class="nm">太初</td><td class="num">2</td><td class="num">4</td><td class="num">5</td><td class="num">4</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">最後兩條「神話」詞綴要污染 ≥ 70 且階級在神以上才會進池，太初一律開放。</p>
+  </section>
+
+  <section>
+    <h2>隱藏層</h2>
+    <p class="note">打完主線首領之後才判定。機率 =（階級基礎率 + 隱藏分）%，隱藏分最多算 25 分，最終機率上限 80%。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>做到什麼</th><th class="num">隱藏分</th></tr></thead>
+        <tbody><tr><td>完成當場全部的事件</td><td class="num roll">＋8</td></tr><tr><td>解開模板的隱藏機關</td><td class="num roll">＋8</td></tr><tr><td>全場無人死亡</td><td class="num roll">＋6</td></tr><tr><td>擊殺模板的特定稀有怪</td><td class="num roll">＋5</td></tr><tr><td>打完主線首領時穩定度 ≥ 40</td><td class="num roll">＋5</td></tr><tr><td>在限時內完成主線</td><td class="num roll">＋3</td></tr><tr><td>三個風險祭壇全部成功</td><td class="num roll">＋3</td></tr></tbody>
+      </table>
+    </div>
+    <div class="callout">
+      門開了也不一定進得去 —— 要<b>穩定度 ≥ 20</b>，而且付掉 <b>8 點</b>之後還要剩 <b>≥ 12</b>。兩個條件不到就只能撤離。<br>
+      <b>撤離或失敗都不影響主線的獎勵</b> —— 主線的部分在打完首領當下就已經入帳了。<br>
+      「限時完成主線」的門檻依階級是 凡 18／靈 23／仙 30／神 36／太初 40 分鐘。
+    </div>
+  </section>
+
+  <section>
+    <h2>獎勵</h2>
+    <p class="note">主線通關給<b>秘境碎片</b>，基礎 20 片再乘上難度倍率與本週收益率。難度倍率吃階級（凡 ×1 → 太初 ×3）、層數、祭壇與法則。</p>
+    <div class="two">
+      <div>
+        <h3 class="sub" style="margin-top:0">本週第幾場</h3>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>場次</th><th class="num">收益率</th></tr></thead><tbody><tr><td>第 1 ~ 6 場</td><td class="num roll">100%</td></tr><tr><td>第 7 ~ 10 場</td><td class="num roll">25%</td></tr><tr><td>第 11 場之後</td><td class="num roll">0%</td></tr></tbody></table>
+        </div>
+        <p class="note">一週認真打 <b>6 場</b>就好，之後大幅遞減。守望者的第一頁就寫著你下一場拿幾成。</p>
+      </div>
+      <div>
+        <h3 class="sub" style="margin-top:0">失敗補償</h3>
+        <p class="note">崩塌或超時也有補償：每完成一個非首領層 2 片，單場最多 5 片；每週最多領 3 次、總共 15 片。<b>已經入帳的獎勵不會因為崩塌被收回。</b></p>
+      </div>
+    </div>
+    <h3 class="sub">碎片兌換（找秘境守望者）</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>兌換</th><th class="num">碎片</th><th class="num">每週上限</th><th>門檻</th></tr></thead>
+        <tbody><tr><td class="nm">修仙基礎材料包</td><td class="num roll">40</td><td class="num">10</td><td class="lim">—</td></tr><tr><td class="nm">符文原料包</td><td class="num roll">100</td><td class="num">5</td><td class="lim">—</td></tr><tr><td class="nm">MVP附魔原料包</td><td class="num roll">160</td><td class="num">3</td><td class="lim">—</td></tr><tr><td class="nm">悟道材料包</td><td class="num roll">240</td><td class="num">1</td><td class="lim">—</td></tr><tr><td class="nm">高階符文碎料</td><td class="num roll">400</td><td class="num">1</td><td class="lim">完成 仙 階以上的主線</td></tr><tr><td class="nm">秘境限定服飾碎片</td><td class="num roll">120</td><td class="num">3</td><td class="lim">—</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>成就、排行榜與守望者</h2>
+    <div class="two">
+      <div>
+        <h3 class="sub" style="margin-top:0">8 個秘境成就</h3>
+        <div class="tbl-wrap">
+          <table><tbody><tr><td class="nm">初窺洞天</td><td>任一主線首通</td></tr><tr><td class="nm">六境行者</td><td>六個模板各首通</td></tr><tr><td class="nm">不染塵劫</td><td>全隊無死亡完成主線</td></tr><tr><td class="nm">守界有方</td><td>主線完成時穩定度 &gt;= 40</td></tr><tr><td class="nm">踏隙如風</td><td>依各品階的限時完成主線</td></tr><tr><td class="nm">三契問天</td><td>同場 3 個有效風險祭壇全部成功</td></tr><tr><td class="nm">太初見道</td><td>太初道影首次完成</td></tr><tr><td class="nm">一人問道</td><td>鎖定單人完成太初(含道影)</td></tr></tbody></table>
+        </div>
+        <p class="note">只給收藏與外觀，<b>不堆疊永久傷害</b>。成就記在帳號上，換角色不用重領。</p>
+      </div>
+      <div>
+        <h3 class="sub" style="margin-top:0">5 種排行榜</h3>
+        <p class="note">最快主線、最快含隱藏、最高危險度、最高獎勵倍率、單人太初。各自依階級、模板、人數與境界分開排。</p>
+        <h3 class="sub">秘境守望者</h3>
+        <p class="note">在<b>崑崙</b>。查入口開在哪張圖、斷線後返回原場次、領取獎勵、碎片兌換、看成就與排行榜，全都找他。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>爭天秘境</h2>
+    <p class="note">同一套秘境的 <b>PVP 分支</b>，報名處也在崑崙。<b>永遠是自願的</b> —— 公告會明講是 PVP，還要按二次確認才鎖隊。它<b>不抽太初、不列一般通關榜</b>，核心畢業材料一片都不給。不想碰的人完全不會被捲進去。</p>
+  </section>
+
+  <footer class="foot">
+    資料以伺服器實際設定為準。若頁面內容與遊戲內不符，請以遊戲內為準並回報管理員。
+  </footer>
+</div>
+
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.search[data-target]');
+  Array.prototype.forEach.call(boxes, function(box){
+    var tb = document.querySelector(box.getAttribute('data-target') + ' tbody');
+    if(!tb) return;
+    var rows = Array.prototype.slice.call(tb.querySelectorAll('tr'));
+    box.addEventListener('input', function(){
+      var s = box.value.trim().toLowerCase();
+      rows.forEach(function(tr){
+        tr.hidden = !!s && tr.textContent.toLowerCase().indexOf(s) < 0;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
