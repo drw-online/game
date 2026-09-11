@@ -36,7 +36,7 @@
   那是 2026-09-09 的分工 —— 00 是數值表, 02 是 UI 文案。抓錯檔案會得到
   空字串, 頁面上每一條效果都只剩數字。
 """
-import os, re, io, html
+import os, re, io, html, json      # json: 互動星盤要把節點資料序列化進頁面
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WEB  = os.path.dirname(HERE)
@@ -431,6 +431,240 @@ def node_table(rows, meta, cross=False):
     return "\n".join(o)
 
 
+# ---------------------------------------------------------------- 互動星盤
+#
+# 進階星盤與大道 / 萬法都不一樣, 它是「門檻制」不是樹:
+#
+#   一般節點   同星域已投入 >= ADV_DOM_PRE(3) 點
+#   核心星位   同星域已投入 >= ADV_CORE_PRE(12) 點   (tier 2)
+#   跨星域     兩側星域「各」>= ADV_CROSS_PRE(6) 點  (tier 3)
+#
+# ★★ 每個星域「編號最小的那個節點」是入口, 永遠可點 ★★
+#   沒有這個例外會死結 —— 要 3 點才點得下去, 但不點就永遠拿不到那 3 點。
+#   (01.核心.txt 的 F_Adv_PreOK 有一整段註解在講: 2026-09-10 修過,
+#    舊版只放行「該域 0 點」時, 投入 1 點之後就永久卡死。)
+#   前端不必另外拿資料 —— 依 dom 分組取最小 id 就是入口。
+#
+# ★ pos / neg 已經是 eff_text() 產好的「每級」文字, 所以 tooltip 直接用;
+#   但也因為是文字, 加總不了 —— 側欄只給各星域投入與門檻進度, 不做效果總計。
+def adv_sim_block(rows, meta):
+    sim_rows = [{k: r[k] for k in ("id", "name", "dom", "tier", "max", "cost",
+                                   "pos", "neg", "xa", "xb")} for r in rows]
+    sim_meta = {
+        "maxPt": meta["max_pt"], "domPre": meta["dom_pre"],
+        "corePre": meta["core_pre"], "crossPre": meta["cross_pre"],
+        "dom": {str(k): v for k, v in meta["dom"].items()},
+    }
+    css = """<style>
+  .asim-wrap{border:1px solid var(--rule);border-radius:10px;background:var(--paper);
+    overflow:hidden;margin-top:14px}
+  .asim-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 12px;
+    background:var(--sunk);border-bottom:1px solid var(--rule)}
+  .asim-bar button{font:inherit;font-size:.86rem;padding:5px 11px;border-radius:999px;
+    border:1px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer}
+  .asim-bar button:hover{border-color:var(--cinnabar);color:var(--cinnabar)}
+  .asim-bar .sp{flex:1 1 auto}
+  .asim-pts{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--ink-soft)}
+  .asim-pts b{color:var(--cinnabar);font-size:1.05rem}
+  .asim-body{display:grid;grid-template-columns:minmax(0,1fr) 240px}
+  @media (max-width:820px){.asim-body{grid-template-columns:minmax(0,1fr)}}
+  .asim-canvas{overflow:auto;background:var(--ground);max-height:600px}
+  .asim-canvas svg{display:block}
+  .asim-side{border-left:1px solid var(--rule);padding:12px;font-size:.86rem;
+    max-height:600px;overflow:auto}
+  @media (max-width:820px){.asim-side{border-left:0;border-top:1px solid var(--rule)}}
+  .asim-side h4{margin:0 0 6px;font-size:.8rem;color:var(--ink-faint)}
+  .asim-side dl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:0 0 14px}
+  .asim-side dt{color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .asim-side dd{margin:0;font-variant-numeric:tabular-nums;font-weight:500}
+  .asim-side dd.ok{color:var(--cinnabar)}
+  .asim-side dd.no{color:var(--ink-faint)}
+  .asim-tip{padding:8px 12px;border-top:1px solid var(--rule);background:var(--sunk);
+    font-size:.8rem;color:var(--ink-faint)}
+  .asim-axis{fill:var(--ink-faint);font-size:11px}
+  .asim-node{cursor:pointer}
+  .asim-node circle{fill:var(--paper);stroke:var(--ink-faint);stroke-width:2}
+  .asim-node.on circle{fill:var(--cinnabar);stroke:var(--cinnabar)}
+  .asim-node.max circle{stroke:#D8A21B;stroke-width:3}
+  .asim-node.locked circle{stroke-dasharray:3 3;opacity:.5}
+  .asim-node text.lbl{font-size:10px;fill:var(--ink-soft)}
+  .asim-node.on text.lbl{fill:var(--ink)}
+  .asim-node text.lv{font-size:10px;font-weight:700;fill:#D8A21B}
+  .asim-node:focus circle{stroke:var(--cinnabar);stroke-width:3}
+</style>"""
+    html = """
+<section id="sim">
+<h2>互動星盤</h2>
+<div class="note">在盤上排點看看：<b>左鍵加一級、右鍵退一級</b>。規則跟遊戲裡一致 ——
+一般節點要同星域先投入 %d 點、核心星位要 %d 點、跨星域連線要<b>兩側各</b> %d 點，
+總共只有 <b>%d 點</b>。每個星域最上面那個是<b>入口</b>，不受門檻限制（否則會死結）。</div>
+<div class="asim-wrap">
+  <div class="asim-bar" id="asimBar"></div>
+  <div class="asim-body">
+    <div class="asim-canvas" id="asimCanvas"></div>
+    <div class="asim-side">
+      <h4>各星域投入</h4><dl id="asimDom"></dl>
+      <h4>跨星域連線</h4><dl id="asimCross"></dl>
+    </div>
+  </div>
+  <div class="asim-tip" id="asimTip">點一個節點試試。配點會寫進網址，複製整條網址就能分享。</div>
+</div>
+</section>""" % (meta["dom_pre"], meta["core_pre"], meta["cross_pre"], meta["max_pt"])
+    js = r"""
+<script>
+(function(){
+  var R = __ROWS__, M = __META__;
+  var N = {}, i, k;
+  for(i=0;i<R.length;i++) N[R[i].id] = R[i];
+  var lv = {};
+  // 每個星域編號最小的節點 = 入口, 不受門檻限制
+  var entry = {};
+  for(i=0;i<R.length;i++){
+    var d = R[i].dom;
+    if(d === 7) continue;
+    if(!entry[d] || R[i].id < entry[d]) entry[d] = R[i].id;
+  }
+  function domUsed(d){
+    var s = 0;
+    for(k in lv){ if(N[k].dom === d) s += lv[k]*N[k].cost; }
+    return s;
+  }
+  function used(){ var s=0; for(k in lv) s += lv[k]*N[k].cost; return s; }
+  function preOK(id){
+    var n = N[id];
+    if(n.tier === 3) return domUsed(n.xa) >= M.crossPre && domUsed(n.xb) >= M.crossPre;
+    if(n.tier === 2) return domUsed(n.dom) >= M.corePre;
+    if(id === entry[n.dom]) return true;
+    return domUsed(n.dom) >= M.domPre;
+  }
+  function why(id){
+    var n = N[id];
+    if(n.tier === 3) return '跨星域連線要「' + M.dom[n.xa] + '」與「' + M.dom[n.xb] + '」各投入 ' + M.crossPre + ' 點（目前 ' + domUsed(n.xa) + ' / ' + domUsed(n.xb) + '）。';
+    if(n.tier === 2) return '核心星位要同星域先投入 ' + M.corePre + ' 點（目前 ' + domUsed(n.dom) + '）。';
+    return '要同星域先投入 ' + M.domPre + ' 點（目前 ' + domUsed(n.dom) + '）。';
+  }
+  // 退一級之後, 有沒有別人的門檻被打破
+  function breaksAfter(id){
+    var save = lv[id], bad = 0;
+    if(save - 1 > 0) lv[id] = save - 1; else delete lv[id];
+    for(k in lv){ if(!preOK(k)){ bad = k; break; } }
+    lv[id] = save;
+    return bad;
+  }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function title(id){
+    var n = N[id], cl = lv[id]||0;
+    var t = n.name + ' — ' + (n.dom === 7 ? '跨星域連線' : M.dom[n.dom]);
+    t += '\n上限 ' + n.max + ' 級，每級 ' + n.cost + ' 點';
+    if(n.pos) t += '\n投資 1 級：' + n.pos;
+    if(n.neg) t += '\n代價（每級）：' + n.neg;
+    if(cl > 0) t += '\n目前 ' + cl + ' 級，已投入 ' + (cl*n.cost) + ' 點';
+    if(id === entry[n.dom]) t += '\n（此星域的入口，不受門檻限制）';
+    return t;
+  }
+  function draw(){
+    var COLW=150, ROWH=48, PADX=70, PADY=44, cols={}, pos={}, out=[];
+    var ids = R.map(function(r){ return r.id; }).sort(function(a,b){
+      if(N[a].dom !== N[b].dom) return N[a].dom - N[b].dom;
+      return a - b; });
+    for(i=0;i<ids.length;i++){
+      var d2 = N[ids[i]].dom;
+      cols[d2] = cols[d2] || 0;
+      pos[ids[i]] = { x: PADX + (d2-1)*COLW, y: PADY + 22 + cols[d2]*ROWH };
+      cols[d2]++;
+    }
+    var maxr = 0, dmax = 0;
+    for(var c in cols){ if(cols[c] > maxr) maxr = cols[c]; if(+c > dmax) dmax = +c; }
+    var W = PADX*2 + (dmax-1)*COLW + 110, H = PADY*2 + 22 + maxr*ROWH;
+    out.push('<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">');
+    for(var d3=1; d3<=dmax; d3++){
+      var nm = d3 === 7 ? '跨星域' : (M.dom[d3] || '');
+      out.push('<text class="asim-axis" x="'+(PADX+(d3-1)*COLW)+'" y="20" text-anchor="middle">'+esc(nm)+'</text>');
+      out.push('<text class="asim-axis" x="'+(PADX+(d3-1)*COLW)+'" y="36" text-anchor="middle">'+(d3===7?'':domUsed(d3)+' 點')+'</text>');
+    }
+    for(i=0;i<ids.length;i++){
+      var id=ids[i], n=N[id], p=pos[id], cl=lv[id]||0;
+      var cls=['asim-node'];
+      if(cl>0) cls.push('on');
+      if(cl>=n.max) cls.push('max');
+      if(cl===0 && !preOK(id)) cls.push('locked');
+      var r = n.tier===1 ? 10 : 13;
+      out.push('<g class="'+cls.join(' ')+'" data-id="'+id+'" tabindex="0">');
+      out.push('<title>'+esc(title(id))+'</title>');
+      out.push('<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'"/>');
+      out.push('<text class="lv" x="'+(p.x+r-1)+'" y="'+(p.y+r+1)+'">'+(cl||'')+'</text>');
+      out.push('<text class="lbl" x="'+(p.x+r+5)+'" y="'+(p.y+4)+'">'+esc(n.name)+'</text>');
+      out.push('</g>');
+    }
+    out.push('</svg>');
+    document.getElementById('asimCanvas').innerHTML = out.join('');
+  }
+  function side(){
+    var h=[], d;
+    for(d=1; d<=6; d++){
+      var u=domUsed(d), st = u>=M.domPre ? 'ok' : 'no';
+      h.push('<dt>'+esc(M.dom[d]||('星域'+d))+'</dt><dd class="'+st+'">'+u+'</dd>');
+    }
+    document.getElementById('asimDom').innerHTML = h.join('');
+    var h2=[];
+    for(i=0;i<R.length;i++){
+      if(R[i].tier !== 3) continue;
+      var a=domUsed(R[i].xa), b=domUsed(R[i].xb);
+      var okk = a>=M.crossPre && b>=M.crossPre;
+      h2.push('<dt>'+esc(R[i].name)+'</dt><dd class="'+(okk?'ok':'no')+'">'+a+'/'+b+'</dd>');
+    }
+    document.getElementById('asimCross').innerHTML = h2.length?h2.join(''):'<dt>—</dt><dd></dd>';
+    document.getElementById('asimUsed').innerHTML = '已用 <b>'+used()+'</b> / '+M.maxPt+' 點';
+  }
+  function tip(m){ document.getElementById('asimTip').textContent = m; }
+  function add(id){
+    var n=N[id], cl=lv[id]||0;
+    if(cl>=n.max){ tip(n.name+' 已經滿級了。'); return; }
+    if(cl===0 && !preOK(id)){ tip(why(id)); return; }
+    if(used()+n.cost > M.maxPt){ tip('點數不夠了，這一級要 '+n.cost+' 點，總共只有 '+M.maxPt+' 點。'); return; }
+    lv[id]=cl+1; tip(n.name+' → '+lv[id]+' 級（花了 '+n.cost+' 點）。'); sync();
+  }
+  function sub(id){
+    var n=N[id], cl=lv[id]||0;
+    if(cl<=0) return;
+    var b=breaksAfter(id);
+    if(b){ tip('不能退 —— 退了之後【'+N[b].name+'】的門檻就不夠了。'); return; }
+    lv[id]=cl-1; if(!lv[id]) delete lv[id];
+    tip(n.name+' → '+(lv[id]||0)+' 級。'); sync();
+  }
+  function encode(){ var a=[],ks=Object.keys(lv).sort(function(x,y){return x-y;});
+    for(i=0;i<ks.length;i++) a.push(ks[i]+'.'+lv[ks[i]]); return a.join('-'); }
+  function decode(s){ lv={}; if(!s) return;
+    var ps=s.split('-');
+    for(i=0;i<ps.length;i++){ var kv=ps[i].split('.'), id=+kv[0], v=+kv[1];
+      if(N[id] && v>0 && v<=N[id].max) lv[id]=v; } }
+  function sync(){ draw(); side();
+    var h=encode(); history.replaceState(null,'',h?('#b='+h):location.pathname); }
+  document.getElementById('asimBar').innerHTML =
+    '<span class="asim-pts" id="asimUsed"></span><span class="sp"></span>'+
+    '<button type="button" id="asimReset">清空</button>';
+  document.getElementById('asimBar').addEventListener('click', function(ev){
+    var b=ev.target.closest('button');
+    if(b && b.id==='asimReset'){ lv={}; tip('已清空。'); sync(); } });
+  var cv=document.getElementById('asimCanvas');
+  cv.addEventListener('click', function(ev){
+    var g=ev.target.closest('.asim-node'); if(g) add(+g.dataset.id); });
+  cv.addEventListener('contextmenu', function(ev){
+    var g=ev.target.closest('.asim-node'); if(!g) return;
+    ev.preventDefault(); sub(+g.dataset.id); });
+  cv.addEventListener('keydown', function(ev){
+    var g=ev.target.closest('.asim-node'); if(!g) return;
+    if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); add(+g.dataset.id); }
+    if(ev.key==='Backspace'||ev.key==='Delete'){ ev.preventDefault(); sub(+g.dataset.id); } });
+  if(location.hash.indexOf('#b=')===0) decode(location.hash.slice(3));
+  sync();
+})();
+</script>"""
+    js = js.replace("__ROWS__", json.dumps(sim_rows, ensure_ascii=False, separators=(",", ":")))
+    js = js.replace("__META__", json.dumps(sim_meta, ensure_ascii=False, separators=(",", ":")))
+    return css + html + js
+
+
 def build():
     rows, meta = collect()
     ecl, eng = collect_eclipse()
@@ -521,6 +755,8 @@ def build():
       '尋寶者犧牲戰力與生存，破甲者犧牲自身防禦，法術穿透者承擔 SP 與詠唱壓力，'
       '異常流則承擔較低的直接輸出。選你願意付的代價。</div>')
     a('</section>')
+
+    a(adv_sim_block(rows, meta))
 
     for d in sorted(meta["dom"]):
         a('<section id="d%d">' % d)
