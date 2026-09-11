@@ -166,6 +166,311 @@ h3 .role{margin-left:12px; font-family:"Noto Sans TC","PingFang TC",sans-serif;
     <div class="jump"><a href="#p0">武道</a><a href="#p1">仙道</a><a href="#p2">守道</a><a href="#p3">血道</a><a href="#p4">疾道</a><a href="#p5">天命</a></div>
   </section>
 
+<!-- DAOPAN-SIM:BEGIN -->
+<style>
+  .sim-wrap{border:1px solid var(--rule);border-radius:10px;background:var(--paper);
+    box-shadow:var(--shadow);overflow:hidden;margin-top:14px}
+  .sim-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    padding:10px 12px;background:var(--sunk);border-bottom:1px solid var(--rule)}
+  .sim-bar button{font:inherit;font-size:.86rem;padding:5px 11px;border-radius:999px;
+    border:1px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer}
+  .sim-bar button:hover{border-color:var(--cinnabar);color:var(--cinnabar)}
+  .sim-bar button[aria-pressed="true"]{background:var(--cinnabar);border-color:var(--cinnabar);
+    color:var(--on-accent)}
+  .sim-bar .spacer{flex:1 1 auto}
+  .sim-pts{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--ink-soft)}
+  .sim-pts b{color:var(--cinnabar);font-size:1.05rem}
+  .sim-body{display:grid;grid-template-columns:minmax(0,1fr) 250px}
+  @media (max-width:820px){.sim-body{grid-template-columns:minmax(0,1fr)}}
+  .sim-canvas{overflow:auto;background:var(--ground);max-height:560px}
+  .sim-canvas svg{display:block}
+  .sim-side{border-left:1px solid var(--rule);padding:12px;font-size:.86rem;
+    max-height:560px;overflow:auto}
+  @media (max-width:820px){.sim-side{border-left:0;border-top:1px solid var(--rule)}}
+  .sim-side h4{margin:0 0 6px;font-size:.8rem;letter-spacing:.06em;color:var(--ink-faint);
+    text-transform:uppercase}
+  .sim-side dl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:0 0 14px}
+  .sim-side dt{color:var(--ink-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .sim-side dd{margin:0;font-variant-numeric:tabular-nums;color:var(--cinnabar);font-weight:500}
+  .sim-empty{color:var(--ink-faint)}
+  .sim-tip{padding:8px 12px;border-top:1px solid var(--rule);background:var(--sunk);
+    font-size:.8rem;color:var(--ink-faint)}
+  .sim-axis{fill:var(--ink-faint);font-size:11px}
+  .sim-link{stroke:var(--rule);stroke-width:2;fill:none}
+  .sim-link.on{stroke:var(--cinnabar);stroke-width:2.5}
+  .sim-link.alt{stroke-dasharray:4 3}
+  .sim-node{cursor:pointer}
+  .sim-node circle{fill:var(--paper);stroke:var(--ink-faint);stroke-width:2;
+    transition:fill .12s,stroke .12s}
+  .sim-node.on circle{fill:var(--cinnabar);stroke:var(--cinnabar)}
+  .sim-node.max circle{stroke:#D8A21B;stroke-width:3}
+  .sim-node.locked circle{stroke-dasharray:3 3;opacity:.5}
+  .sim-node text.lbl{font-size:11px;fill:var(--ink-soft)}
+  .sim-node.on text.lbl{fill:var(--ink)}
+  .sim-node text.lv{font-size:10px;font-weight:700;fill:#D8A21B}
+  .sim-node.t4 circle{stroke-width:3}
+  .sim-node:focus{outline:none}
+  .sim-node:focus circle{stroke:var(--focus);stroke-width:3}
+</style>
+
+<section id="sim">
+  <h2>互動星盤</h2>
+  <p class="note">直接在盤上排點看看：<b>左鍵加一級、右鍵退一級</b>。規則跟遊戲裡一致——要有前置節點才點得到、總共只有 <b>56 點</b>、同群組的核心天賦只能擇一。橫軸是節點的深度，越往右越深。</p>
+  <div class="sim-wrap">
+    <div class="sim-bar" id="simTabs"></div>
+    <div class="sim-body">
+      <div class="sim-canvas" id="simCanvas"></div>
+      <div class="sim-side">
+        <h4>各道投入</h4>
+        <dl id="simPaths"></dl>
+        <h4>加成總計</h4>
+        <dl id="simEff"></dl>
+      </div>
+    </div>
+    <div class="sim-tip" id="simTip">點一個節點試試。配點會寫進網址，複製整條網址就能分享。</div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var D = {"paths":[{"b":100,"n":"武道","desc":"物理輸出 —— ATK、P.ATK、近遠物理傷害、破甲","slot":121},{"b":200,"n":"仙道","desc":"魔法輸出 —— MATK、S.MATK、魔法傷害、詠唱","slot":221},{"b":300,"n":"守道","desc":"坦克防禦 —— MHP、RES、MRES、減傷、抗 Boss","slot":320},{"b":400,"n":"血道","desc":"生存恢復 —— MHP、恢復、吸血、生命轉換","slot":420},{"b":500,"n":"疾道","desc":"行動速度 —— ASPD、技能後延遲、移動速度","slot":520},{"b":600,"n":"天命","desc":"暴擊特化 —— CRI、暴擊傷害(物理/法術)、LUK、特殊觸發","slot":621}],"keyname":["MHP","MHP","MSP","MSP","ATK","MATK","P.ATK","S.MATK","RES","MRES","近距離物理傷害","遠距離物理傷害","魔法攻擊","技能傷害","ASPD","技能後延遲","移動速度","CRI","暴擊傷害(含法術)","LUK","HP 自然恢復","攻擊吸血","近距離傷害減免","遠距離傷害減免","魔法傷害減免","受到 Boss 傷害","無視防禦","全能力","最終物理傷害","固定詠唱","變動詠唱","SP 自然恢復"],"keyunit":[0,1,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,2,1,1],"keysign":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,-1,1,1,1,-1,-1,1],"tiermax":[3,2,1,1,1],"tiercost":[1,2,4,6,3],"tiername":["小型天賦","中型天賦","大型天賦","核心天賦","大道靈石孔"],"cap":56,"full":504,"nodes":{"100":{"n":"煉力","t":1,"p":0,"q":0,"x":0,"e":[[5,40]],"d":0},"101":{"n":"鍛骨","t":1,"p":100,"q":0,"x":0,"e":[[1,400]],"d":1},"102":{"n":"磨鋒","t":1,"p":100,"q":0,"x":0,"e":[[7,4]],"d":1},"103":{"n":"劍心","t":2,"p":102,"q":0,"x":0,"e":[[11,5],[7,3]],"d":2},"104":{"n":"弓意","t":2,"p":102,"q":0,"x":0,"e":[[12,5],[7,3]],"d":2},"105":{"n":"破甲","t":1,"p":101,"q":0,"x":0,"e":[[27,4]],"d":2},"106":{"n":"蠻力","t":1,"p":101,"q":0,"x":0,"e":[[28,2]],"d":2},"107":{"n":"沉腕","t":1,"p":103,"q":0,"x":0,"e":[[11,3]],"d":3},"108":{"n":"遠目","t":1,"p":104,"q":0,"x":0,"e":[[12,3]],"d":3},"109":{"n":"崩山","t":2,"p":107,"q":0,"x":0,"e":[[5,80],[11,4]],"d":4},"110":{"n":"貫日","t":2,"p":108,"q":0,"x":0,"e":[[5,80],[12,4]],"d":4},"111":{"n":"悍體","t":1,"p":106,"q":0,"x":0,"e":[[2,2]],"d":3},"112":{"n":"裂石","t":1,"p":105,"q":0,"x":0,"e":[[27,5]],"d":3},"113":{"n":"武道精通","t":2,"p":109,"q":110,"x":0,"e":[[14,5],[7,6]],"d":5},"114":{"n":"剛勁","t":1,"p":113,"q":0,"x":0,"e":[[7,6]],"d":6},"115":{"n":"疾鋒","t":1,"p":113,"q":0,"x":0,"e":[[16,3]],"d":6},"116":{"n":"萬劍歸宗","t":3,"p":114,"q":0,"x":0,"e":[[7,15],[14,10],[16,10]],"d":7},"117":{"n":"拔山","t":3,"p":115,"q":0,"x":0,"e":[[5,250],[11,10],[12,10]],"d":7},"118":{"n":"破軍","t":1,"p":116,"q":117,"x":0,"e":[[27,6]],"d":8},"119":{"n":"煞氣","t":1,"p":118,"q":0,"x":0,"e":[[29,3]],"d":9},"120":{"n":"天罡","t":3,"p":119,"q":0,"x":0,"e":[[7,12],[29,6]],"d":10},"121":{"n":"武道靈石孔","t":5,"p":113,"q":0,"x":0,"e":[],"d":6},"122":{"n":"一劍破萬法","t":4,"p":120,"q":0,"x":1,"e":[[14,25],[7,20]],"d":11},"123":{"n":"捨身證道","t":4,"p":120,"q":0,"x":2,"e":[[2,-30],[29,20]],"d":11},"200":{"n":"凝神","t":1,"p":0,"q":0,"x":0,"e":[[6,40]],"d":0},"201":{"n":"通竅","t":1,"p":200,"q":0,"x":0,"e":[[3,250]],"d":1},"202":{"n":"靈覺","t":1,"p":200,"q":0,"x":0,"e":[[8,4]],"d":1},"203":{"n":"火法","t":2,"p":202,"q":0,"x":0,"e":[[13,5],[8,3]],"d":2},"204":{"n":"水法","t":2,"p":202,"q":0,"x":0,"e":[[13,5],[31,4]],"d":2},"205":{"n":"聚靈","t":1,"p":201,"q":0,"x":0,"e":[[4,3]],"d":2},"206":{"n":"慧根","t":1,"p":201,"q":0,"x":0,"e":[[28,2]],"d":2},"207":{"n":"焰心","t":1,"p":203,"q":0,"x":0,"e":[[13,3]],"d":3},"208":{"n":"澄心","t":1,"p":204,"q":0,"x":0,"e":[[30,100]],"d":3},"209":{"n":"烈陽訣","t":2,"p":207,"q":0,"x":0,"e":[[6,80],[13,4]],"d":4},"210":{"n":"太陰訣","t":2,"p":208,"q":0,"x":0,"e":[[6,80],[31,5]],"d":4},"211":{"n":"靈台","t":1,"p":206,"q":0,"x":0,"e":[[32,8]],"d":3},"212":{"n":"神識","t":1,"p":205,"q":0,"x":0,"e":[[8,5]],"d":3},"213":{"n":"仙道精通","t":2,"p":209,"q":210,"x":0,"e":[[14,5],[8,6]],"d":5},"214":{"n":"澄明","t":1,"p":213,"q":0,"x":0,"e":[[8,6]],"d":6},"215":{"n":"頓悟","t":1,"p":213,"q":0,"x":0,"e":[[16,3]],"d":6},"216":{"n":"萬法歸元","t":3,"p":214,"q":0,"x":0,"e":[[8,15],[14,10],[13,10]],"d":7},"217":{"n":"法隨心動","t":3,"p":215,"q":0,"x":0,"e":[[30,400],[31,15],[16,8]],"d":7},"218":{"n":"破法","t":1,"p":216,"q":217,"x":0,"e":[[13,4]],"d":8},"219":{"n":"法煞","t":1,"p":218,"q":0,"x":0,"e":[[6,120]],"d":9},"220":{"n":"紫霄","t":3,"p":219,"q":0,"x":0,"e":[[8,12],[13,8]],"d":10},"221":{"n":"仙道靈石孔","t":5,"p":213,"q":0,"x":0,"e":[],"d":6},"222":{"n":"萬法歸一","t":4,"p":220,"q":0,"x":1,"e":[[13,20],[8,25]],"d":11},"223":{"n":"法體雙修","t":4,"p":220,"q":0,"x":1,"e":[[6,150],[5,150],[13,-10]],"d":11},"300":{"n":"堅壁","t":1,"p":0,"q":0,"x":0,"e":[[1,500]],"d":0},"301":{"n":"厚土","t":1,"p":300,"q":0,"x":0,"e":[[9,15]],"d":1},"302":{"n":"御法","t":1,"p":300,"q":0,"x":0,"e":[[10,15]],"d":1},"303":{"n":"金身","t":2,"p":301,"q":0,"x":0,"e":[[9,25],[23,3]],"d":2},"304":{"n":"玄甲","t":2,"p":302,"q":0,"x":0,"e":[[10,25],[25,3]],"d":2},"305":{"n":"重鎧","t":1,"p":301,"q":0,"x":0,"e":[[2,3]],"d":2},"306":{"n":"磐石","t":1,"p":302,"q":0,"x":0,"e":[[24,3]],"d":2},"307":{"n":"鐵骨","t":1,"p":303,"q":0,"x":0,"e":[[9,20]],"d":3},"308":{"n":"靈盾","t":1,"p":304,"q":0,"x":0,"e":[[10,20]],"d":3},"309":{"n":"不壞金身","t":2,"p":307,"q":0,"x":0,"e":[[9,40],[26,3]],"d":4},"310":{"n":"無漏法體","t":2,"p":308,"q":0,"x":0,"e":[[10,40],[26,3]],"d":4},"311":{"n":"沉重","t":1,"p":305,"q":0,"x":0,"e":[[1,800]],"d":3},"312":{"n":"安如山","t":1,"p":306,"q":0,"x":0,"e":[[23,3]],"d":3},"313":{"n":"守道精通","t":2,"p":309,"q":310,"x":0,"e":[[2,5],[26,4]],"d":5},"314":{"n":"護體","t":1,"p":313,"q":0,"x":0,"e":[[23,3]],"d":6},"315":{"n":"護神","t":1,"p":313,"q":0,"x":0,"e":[[25,3]],"d":6},"316":{"n":"山河永固","t":3,"p":314,"q":0,"x":0,"e":[[9,80],[10,80],[26,8]],"d":7},"317":{"n":"金剛不壞","t":3,"p":315,"q":0,"x":0,"e":[[2,15],[23,8],[24,8]],"d":7},"318":{"n":"鎮嶽","t":1,"p":316,"q":317,"x":0,"e":[[26,3]],"d":8},"319":{"n":"厚德","t":1,"p":318,"q":0,"x":0,"e":[[2,3]],"d":9},"320":{"n":"守道靈石孔","t":5,"p":313,"q":0,"x":0,"e":[],"d":6},"321":{"n":"不動明王","t":4,"p":319,"q":0,"x":3,"e":[[17,-20],[9,300],[10,300]],"d":10},"322":{"n":"金剛怒目","t":4,"p":319,"q":0,"x":0,"e":[[23,12],[24,12],[25,12]],"d":10},"400":{"n":"氣血","t":1,"p":0,"q":0,"x":0,"e":[[1,600]],"d":0},"401":{"n":"回春","t":1,"p":400,"q":0,"x":0,"e":[[21,15]],"d":1},"402":{"n":"嗜血","t":1,"p":400,"q":0,"x":0,"e":[[22,2]],"d":1},"403":{"n":"血氣方剛","t":2,"p":401,"q":0,"x":0,"e":[[1,900],[21,10]],"d":2},"404":{"n":"飲血","t":2,"p":402,"q":0,"x":0,"e":[[22,3],[5,50]],"d":2},"405":{"n":"壯魄","t":1,"p":401,"q":0,"x":0,"e":[[2,3]],"d":2},"406":{"n":"血勇","t":1,"p":402,"q":0,"x":0,"e":[[5,60]],"d":2},"407":{"n":"生生不息","t":1,"p":403,"q":0,"x":0,"e":[[21,15]],"d":3},"408":{"n":"血刃","t":1,"p":404,"q":0,"x":0,"e":[[22,2]],"d":3},"409":{"n":"不死之軀","t":2,"p":407,"q":0,"x":0,"e":[[2,5],[21,20]],"d":4},"410":{"n":"血河","t":2,"p":408,"q":0,"x":0,"e":[[22,4],[29,3]],"d":4},"411":{"n":"厚血","t":1,"p":405,"q":0,"x":0,"e":[[1,1000]],"d":3},"412":{"n":"熱血","t":1,"p":406,"q":0,"x":0,"e":[[11,4]],"d":3},"413":{"n":"血道精通","t":2,"p":409,"q":410,"x":0,"e":[[2,6],[22,3]],"d":5},"414":{"n":"血湧","t":1,"p":413,"q":0,"x":0,"e":[[22,2]],"d":6},"415":{"n":"血養","t":1,"p":413,"q":0,"x":0,"e":[[2,3]],"d":6},"416":{"n":"血海無涯","t":3,"p":414,"q":0,"x":0,"e":[[22,8],[2,12]],"d":7},"417":{"n":"浴血重生","t":3,"p":415,"q":0,"x":0,"e":[[2,20],[21,50]],"d":7},"418":{"n":"血煞","t":1,"p":416,"q":417,"x":0,"e":[[22,2]],"d":8},"419":{"n":"血怒","t":1,"p":418,"q":0,"x":0,"e":[[29,3]],"d":9},"420":{"n":"血道靈石孔","t":5,"p":413,"q":0,"x":0,"e":[],"d":6},"421":{"n":"血祭大道","t":4,"p":419,"q":0,"x":2,"e":[[4,-50],[2,30]],"d":10},"422":{"n":"以血換力","t":4,"p":419,"q":0,"x":2,"e":[[2,-20],[5,250],[6,250]],"d":10},"500":{"n":"身法","t":1,"p":0,"q":0,"x":0,"e":[[15,3]],"d":0},"501":{"n":"輕身","t":1,"p":500,"q":0,"x":0,"e":[[17,3]],"d":1},"502":{"n":"流雲","t":1,"p":500,"q":0,"x":0,"e":[[16,3]],"d":1},"503":{"n":"疾風步","t":2,"p":501,"q":0,"x":0,"e":[[17,4],[15,2]],"d":2},"504":{"n":"行雲訣","t":2,"p":502,"q":0,"x":0,"e":[[16,4],[31,4]],"d":2},"505":{"n":"迅捷","t":1,"p":501,"q":0,"x":0,"e":[[15,3]],"d":2},"506":{"n":"無滯","t":1,"p":502,"q":0,"x":0,"e":[[16,3]],"d":2},"507":{"n":"掠影","t":1,"p":503,"q":0,"x":0,"e":[[17,2]],"d":3},"508":{"n":"破空","t":1,"p":504,"q":0,"x":0,"e":[[16,2]],"d":3},"509":{"n":"風馳","t":2,"p":507,"q":0,"x":0,"e":[[15,4],[11,3]],"d":4},"510":{"n":"電掣","t":2,"p":508,"q":0,"x":0,"e":[[16,4],[14,3]],"d":4},"511":{"n":"輕靈","t":1,"p":505,"q":0,"x":0,"e":[[15,3]],"d":3},"512":{"n":"空明","t":1,"p":506,"q":0,"x":0,"e":[[30,150]],"d":3},"513":{"n":"疾道精通","t":2,"p":509,"q":510,"x":0,"e":[[15,5],[16,4]],"d":5},"514":{"n":"逐風","t":1,"p":513,"q":0,"x":0,"e":[[15,3]],"d":6},"515":{"n":"無跡","t":1,"p":513,"q":0,"x":0,"e":[[17,3]],"d":6},"516":{"n":"風捲殘雲","t":3,"p":514,"q":0,"x":0,"e":[[15,12],[11,10],[12,10]],"d":7},"517":{"n":"瞬息千里","t":3,"p":515,"q":0,"x":0,"e":[[16,15],[17,12],[31,12]],"d":7},"518":{"n":"疾影","t":1,"p":516,"q":517,"x":0,"e":[[16,2]],"d":8},"519":{"n":"流光","t":1,"p":518,"q":0,"x":0,"e":[[15,3]],"d":9},"520":{"n":"疾道靈石孔","t":5,"p":513,"q":0,"x":0,"e":[],"d":6},"521":{"n":"無影","t":4,"p":519,"q":0,"x":3,"e":[[2,-20],[15,20],[16,20]],"d":10},"522":{"n":"止水","t":4,"p":519,"q":0,"x":0,"e":[[16,25],[15,-20],[30,800]],"d":10},"600":{"n":"觀星","t":1,"p":0,"q":0,"x":0,"e":[[20,8]],"d":0},"601":{"n":"聚運","t":1,"p":600,"q":0,"x":0,"e":[[18,4]],"d":1},"602":{"n":"察機","t":1,"p":600,"q":0,"x":0,"e":[[19,5]],"d":1},"603":{"n":"天機","t":2,"p":601,"q":0,"x":0,"e":[[18,6],[20,5]],"d":2},"604":{"n":"地脈","t":2,"p":602,"q":0,"x":0,"e":[[19,7],[18,3]],"d":2},"605":{"n":"福緣","t":1,"p":601,"q":0,"x":0,"e":[[20,8]],"d":2},"606":{"n":"慧眼","t":1,"p":602,"q":0,"x":0,"e":[[19,4]],"d":2},"607":{"n":"星軌","t":1,"p":603,"q":0,"x":0,"e":[[18,4]],"d":3},"608":{"n":"月華","t":1,"p":604,"q":0,"x":0,"e":[[19,5]],"d":3},"609":{"n":"紫微","t":2,"p":607,"q":0,"x":0,"e":[[18,7],[19,5]],"d":4},"610":{"n":"貪狼","t":2,"p":608,"q":0,"x":0,"e":[[19,8],[11,3]],"d":4},"611":{"n":"天罡星","t":1,"p":605,"q":0,"x":0,"e":[[20,10]],"d":3},"612":{"n":"地煞星","t":1,"p":606,"q":0,"x":0,"e":[[18,4]],"d":3},"613":{"n":"天命精通","t":2,"p":609,"q":610,"x":0,"e":[[18,8],[19,8]],"d":5},"614":{"n":"應運","t":1,"p":613,"q":0,"x":0,"e":[[18,5]],"d":6},"615":{"n":"承命","t":1,"p":613,"q":0,"x":0,"e":[[19,6]],"d":6},"616":{"n":"七殺破軍","t":3,"p":614,"q":0,"x":0,"e":[[18,15],[19,20]],"d":7},"617":{"n":"斗轉星移","t":3,"p":615,"q":0,"x":0,"e":[[20,40],[19,15]],"d":7},"618":{"n":"星隕","t":1,"p":616,"q":617,"x":0,"e":[[19,5]],"d":8},"619":{"n":"天樞","t":1,"p":618,"q":0,"x":0,"e":[[18,5]],"d":9},"620":{"n":"周天星斗","t":3,"p":619,"q":0,"x":0,"e":[[18,12],[19,15],[20,20]],"d":10},"621":{"n":"天命靈石孔","t":5,"p":613,"q":0,"x":0,"e":[],"d":6},"622":{"n":"逆天改命","t":4,"p":620,"q":0,"x":0,"e":[[18,50],[19,60],[20,50]],"d":11},"623":{"n":"安身立命","t":4,"p":620,"q":0,"x":0,"e":[[28,8],[2,10],[14,10]],"d":11}}};
+  var N = D.nodes, CAP = D.cap;
+  var COLW = 132, ROWH = 62, PADX = 54, PADY = 34;
+  var lv = {}, cur = 0;
+
+  function tmax(id){ return D.tiermax[N[id].t - 1]; }
+  function tcost(id){ return D.tiercost[N[id].t - 1]; }
+  function used(){ var s=0; for(var k in lv){ s += lv[k]*tcost(k); } return s; }
+  function pathUsed(b){ var s=0; for(var k in lv){ if(Math.floor(k/100)*100 === b) s += lv[k]*tcost(k); } return s; }
+  function has(id){ return (lv[id]||0) > 0; }
+
+  function preOK(id){
+    var d = N[id];
+    if(d.p === 0) return true;
+    if(has(d.p)) return true;
+    if(d.q > 0 && has(d.q)) return true;
+    return false;
+  }
+  function exConflict(id){
+    var g = N[id].x;
+    if(!g) return 0;
+    for(var k in lv){ if(k != id && N[k] && N[k].x === g && lv[k] > 0) return k; }
+    return 0;
+  }
+  // 退點會不會讓別人斷線: 只有退到 0 級才可能
+  function breaks(id){
+    for(var k in lv){
+      if(k == id || lv[k] <= 0) continue;
+      var d = N[k];
+      if(d.p != id && d.q != id) continue;
+      var other = (d.p == id) ? d.q : d.p;
+      if(other > 0 && has(other)) continue;
+      return k;
+    }
+    return 0;
+  }
+
+  function layout(b){
+    var ids = [], i;
+    for(var k in N){ if(Math.floor(k/100)*100 === b) ids.push(k); }
+    ids.sort(function(a,c){ return a-c; });
+    var rows = {}, pos = {};
+    for(i=0;i<ids.length;i++){
+      var d = N[ids[i]].d;
+      rows[d] = rows[d] || 0;
+      pos[ids[i]] = { x: PADX + d*COLW, y: PADY + 26 + rows[d]*ROWH };
+      rows[d]++;
+    }
+    var maxd = 0, maxr = 0;
+    for(var dd in rows){ if(+dd > maxd) maxd = +dd; if(rows[dd] > maxr) maxr = rows[dd]; }
+    return { ids: ids, pos: pos, w: PADX*2 + maxd*COLW + 90, h: PADY*2 + 26 + maxr*ROWH };
+  }
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function draw(){
+    var b = D.paths[cur].b, L = layout(b), i;
+    var out = ['<svg width="'+L.w+'" height="'+L.h+'" viewBox="0 0 '+L.w+' '+L.h+'">'];
+
+    // 深度刻度
+    var seen = {};
+    for(i=0;i<L.ids.length;i++){
+      var dv = N[L.ids[i]].d;
+      if(seen[dv]) continue;
+      seen[dv] = 1;
+      out.push('<text class="sim-axis" x="'+(PADX + dv*COLW)+'" y="18" text-anchor="middle">'+dv+'</text>');
+    }
+
+    // 連線
+    for(i=0;i<L.ids.length;i++){
+      var id = L.ids[i], d = N[id], a = L.pos[id];
+      [[d.p,''],[d.q,' alt']].forEach(function(pair){
+        var pid = pair[0];
+        if(!pid || !L.pos[pid]) return;
+        var s = L.pos[pid];
+        var on = (has(pid) && has(id)) ? ' on' : '';
+        out.push('<path class="sim-link'+pair[1]+on+'" d="M'+s.x+' '+s.y+' L'+a.x+' '+a.y+'"/>');
+      });
+    }
+
+    // 節點
+    for(i=0;i<L.ids.length;i++){
+      var id2 = L.ids[i], n = N[id2], p = L.pos[id2];
+      var cls = ['sim-node','t'+n.t];
+      var cl = lv[id2] || 0;
+      if(cl > 0) cls.push('on');
+      if(cl >= tmax(id2)) cls.push('max');
+      if(cl === 0 && !preOK(id2)) cls.push('locked');
+      var r = n.t >= 3 ? 17 : 14;
+      out.push('<g class="'+cls.join(' ')+'" data-id="'+id2+'" tabindex="0">');
+      out.push('<title>'+esc(n.n)+' — '+esc(D.tiername[n.t-1])+'（每級 '+tcost(id2)+' 點，上限 '+tmax(id2)+' 級）</title>');
+      out.push('<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'"/>');
+      out.push('<text class="lv" x="'+(p.x+r-2)+'" y="'+(p.y+r+1)+'">'+(cl||'')+'</text>');
+      out.push('<text class="lbl" x="'+p.x+'" y="'+(p.y+r+15)+'" text-anchor="middle">'+esc(n.n)+'</text>');
+      out.push('</g>');
+    }
+    out.push('</svg>');
+    document.getElementById('simCanvas').innerHTML = out.join('');
+  }
+
+  function fmt(k, v){
+    var sign = D.keysign[k-1] < 0 ? '-' : '+';
+    var unit = D.keyunit[k-1] === 1 ? '%' : (D.keyunit[k-1] === 2 ? ' 毫秒' : '');
+    return sign + v + unit;
+  }
+
+  function side(){
+    var i, html = [];
+    for(i=0;i<D.paths.length;i++){
+      var u = pathUsed(D.paths[i].b);
+      html.push('<dt>'+esc(D.paths[i].n)+'</dt><dd>'+u+'</dd>');
+    }
+    document.getElementById('simPaths').innerHTML = html.join('');
+
+    var sum = {};
+    for(var k in lv){
+      if(lv[k] <= 0) continue;
+      var e = N[k].e;
+      for(i=0;i<e.length;i++){ sum[e[i][0]] = (sum[e[i][0]]||0) + e[i][1]*lv[k]; }
+    }
+    var keys = Object.keys(sum).sort(function(a,c){ return a-c; });
+    if(!keys.length){
+      document.getElementById('simEff').innerHTML = '<dt class="sim-empty">還沒點任何節點</dt><dd></dd>';
+    } else {
+      var h2 = [];
+      for(i=0;i<keys.length;i++){
+        var kk = +keys[i];
+        h2.push('<dt>'+esc(D.keyname[kk-1])+'</dt><dd>'+fmt(kk, sum[kk])+'</dd>');
+      }
+      document.getElementById('simEff').innerHTML = h2.join('');
+    }
+
+    var u2 = used();
+    document.getElementById('simUsed').innerHTML = '已用 <b>'+u2+'</b> / '+CAP+' 點';
+  }
+
+  function tip(msg){ document.getElementById('simTip').textContent = msg; }
+
+  function add(id){
+    var cl = lv[id] || 0;
+    if(cl >= tmax(id)){ tip(N[id].n + ' 已經滿級了。'); return; }
+    if(cl === 0 && !preOK(id)){
+      var need = N[id].p;
+      tip('要先點亮前置節點：' + (N[need] ? N[need].n : '大道之心') + '。');
+      return;
+    }
+    if(cl === 0){
+      var c = exConflict(id);
+      if(c){ tip('與【' + N[c].n + '】互斥，同群組的核心天賦只能擇一。'); return; }
+    }
+    if(used() + tcost(id) > CAP){ tip('點數不夠了，你只有 ' + CAP + ' 點。'); return; }
+    lv[id] = cl + 1;
+    tip(N[id].n + ' → ' + lv[id] + ' 級。');
+    sync();
+  }
+
+  function sub(id){
+    var cl = lv[id] || 0;
+    if(cl <= 0) return;
+    if(cl === 1){
+      var b = breaks(id);
+      if(b){ tip('不能退——【' + N[b].n + '】要靠它連著。'); return; }
+    }
+    lv[id] = cl - 1;
+    if(lv[id] === 0) delete lv[id];
+    tip(N[id].n + ' → ' + (lv[id]||0) + ' 級。');
+    sync();
+  }
+
+  function encode(){
+    var a = [];
+    var ks = Object.keys(lv).sort(function(x,y){ return x-y; });
+    for(var i=0;i<ks.length;i++){ a.push(ks[i] + '.' + lv[ks[i]]); }
+    return a.join('-');
+  }
+  function decode(s){
+    lv = {};
+    if(!s) return;
+    var parts = s.split('-');
+    for(var i=0;i<parts.length;i++){
+      var kv = parts[i].split('.');
+      var id = +kv[0], v = +kv[1];
+      if(N[id] && v > 0 && v <= tmax(id)) lv[id] = v;
+    }
+  }
+
+  function sync(){
+    draw(); side();
+    var h = encode();
+    history.replaceState(null, '', h ? ('#b=' + h) : location.pathname);
+  }
+
+  function tabs(){
+    var h = [], i;
+    for(i=0;i<D.paths.length;i++){
+      h.push('<button type="button" data-i="'+i+'" aria-pressed="'+(i===cur)+'">'+esc(D.paths[i].n)+'</button>');
+    }
+    h.push('<span class="spacer"></span>');
+    h.push('<span class="sim-pts" id="simUsed"></span>');
+    h.push('<button type="button" id="simReset">清空</button>');
+    document.getElementById('simTabs').innerHTML = h.join('');
+  }
+
+  document.getElementById('simTabs').addEventListener('click', function(ev){
+    var b = ev.target.closest('button');
+    if(!b) return;
+    if(b.id === 'simReset'){ lv = {}; tip('已清空。'); sync(); return; }
+    cur = +b.dataset.i;
+    tabs(); sync();
+  });
+
+  var cv = document.getElementById('simCanvas');
+  cv.addEventListener('click', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(g) add(+g.dataset.id);
+  });
+  cv.addEventListener('contextmenu', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(!g) return;
+    ev.preventDefault();
+    sub(+g.dataset.id);
+  });
+  cv.addEventListener('keydown', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(!g) return;
+    if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); add(+g.dataset.id); }
+    if(ev.key === 'Backspace' || ev.key === 'Delete'){ ev.preventDefault(); sub(+g.dataset.id); }
+  });
+
+  if(location.hash.indexOf('#b=') === 0) decode(location.hash.slice(3));
+  tabs(); sync();
+})();
+</script>
+<!-- DAOPAN-SIM:END -->
+
   <section>
     <h2>怎麼點</h2>
     <div class="cards">
