@@ -255,6 +255,15 @@ def collect():
             "pre": node["pre"].get(nid, 0),
             "preids": [p for p, _, _ in slots],
             "pretxt": pretxt,
+            # ---- 以下三項是給「互動星盤」用的結構化資料 ----
+            # pretxt 是給人看的字串, 算不了規則; preids 又丟掉了「要幾級」。
+            #   pres  = [[前置節點, 需要幾級], ...]
+            #   preor = 0 全部都要(預設) / 1 任一即可
+            #   rate / slv 是基礎值, 配上既有的 rinc / sinc 才推得出中間級數
+            #   (rows 原本只有頭尾兩級的 r1/r5 與 l1/l5)。
+            "pres": [[p, lvreq] for p, _, lvreq in slots],
+            "preor": node["preor"].get(nid, 0),
+            "rate": rate, "slv": slv,
             "sk": sk,
             "skn": skills.get(sk, {}).get("Description", ""),
             "skmax": skills.get(sk, {}).get("MaxLevel", 0),
@@ -477,6 +486,7 @@ tr.detail > td{background:var(--sunk); padding:0}
   .tbl-wrap tr.detail > td{padding:0}
   .tbl-wrap tr.detail > td::before{content:none}
 }
+__SIMCSS__
 </style>
 </head>
 <body>
@@ -500,6 +510,8 @@ tr.detail > td{background:var(--sunk); padding:0}
     </ul>
     <p class="note">星盤跟<a href="daopan.html">大道星盤</a>是<b>兩套完全分開</b>的東西 —— 點數、存檔、NPC 都不共用。大道給的是被動數值（ATK／血量／減傷），萬法給的是<b>主動觸發技能</b>。唯一共用的是洗點石頭。</p>
   </section>
+
+__SIM__
 
   <section>
     <h2>點數哪裡來</h2>
@@ -739,6 +751,315 @@ render();
 """
 
 
+# ---------------------------------------------------------------- 互動星盤
+#
+# 與 daopan.html 的互動盤同一套想法, 但規則不同, 抄過去之前先看這裡:
+#
+#   成本   ring 0 (基礎星) = WF_COST_BASE, 只有 1 級
+#          ring 5 (核心主星) = WF_COST_CORE, 只有 1 級
+#          其餘 = 累進 WF_CUM[lv] (不是每級固定!) ——
+#          「再升一級要幾點」是 CUM[lv+1] - CUM[lv]
+#   前置   最多四槽, 每槽各有「要幾級」; preor 決定是「全部都要」還是「任一即可」
+#   佈局   X = 星環(0~5), Y 依路線分組。不分頁 —— 星盤的重點就是看整張圖
+#
+SIM_CSS = """
+  .sim-wrap{border:1px solid var(--rule);border-radius:10px;background:var(--paper);
+    box-shadow:var(--shadow);overflow:hidden;margin-top:14px}
+  .sim-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    padding:10px 12px;background:var(--sunk);border-bottom:1px solid var(--rule)}
+  .sim-bar button{font:inherit;font-size:.86rem;padding:5px 11px;border-radius:999px;
+    border:1px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer}
+  .sim-bar button:hover{border-color:var(--cinnabar);color:var(--cinnabar)}
+  .sim-bar .spacer{flex:1 1 auto}
+  .sim-pts{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--ink-soft)}
+  .sim-pts b{color:var(--cinnabar);font-size:1.05rem}
+  .sim-body{display:grid;grid-template-columns:minmax(0,1fr) 250px}
+  @media (max-width:820px){.sim-body{grid-template-columns:minmax(0,1fr)}}
+  .sim-canvas{overflow:auto;background:var(--ground);max-height:620px}
+  .sim-canvas svg{display:block}
+  .sim-side{border-left:1px solid var(--rule);padding:12px;font-size:.86rem;
+    max-height:620px;overflow:auto}
+  @media (max-width:820px){.sim-side{border-left:0;border-top:1px solid var(--rule)}}
+  .sim-side h4{margin:0 0 6px;font-size:.8rem;letter-spacing:.06em;color:var(--ink-faint)}
+  .sim-side dl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:0 0 14px}
+  .sim-side dt{color:var(--ink-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .sim-side dd{margin:0;font-variant-numeric:tabular-nums;color:var(--cinnabar);font-weight:500}
+  .sim-empty{color:var(--ink-faint)}
+  .sim-tip{padding:8px 12px;border-top:1px solid var(--rule);background:var(--sunk);
+    font-size:.8rem;color:var(--ink-faint)}
+  .sim-axis{fill:var(--ink-faint);font-size:11px}
+  .sim-rt{fill:var(--ink-faint);font-size:10px}
+  .sim-link{stroke:var(--rule);stroke-width:1.6;fill:none}
+  .sim-link.on{stroke:var(--cinnabar);stroke-width:2.4}
+  .sim-link.alt{stroke-dasharray:4 3}
+  .sim-node{cursor:pointer}
+  .sim-node circle{fill:var(--paper);stroke:var(--ink-faint);stroke-width:2;
+    transition:fill .12s,stroke .12s}
+  .sim-node.on circle{fill:var(--cinnabar);stroke:var(--cinnabar)}
+  .sim-node.max circle{stroke:#D8A21B;stroke-width:3}
+  .sim-node.locked circle{stroke-dasharray:3 3;opacity:.5}
+  .sim-node text.lbl{font-size:10px;fill:var(--ink-soft)}
+  .sim-node.on text.lbl{fill:var(--ink)}
+  .sim-node text.lv{font-size:10px;font-weight:700;fill:#D8A21B}
+  .sim-node:focus{outline:none}
+  .sim-node:focus circle{stroke:var(--focus);stroke-width:3}
+"""
+
+SIM_HTML = """
+  <section id="sim">
+    <h2>互動星盤</h2>
+    <p class="note">直接在盤上排點看看：<b>左鍵加一級、右鍵退一級</b>。規則跟遊戲裡一致 —— 前置要先點到指定等級、總共只有 <b>__PTMAX__ 點</b>、升級費用是<b>累進</b>的（__CUM__）。橫軸是星環，同一欄由上而下依路線排。</p>
+    <div class="sim-wrap">
+      <div class="sim-bar" id="simTabs"></div>
+      <div class="sim-body">
+        <div class="sim-canvas" id="simCanvas"></div>
+        <div class="sim-side">
+          <h4>各路線投入</h4>
+          <dl id="simPaths"></dl>
+          <h4>已點的觸發</h4>
+          <dl id="simEff"></dl>
+        </div>
+      </div>
+      <div class="sim-tip" id="simTip">點一個節點試試。配點會寫進網址，複製整條網址就能分享。</div>
+    </div>
+  </section>
+"""
+
+SIM_JS = r"""
+<script>
+(function(){
+  var R = __SIMDATA__, M = __SIMMETA__;
+  var N = {}, i;
+  for(i=0;i<R.length;i++){ N[R[i].id] = R[i]; }
+  var COLW = 150, ROWH = 46, PADX = 62, PADY = 40;
+  var lv = {};
+
+  function maxlv(id){ return N[id].lvmax; }
+  // ★ 累進: 從 cl 升到 cl+1 要幾點。ring 0/5 只有 1 級, 直接用固定價。
+  function stepCost(id, cl){
+    var r = N[id].ring;
+    if(r === 0) return M.costBase;
+    if(r === 5) return M.costCore;
+    return M.cum[cl+1] - M.cum[cl];
+  }
+  function nodeSpent(id){
+    var cl = lv[id]||0, r = N[id].ring;
+    if(!cl) return 0;
+    if(r === 0) return M.costBase;
+    if(r === 5) return M.costCore;
+    return M.cum[cl];
+  }
+  function used(){ var s=0; for(var k in lv){ s += nodeSpent(k); } return s; }
+  function routeUsed(rt){ var s=0; for(var k in lv){ if(N[k].route === rt) s += nodeSpent(k); } return s; }
+
+  function preOK(id){
+    var ps = N[id].pres, j;
+    if(!ps.length) return true;
+    if(N[id].preor){
+      for(j=0;j<ps.length;j++){ if((lv[ps[j][0]]||0) >= ps[j][1]) return true; }
+      return false;
+    }
+    for(j=0;j<ps.length;j++){ if((lv[ps[j][0]]||0) < ps[j][1]) return false; }
+    return true;
+  }
+  function preMissing(id){
+    var ps = N[id].pres, j;
+    for(j=0;j<ps.length;j++){
+      if((lv[ps[j][0]]||0) < ps[j][1]){
+        var nm = N[ps[j][0]] ? N[ps[j][0]].nm : ('#'+ps[j][0]);
+        return nm + (ps[j][1] > 1 ? (' Lv.'+ps[j][1]) : '');
+      }
+    }
+    return '';
+  }
+  // 退到某級之後, 還有沒有別人靠它撐著
+  function breaks(id, after){
+    for(var k in lv){
+      if(k == id || (lv[k]||0) <= 0) continue;
+      var ps = N[k].pres, j, okCnt = 0, need = 0;
+      for(j=0;j<ps.length;j++){
+        need++;
+        var have = (ps[j][0] == id) ? after : (lv[ps[j][0]]||0);
+        if(have >= ps[j][1]) okCnt++;
+      }
+      if(N[k].preor ? okCnt === 0 : okCnt < need) return k;
+    }
+    return 0;
+  }
+
+  function layout(){
+    var byRing = {}, pos = {}, ids = [];
+    for(i=0;i<R.length;i++) ids.push(R[i].id);
+    ids.sort(function(a,b){
+      if(N[a].ring !== N[b].ring) return N[a].ring - N[b].ring;
+      if(N[a].route !== N[b].route) return N[a].route - N[b].route;
+      return a - b;
+    });
+    for(i=0;i<ids.length;i++){
+      var r = N[ids[i]].ring;
+      byRing[r] = byRing[r] || 0;
+      pos[ids[i]] = { x: PADX + r*COLW, y: PADY + 20 + byRing[r]*ROWH };
+      byRing[r]++;
+    }
+    var maxr = 0;
+    for(var rr in byRing){ if(byRing[rr] > maxr) maxr = byRing[rr]; }
+    return { ids: ids, pos: pos, w: PADX*2 + 5*COLW + 100, h: PADY*2 + 20 + maxr*ROWH };
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function pct(milli){ return (milli/10).toFixed(milli%10 ? 1 : 0) + '%'; }
+
+  function nodeTitle(id){
+    var n = N[id], cl = lv[id]||0;
+    var t = n.nm + ' — ' + n.rings + '・' + n.routes;
+    t += '\n上限 ' + n.lvmax + ' 級，點滿共 ' + n.cost + ' 點';
+    if(cl < n.lvmax) t += '\n升到 ' + (cl+1) + ' 級要 ' + stepCost(id, cl) + ' 點';
+    if(n.lvmax > 1){
+      var pr = [];
+      if(n.rinc) pr.push('觸發率 +' + pct(n.rinc));
+      if(n.sinc) pr.push('技能等級 +' + n.sinc);
+      if(pr.length) t += '\n投資 1 級：' + pr.join('、');
+    }
+    if(cl > 0){
+      var now = [];
+      now.push('觸發率 ' + pct(Math.min(n.rate + n.rinc*(cl-1), 1000)));
+      if(n.skn) now.push('技能等級 ' + (n.slv + n.sinc*(cl-1)));
+      t += '\n目前 ' + cl + ' 級：' + now.join('、');
+    }
+    if(n.skn) t += '\n技能：' + n.skn + (n.bf ? ('（' + n.bf + '）') : '');
+    return t;
+  }
+
+  function draw(){
+    var L = layout(), out = ['<svg width="'+L.w+'" height="'+L.h+'" viewBox="0 0 '+L.w+' '+L.h+'">'];
+    for(i=0;i<=5;i++){
+      out.push('<text class="sim-axis" x="'+(PADX + i*COLW)+'" y="20" text-anchor="middle">'+esc(M.rings[i])+'</text>');
+    }
+    for(i=0;i<L.ids.length;i++){
+      var id = L.ids[i], a = L.pos[id], ps = N[id].pres, j;
+      for(j=0;j<ps.length;j++){
+        var s = L.pos[ps[j][0]];
+        if(!s) continue;
+        var on = ((lv[ps[j][0]]||0) >= ps[j][1] && (lv[id]||0) > 0) ? ' on' : '';
+        var alt = N[id].preor ? ' alt' : '';
+        out.push('<path class="sim-link'+alt+on+'" d="M'+s.x+' '+s.y+' L'+a.x+' '+a.y+'"/>');
+      }
+    }
+    for(i=0;i<L.ids.length;i++){
+      var id2 = L.ids[i], n = N[id2], p = L.pos[id2], cl = lv[id2]||0;
+      var cls = ['sim-node'];
+      if(cl > 0) cls.push('on');
+      if(cl >= n.lvmax) cls.push('max');
+      if(cl === 0 && !preOK(id2)) cls.push('locked');
+      var r = n.ring === 5 ? 13 : 10;
+      out.push('<g class="'+cls.join(' ')+'" data-id="'+id2+'" tabindex="0">');
+      out.push('<title>'+esc(nodeTitle(id2))+'</title>');
+      out.push('<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'"/>');
+      out.push('<text class="lv" x="'+(p.x+r-1)+'" y="'+(p.y+r+1)+'">'+(cl||'')+'</text>');
+      out.push('<text class="lbl" x="'+(p.x+r+5)+'" y="'+(p.y+4)+'">'+esc(n.nm)+'</text>');
+      out.push('</g>');
+    }
+    out.push('</svg>');
+    document.getElementById('simCanvas').innerHTML = out.join('');
+  }
+
+  function side(){
+    var h = [], k, seen = {};
+    for(k in lv){ seen[N[k].route] = 1; }
+    var rts = Object.keys(seen).sort(function(a,b){ return a-b; });
+    if(!rts.length) h.push('<dt class="sim-empty">還沒點任何節點</dt><dd></dd>');
+    for(i=0;i<rts.length;i++){
+      h.push('<dt>'+esc(M.routes[rts[i]])+'</dt><dd>'+routeUsed(+rts[i])+'</dd>');
+    }
+    document.getElementById('simPaths').innerHTML = h.join('');
+
+    var h2 = [], keys = Object.keys(lv).sort(function(a,b){ return a-b; });
+    for(i=0;i<keys.length;i++){
+      var n = N[keys[i]], cl = lv[keys[i]];
+      if(!n.skn) continue;
+      h2.push('<dt>'+esc(n.skn)+'</dt><dd>'+pct(Math.min(n.rate + n.rinc*(cl-1), 1000))+'</dd>');
+    }
+    document.getElementById('simEff').innerHTML =
+      h2.length ? h2.join('') : '<dt class="sim-empty">還沒有會觸發的技能</dt><dd></dd>';
+    document.getElementById('simUsed').innerHTML = '已用 <b>'+used()+'</b> / '+M.ptMax+' 點';
+  }
+
+  function tip(m){ document.getElementById('simTip').textContent = m; }
+
+  function add(id){
+    var n = N[id], cl = lv[id]||0;
+    if(cl >= n.lvmax){ tip(n.nm + ' 已經滿級了。'); return; }
+    if(cl === 0 && !preOK(id)){ tip('要先點亮前置：' + preMissing(id) + '。'); return; }
+    var c = stepCost(id, cl);
+    if(used() + c > M.ptMax){ tip('點數不夠了，升這一級要 ' + c + ' 點，你只有 ' + M.ptMax + ' 點。'); return; }
+    lv[id] = cl + 1;
+    tip(n.nm + ' → ' + lv[id] + ' 級（花了 ' + c + ' 點）。');
+    sync();
+  }
+  function sub(id){
+    var n = N[id], cl = lv[id]||0;
+    if(cl <= 0) return;
+    var b = breaks(id, cl - 1);
+    if(b){ tip('不能退 —— 【' + N[b].nm + '】要靠它撐著。'); return; }
+    lv[id] = cl - 1;
+    if(!lv[id]) delete lv[id];
+    tip(n.nm + ' → ' + (lv[id]||0) + ' 級。');
+    sync();
+  }
+
+  function encode(){
+    var a = [], ks = Object.keys(lv).sort(function(x,y){ return x-y; });
+    for(i=0;i<ks.length;i++) a.push(ks[i] + '.' + lv[ks[i]]);
+    return a.join('-');
+  }
+  function decode(s){
+    lv = {};
+    if(!s) return;
+    var parts = s.split('-');
+    for(i=0;i<parts.length;i++){
+      var kv = parts[i].split('.'), id = +kv[0], v = +kv[1];
+      if(N[id] && v > 0 && v <= N[id].lvmax) lv[id] = v;
+    }
+  }
+  function sync(){
+    draw(); side();
+    var h = encode();
+    history.replaceState(null, '', h ? ('#b=' + h) : location.pathname);
+  }
+
+  document.getElementById('simTabs').innerHTML =
+    '<span class="sim-pts" id="simUsed"></span><span class="spacer"></span>' +
+    '<button type="button" id="simReset">清空</button>';
+  document.getElementById('simTabs').addEventListener('click', function(ev){
+    var b = ev.target.closest('button');
+    if(b && b.id === 'simReset'){ lv = {}; tip('已清空。'); sync(); }
+  });
+  var cv = document.getElementById('simCanvas');
+  cv.addEventListener('click', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(g) add(+g.dataset.id);
+  });
+  cv.addEventListener('contextmenu', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(!g) return;
+    ev.preventDefault();
+    sub(+g.dataset.id);
+  });
+  cv.addEventListener('keydown', function(ev){
+    var g = ev.target.closest('.sim-node');
+    if(!g) return;
+    if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); add(+g.dataset.id); }
+    if(ev.key === 'Backspace' || ev.key === 'Delete'){ ev.preventDefault(); sub(+g.dataset.id); }
+  });
+
+  if(location.hash.indexOf('#b=') === 0) decode(location.hash.slice(3));
+  sync();
+})();
+</script>
+"""
+
+
 def build():
     rows, meta = collect()
 
@@ -771,8 +1092,28 @@ def build():
         if n["bf"] and n["bf"] not in bfs:
             bfs.append(n["bf"])
 
+    # 互動盤只要規則需要的欄位, 不要表格那些顯示字串(r1s / icds / pretxt …),
+    # 否則等於在頁面裡塞第二份完整 rows。
+    sim_rows = [{k: n[k] for k in ("id", "nm", "ring", "rings", "route", "routes",
+                                   "pres", "preor", "lvmax", "cost",
+                                   "rate", "rinc", "slv", "sinc", "skn", "bf")}
+                for n in rows]
+    sim_meta = {
+        "ptMax": meta["pt_max"], "cum": meta["cum"],
+        "costBase": meta["cost_base"], "costCore": meta["cost_core"],
+        "rings": meta["ring$"],
+        "routes": {str(k): v for k, v in meta["route$"].items()},
+    }
+
     out = TPL
     for k, v in [
+        # ★ 這三項一定要排在最前面 —— SIM_HTML 裡用了 __PTMAX__ / __CUM__,
+        #   先把區塊插進頁面, 後面那些替換才吃得到它。順序反了不會報錯,
+        #   只會在頁面上看到沒被取代的 __PTMAX__ 字樣。
+        ("__SIMCSS__", SIM_CSS),
+        ("__SIM__", SIM_HTML + SIM_JS),
+        ("__SIMMETA__", json.dumps(sim_meta, ensure_ascii=False, separators=(",", ":"))),
+        ("__SIMDATA__", json.dumps(sim_rows, ensure_ascii=False, separators=(",", ":"))),
         ("__NNODE__", str(len(rows))),
         ("__PTMAX__", str(meta["pt_max"])),
         ("__TOTALCOST__", str(sum(n["cost"] for n in rows))),
