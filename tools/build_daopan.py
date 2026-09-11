@@ -178,7 +178,7 @@ HTML = """
 </section>
 """
 
-JS_TEMPLATE = """
+JS_TEMPLATE = r"""
 <script>
 (function(){
   var D = __DATA__;
@@ -273,7 +273,7 @@ JS_TEMPLATE = """
       if(cl === 0 && !preOK(id2)) cls.push('locked');
       var r = n.t >= 3 ? 17 : 14;
       out.push('<g class="'+cls.join(' ')+'" data-id="'+id2+'" tabindex="0">');
-      out.push('<title>'+esc(n.n)+' — '+esc(D.tiername[n.t-1])+'（每級 '+tcost(id2)+' 點，上限 '+tmax(id2)+' 級）</title>');
+      out.push('<title>'+esc(nodeTitle(id2, cl))+'</title>');
       out.push('<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'"/>');
       out.push('<text class="lv" x="'+(p.x+r-2)+'" y="'+(p.y+r+1)+'">'+(cl||'')+'</text>');
       out.push('<text class="lbl" x="'+p.x+'" y="'+(p.y+r+15)+'" text-anchor="middle">'+esc(n.n)+'</text>');
@@ -287,6 +287,29 @@ JS_TEMPLATE = """
     var sign = D.keysign[k-1] < 0 ? '-' : '+';
     var unit = D.keyunit[k-1] === 1 ? '%' : (D.keyunit[k-1] === 2 ? ' 毫秒' : '');
     return sign + v + unit;
+  }
+
+  // 節點 tooltip。$@dao_ev1~3 存的是「每級」的值, 乘上等級就是累計。
+  // ★ 16/17/26/30/31 那幾個 key 在表裡填正數代表「改善幅度」,
+  //   負號由 fmt() 看 D.keysign 補 —— 不要在這裡自己判斷正負。
+  function effList(id, mul){
+    var e = N[id].e, a = [], i;
+    for(i=0;i<e.length;i++){
+      a.push(D.keyname[e[i][0]-1] + ' ' + fmt(e[i][0], e[i][1]*mul));
+    }
+    return a.join('、');
+  }
+  function nodeTitle(id, cl){
+    var n = N[id];
+    var t = n.n + ' — ' + D.tiername[n.t-1]
+          + '（每級 ' + tcost(id) + ' 點，上限 ' + tmax(id) + ' 級）';
+    var per = effList(id, 1);
+    if(per) t += '\n投資 1 級：' + per;
+    if(cl > 0){
+      var now = effList(id, cl);
+      if(now) t += '\n目前 ' + cl + ' 級合計：' + now;
+    }
+    return t;
   }
 
   function side(){
