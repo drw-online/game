@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>法寶神將玩法</title>
+<meta name="description" content="神域仙境 法寶神將：29 名神將的靈氣與技能、召喚池機率、升級升星成本、十二境神將印兌換、召喚期間的加成。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="法寶神將玩法">
+<meta property="og:description" content="一件法寶、一名神將。裝備就有靈氣加成，召喚出來還會替你打。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:hover{background:var(--sunk)}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:14px 0 12px;
+  border-bottom:1px solid var(--rule); margin-bottom:18px}
+.ctl-row{display:flex; flex-wrap:wrap; gap:9px 16px; align-items:center}
+.glab{font-size:12px; letter-spacing:.18em; color:var(--ink-faint)}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+td.oid{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%; white-space:nowrap}
+td.pos{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.rng{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--cinnabar); font-weight:500}
+td.roll{color:var(--cinnabar); font-weight:500; white-space:nowrap}
+td.keep{color:var(--ink-faint); white-space:nowrap}
+td.lim{font-size:13px; color:var(--ink-soft)}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:64ch}
+.empty{padding:40px 0; text-align:center; color:var(--ink-faint)}
+</style>
+
+<style>
+.nm{font-weight:700}
+h3.sub{font-family:"Noto Serif TC",serif; font-size:16px; margin:24px 0 0}
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:14px;
+       grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.steps li{border:1px solid var(--rule); border-radius:10px; padding:14px 16px}
+.steps b{display:block; font-family:"Noto Serif TC",serif; font-size:17px;
+         margin-bottom:6px}
+.steps i{font-style:normal; color:var(--cinnabar); font-weight:700;
+         margin-right:.45em}
+.steps p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.75}
+.bn{display:inline-block; padding:1px 7px; margin-left:6px; border-radius:6px;
+    font-size:.82em; white-space:nowrap; font-weight:700;
+    background:#c6503022; color:#c65030}
+.dim{color:var(--ink-soft); opacity:.7}
+.c{text-align:center; white-space:nowrap}
+.callout{border-left:3px solid var(--cinnabar); padding:2px 0 2px 14px;
+         margin:18px 0 0; color:var(--ink-soft); font-size:14.5px;
+         line-height:1.85; max-width:72ch}
+.callout b{color:var(--ink)}
+.two{display:grid; gap:24px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.two .note{max-width:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>法寶神將玩法</h1>
+    <p class="lede">一件法寶對應一名神將。<b>裝備法寶</b>就有靈氣加成，<b>召喚出來</b>神將會上場替你打，而且召喚期間主人自己也會變強。全部功能都在崑崙的<b>【御寶天君‧雲虛】</b>（gonryun 173,136）。</p>
+  </header>
+
+  <section>
+    <h2>三句話</h2>
+    <ol class="steps">
+      <li><b><i>一</i>拿到法寶</b><p>用<b>神將轉蛋</b>抽，或蒐集<b>神將碎片</b>湊。共 29 名神將，其中 4 名是特級。</p></li>
+      <li><b><i>二</i>裝備法寶</b><p>裝上去就有<b>靈氣</b>加成，不必召喚。同時只能裝一件 —— 換法寶會讓星級歸零。</p></li>
+      <li><b><i>三</i>召喚神將</b><p>神將上場替你打，一次撐 <b>12 小時</b>。召喚期間主人另外拿到一整批加成。</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>召喚期間，主人拿到什麼</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>項目</th><th class="c">一般神將</th><th class="c">特級神將</th></tr></thead>
+        <tbody>
+          <tr><td>最大 HP／最大 SP</td><td class="c">+50%</td><td class="c">+100%</td></tr>
+          <tr><td>無視特性 RES／MRES</td><td class="c">+15%</td><td class="c">+25%</td></tr>
+          <tr><td>全特性素質（六項各）</td><td class="c">+100</td><td class="c">+400</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">這些<b>只在神將真的在場上時生效</b>，收回或時間到就沒了 —— 跟「裝備法寶就有」的靈氣是兩回事。</p>
+    <div class="callout"><b>無視特性 RES／MRES 有一個共用上限。</b>全服總上限是 <b>50%</b>，而且是<b>與其他來源共用</b>的、不是額外配額 —— 你身上如果已經從別處吃滿了，神將這一份就疊不上去。</div>
+  </section>
+
+  <section>
+    <h2>29 名神將</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="c">編號</th><th>名稱</th><th class="c">定位</th><th>靈氣（裝備就生效）</th><th>技能</th></tr></thead>
+        <tbody><tr><td class="c">1</td><td class="nm">玄甲神將‧岳鎮</td><td class="c">物理</td><td>MHP+5%、DEF+5%、受到普通怪傷害-3%</td><td>玄甲震地：倍率10,000%，冷卻12秒<br>守主：冷卻20秒</td></tr>
+<tr><td class="c">2</td><td class="nm">赤羽神將‧炎翎</td><td class="c">法術</td><td>MATK+5%、火屬性傷害+5%、SP消耗+3%</td><td>赤焰羽：倍率12,000%，冷卻10秒<br>火羽旋：倍率10,000%，冷卻15秒</td></tr>
+<tr><td class="c">3</td><td class="nm">青木神將‧靈葵</td><td class="c">法術</td><td>治療效果+5%、MSP+5%、自身傷害-3%</td><td>青木回春：冷卻12秒<br>靈藤：冷卻15秒</td></tr>
+<tr><td class="c">4</td><td class="nm">白虎神將‧鋒牙</td><td class="c">物理</td><td>ATK+5%、暴擊率+3%、受到傷害+3%</td><td>裂魂爪：倍率15,000%，冷卻12秒<br>追獵：冷卻20秒</td></tr>
+<tr><td class="c">5</td><td class="nm">玄水神將‧洛川</td><td class="c">法術</td><td>MDEF+5%、水屬性傷害+5%、移動速度-3%</td><td>寒川：倍率10,000%，冷卻12秒<br>水鏡：冷卻20秒</td></tr>
+<tr><td class="c">6</td><td class="nm">黃巾神將‧力魁</td><td class="c">物理</td><td>P.ATK+3、MHP+3%、ASPD-3%</td><td>撼地槌：倍率12,000%，冷卻12秒<br>橫掃：倍率10,000%，冷卻15秒</td></tr>
+<tr><td class="c">7</td><td class="nm">齊天神將‧悟空</td><td class="c">物理</td><td>ASPD+5%、技能後延遲-3%、單次技能傷害-3%</td><td>如意連打：每段2,500% x 4段 = 總倍率10,000%，冷卻10秒<br>筋斗追擊：冷卻10秒</td></tr>
+<tr><td class="c">8</td><td class="nm">太陰神將‧月華</td><td class="c">法術</td><td>MRES+3%、水屬性傷害+5%、受到火屬性傷害+5%</td><td>太陰寒潮：倍率10,000%，冷卻12秒<br>月蝕：冷卻18秒</td></tr>
+<tr><td class="c">9</td><td class="nm">雷部神將‧震霄</td><td class="c">法術</td><td>風屬性傷害+5%、S.MATK+3、MDEF-3%</td><td>雷矛：倍率12,000%，冷卻10秒<br>雷域：倍率10,000%，冷卻15秒</td></tr>
+<tr><td class="c">10</td><td class="nm">風伯神將‧飛廉</td><td class="c">法術</td><td>移動速度+5%、遠距離傷害+3%、MHP-3%</td><td>風刃：倍率10,000%，冷卻12秒<br>御風：冷卻25秒</td></tr>
+<tr><td class="c">11</td><td class="nm">雨師神將‧玄冥</td><td class="c">法術</td><td>水屬性傷害+5%、MSP+5%、火抗-5%</td><td>玄雨：每段2,000% x 5段 = 總倍率10,000%，冷卻15秒<br>水牢：冷卻18秒</td></tr>
+<tr><td class="c">12</td><td class="nm">巨靈神將‧擎山</td><td class="c">物理</td><td>ATK+4%、MHP+5%、ASPD-5%</td><td>開山斧：倍率15,000%，冷卻12秒<br>崩甲：冷卻15秒</td></tr>
+<tr><td class="c">13</td><td class="nm">天蓬神將‧玄罡</td><td class="c">物理</td><td>MHP+6%、DEF+4%、技能傷害-3%</td><td>九齒橫掃：倍率10,000%，冷卻15秒<br>玄罡護主：冷卻20秒</td></tr>
+<tr><td class="c">14</td><td class="nm">火德神將‧炎武</td><td class="c">混合</td><td>ATK/MATK+3%、移動速度+3%、受到水傷+5%</td><td>火德槍：倍率10,000%，冷卻12秒<br>烈焰步：冷卻12秒</td></tr>
+<tr><td class="c">15</td><td class="nm">托塔神將‧靖遠</td><td class="c">物理</td><td>DEF/MDEF+5%、移動速度-3%</td><td>寶塔鎮壓：冷卻15秒<br>護塔：冷卻25秒</td></tr>
+<tr><td class="c">16</td><td class="nm">文曲神將‧星衡</td><td class="c">法術</td><td>變動詠唱-5%、MSP+5%、MHP-3%</td><td>星文咒：倍率10,000%，冷卻12秒<br>啟靈：冷卻20秒</td></tr>
+<tr><td class="c">17</td><td class="nm">武曲神將‧天鋒</td><td class="c">物理</td><td>暴擊率+4%、暴擊傷害+6%、MDEF-3%</td><td>武曲斬：倍率14,000%，冷卻12秒<br>戰意：冷卻20秒</td></tr>
+<tr><td class="c">18</td><td class="nm">藥王神將‧青囊</td><td class="c">法術</td><td>治療效果+6%、毒抗+10%、玩家傷害-3%</td><td>青囊術：冷卻12秒<br>百毒散：冷卻25秒</td></tr>
+<tr><td class="c">19</td><td class="nm">瘟部神將‧厄羅</td><td class="c">法術</td><td>異常傷害+5%、異常抗性-8%</td><td>瘟毒：倍率10,000%，冷卻12秒<br>枯脈：冷卻18秒</td></tr>
+<tr><td class="c">20</td><td class="nm">劍侍神將‧凌霜</td><td class="c">物理</td><td>ATK+5%、命中+5%、受到遠距離傷害+3%</td><td>霜華劍：倍率12,000%，冷卻12秒<br>劍返：冷卻10秒</td></tr>
+<tr><td class="c">21</td><td class="nm">狐仙神將‧青丘</td><td class="c">法術</td><td>MATK+4%、閃避+5%、DEF-3%</td><td>狐火：倍率10,000%，冷卻12秒<br>魅影：冷卻18秒</td></tr>
+<tr><td class="c">22</td><td class="nm">金蟾神將‧聚寶</td><td class="c">混合</td><td>Zeny取得+8%、一般素材相對掉落率+3%、玩家傷害-6%</td><td>金珠：倍率20,000%，冷卻15秒<br>聚財：冷卻30秒</td></tr>
+<tr><td class="c">23</td><td class="nm">地煞神將‧岩魁</td><td class="c">物理</td><td>地屬性傷害+5%、DEF+5%、移動速度-3%</td><td>地裂拳：倍率12,000%，冷卻12秒<br>岩脈崩解：冷卻15秒</td></tr>
+<tr><td class="c">24</td><td class="nm">妙音神將‧清弦</td><td class="c">法術</td><td>受到異常持續時間-8%、MSP+4%、玩家最終傷害-4%</td><td>清心曲：冷卻25秒<br>亂魂音：冷卻18秒</td></tr>
+<tr><td class="c">25</td><td class="nm">金翅神將‧雲鷹</td><td class="c">物理</td><td>遠距離物理傷害+5%、命中+8%、MHP-3%</td><td>金羽穿雲：倍率12,000%，冷卻12秒<br>獵空印：冷卻18秒</td></tr>
+<tr><td class="c">26</td><td class="nm">二郎真君 <span class="bn">特級</span></td><td class="c">物理</td><td>ATK+8%、P.ATK+8、Boss傷害+10%；受到Boss傷害+5%</td><td>三尖裂界：倍率20,000%，冷卻10秒<br>天眼破妄：冷卻15秒<br>哮天追獵：冷卻20秒<br>法天象地：冷卻60秒</td></tr>
+<tr><td class="c">27</td><td class="nm">九天玄女 <span class="bn">特級</span></td><td class="c">法術</td><td>MATK+8%、S.MATK+8、技能後延遲-5%；SP消耗+8%</td><td>九天星落：倍率16,000%，冷卻12秒<br>玄女法印：冷卻15秒<br>天機護法：冷卻20秒<br>萬星歸墟：倍率40,000%，冷卻60秒</td></tr>
+<tr><td class="c">28</td><td class="nm">哪吒 <span class="bn">特級</span></td><td class="c">混合</td><td>ATK/MATK+8%、P.ATK/S.MATK+5、移動速度+5%；受到水屬性傷害+8%</td><td>火尖槍‧燎原：倍率20,000%，冷卻10秒<br>乾坤圈：冷卻15秒<br>混天綾：冷卻18秒<br>三頭六臂：冷卻75秒</td></tr>
+<tr><td class="c">29</td><td class="nm">敖丙 <span class="bn">特級</span></td><td class="c">法術</td><td>MATK+10%、S.MATK+8、水屬性傷害+12%；受到火屬性傷害+8%</td><td>冰龍破：倍率20,000%，冷卻10秒<br>萬龍甲：冷卻25秒<br>東海寒潮：冷卻15秒<br>白龍真身：倍率45,000%，冷卻75秒</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">一般神將 25 名、特級 4 名。等級上限一般 <b>Lv.100</b>、特級 <b>Lv.120</b>；星級上限一般 <b>5 星</b>、特級 <b>7 星</b>。</p>
+  </section>
+
+  <section>
+    <h2>怎麼拿到</h2>
+    <div class="two">
+      <div>
+        <h3 class="sub">召喚池機率</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>抽到什麼</th><th class="c">機率</th></tr></thead>
+            <tbody><tr><td>特級法寶</td><td class="c">0.001%</td></tr>
+<tr><td>一般法寶</td><td class="c">0.01%</td></tr>
+<tr><td>特級神將碎片</td><td class="c">4.999%</td></tr>
+<tr><td>一般神將碎片</td><td class="c">20%</td></tr>
+<tr><td>材料</td><td class="c">74.99%</td></tr></tbody>
+          </table>
+        </div>
+        <p class="note">抽一次要一張<b>神將轉蛋</b>，商城「新商品」頁上架，<b>60 點</b>。</p>
+      </div>
+      <div>
+        <h3 class="sub">碎片也能湊</h3>
+        <p class="note">抽到重複的法寶可以在天君那裡<b>分解</b>成該神將的碎片：一般 1,000 片、特級 5,000 片。碎片本身可以交易，湊齊了一樣能請出神將。</p>
+        <p class="note">碎片與法寶也會從<b>天降福利</b>之類的活動流出來，不是只有商城一條路。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>養成</h2>
+    <h3 class="sub">提升等級</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="c">階段</th><th class="c">可升到</th><th class="c">神將碎片</th><th class="c">幻影碎片</th><th class="c">神將印（兩種各）</th><th class="c">Zeny</th></tr></thead>
+        <tbody><tr><td class="c">1</td><td class="c">Lv.40</td><td class="c">1,000</td><td class="c">1,000</td><td class="c">20</td><td class="c">100,000,000</td></tr>
+<tr><td class="c">2</td><td class="c">Lv.60</td><td class="c">2,000</td><td class="c">2,000</td><td class="c">40</td><td class="c">300,000,000</td></tr>
+<tr><td class="c">3</td><td class="c">Lv.80</td><td class="c">4,000</td><td class="c">4,000</td><td class="c">60</td><td class="c">600,000,000</td></tr>
+<tr><td class="c">4</td><td class="c">Lv.100</td><td class="c">8,000</td><td class="c">8,000</td><td class="c">100</td><td class="c">1,200,000,000</td></tr>
+<tr><td class="c">5</td><td class="c">Lv.110</td><td class="c">12,000</td><td class="c">12,000</td><td class="c">150</td><td class="c">2,500,000,000</td></tr>
+<tr><td class="c">6</td><td class="c">Lv.120</td><td class="c">20,000</td><td class="c">20,000</td><td class="c">200</td><td class="c">5,000,000,000</td></tr></tbody>
+      </table>
+    </div>
+    <div class="callout"><b>一般神將只開到第 4 階段（Lv.100）。</b>第 5 階段以後只有特級神將能升，一路到 Lv.120 —— 表上有六個階段，但一般神將用不到後面兩個。</div>
+
+    <h3 class="sub">升星</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="c">星級</th><th class="c">碎片（一般）</th><th class="c">碎片（特級）</th><th class="c">幻影碎片</th><th class="c">神將印（兩種各）</th><th class="c">Zeny</th></tr></thead>
+        <tbody><tr><td class="c">1 → 2</td><td class="c">1,000</td><td class="c">1,500</td><td class="c">1,000</td><td class="c">500</td><td class="c">100,000,000</td></tr>
+<tr><td class="c">2 → 3</td><td class="c">2,000</td><td class="c">3,000</td><td class="c">2,000</td><td class="c">800</td><td class="c">300,000,000</td></tr>
+<tr><td class="c">3 → 4</td><td class="c">4,000</td><td class="c">6,000</td><td class="c">4,000</td><td class="c">1,000</td><td class="c">600,000,000</td></tr>
+<tr><td class="c">4 → 5</td><td class="c">8,000</td><td class="c">12,000</td><td class="c">8,000</td><td class="c">1,500</td><td class="c">1,200,000,000</td></tr>
+<tr><td class="c">5 → 6</td><td class="c"><span class="dim">上限</span></td><td class="c">20,000</td><td class="c">15,000</td><td class="c">2,000</td><td class="c">2,500,000,000</td></tr>
+<tr><td class="c">6 → 7</td><td class="c"><span class="dim">上限</span></td><td class="c">35,000</td><td class="c">25,000</td><td class="c">3,000</td><td class="c">5,000,000,000</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">升星<b>固定成功，不會失敗</b>。Zeny 超過單筆上限的階段可以分次存入，存滿了再升。升星成功會發<b>全服公告</b>。</p>
+
+    <h3 class="sub">十二境神將印怎麼換</h3>
+    <p class="note">養成吃的是<b>神將印</b>不是原始材料 —— 原始材料要先在天君那裡兌換成<b>同境</b>的印，不能跨境、高境也不能向下替代。兌換<b>固定成功但不可還原</b>，神將印帳號綁定。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="c">境</th><th>原始材料</th><th>換成</th><th class="c">比例</th><th class="c">每枚手續費</th></tr></thead>
+        <tbody><tr><td class="c">子境</td><td>子境靈砂</td><td>子境神將印</td><td class="c">10,000 : 1</td><td class="c">10,000 Zeny</td></tr>
+<tr><td class="c">丑境</td><td>丑境玄鐵</td><td>丑境神將印</td><td class="c">10,000 : 1</td><td class="c">10,000 Zeny</td></tr>
+<tr><td class="c">寅境</td><td>寅境妖丹</td><td>寅境神將印</td><td class="c">8,000 : 1</td><td class="c">20,000 Zeny</td></tr>
+<tr><td class="c">卯境</td><td>卯境靈木</td><td>卯境神將印</td><td class="c">8,000 : 1</td><td class="c">20,000 Zeny</td></tr>
+<tr><td class="c">辰境</td><td>辰境星髓</td><td>辰境神將印</td><td class="c">6,000 : 1</td><td class="c">30,000 Zeny</td></tr>
+<tr><td class="c">巳境</td><td>巳境炎晶</td><td>巳境神將印</td><td class="c">6,000 : 1</td><td class="c">30,000 Zeny</td></tr>
+<tr><td class="c">午境</td><td>午境陽玉</td><td>午境神將印</td><td class="c">4,000 : 1</td><td class="c">50,000 Zeny</td></tr>
+<tr><td class="c">未境</td><td>未境地髓</td><td>未境神將印</td><td class="c">4,000 : 1</td><td class="c">50,000 Zeny</td></tr>
+<tr><td class="c">申境</td><td>申境風魄</td><td>申境神將印</td><td class="c">2,000 : 1</td><td class="c">80,000 Zeny</td></tr>
+<tr><td class="c">酉境</td><td>酉境月華</td><td>酉境神將印</td><td class="c">2,000 : 1</td><td class="c">80,000 Zeny</td></tr>
+<tr><td class="c">戌境</td><td>戌境天罡</td><td>戌境神將印</td><td class="c">1,000 : 1</td><td class="c">120,000 Zeny</td></tr>
+<tr><td class="c">亥境</td><td>亥境混沌晶</td><td>亥境神將印</td><td class="c">1,000 : 1</td><td class="c">120,000 Zeny</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>天君還能做什麼</h2>
+    <div class="two">
+      <div>
+        <p class="note"><b>設定戰鬥 AI</b> —— 跟隨、主動、守護、集火、輔助、停止六種，決定神將上場之後怎麼動。</p>
+        <p class="note"><b>裝備法寶符印</b> —— 戰印／真印／靈印三種，分別加攻擊、血量與冷卻縮減。</p>
+      </div>
+      <div>
+        <p class="note"><b>分解重複法寶</b> —— 重複的法寶換成該神將的碎片。</p>
+        <p class="note"><b>法寶修復</b> —— 法寶碎片換回剩餘冷卻的一半，每天一次，所有品階共用。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>資料直接取自伺服器設定檔，改動後重新產生即可。</p>
+    <p><a href="index.html">← 回玩家工具首頁</a></p>
+  </footer>
+</div>
+</body>
+</html>
