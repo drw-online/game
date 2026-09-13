@@ -13,7 +13,7 @@
 --------------------------------------------------------------------------
   script/20.法寶神將/00.設定.txt   所有 $@SJ_* 表(神將名/階級/定位/靈氣/技能、
                                    養成成本、兌換比例、召喚池機率)
-  script/20.法寶神將/02.附靈.txt   召喚期間給主人的加成(bonus 那一段)
+  script/20.法寶神將/02.附靈.txt   裝備法寶給主人的加成(bonus 那一段)
   script/20.法寶神將/03.NPC.txt    NPC 座標
   conf/battle/blackgod.conf        sj_* 設定(基礎 ATK、召喚時長…)
   conf/battle/player.conf          max_res_mres_ignored(無視特性的全服上限)
@@ -202,16 +202,18 @@ def main():
     if cut[max(cut)] != den:
         die("$@SJ_PoolCut 最後一段不等於分母, 機率表對不起來")
 
-    # ---- 召喚期間的玩家加成 (02.附靈.txt) ----
-    blk = re.search(r"if\s*\(\s*getsjinfo\(1\)\s*\)\s*\{(.*?)\n\t\}", A, re.S)
+    # ---- 裝備法寶就生效的玩家加成 (02.附靈.txt) ----
+    #   [2026-09-13] 閘門從 if (getsjinfo(1)) 改成 if (.@g >= 1) ——
+    #   由「召喚在場上才給」改成「裝備法寶就給」。
+    blk = re.search(r"if\s*\(\s*\.@g\s*>=\s*1\s*\)\s*\{(.*?)\n\t\}", A, re.S)
     if not blk:
-        die("02.附靈.txt 找不到 getsjinfo(1) 的召喚加成區塊")
+        die("02.附靈.txt 找不到 .@g >= 1 的加成區塊")
     blk = blk.group(1)
 
     def two(pat):
         m = re.search(pat, blk)
         if not m:
-            die("召喚加成解析不到: " + pat)
+            die("加成解析不到: " + pat)
         return int(m.group(1)), int(m.group(2))
 
     hp_p, hp_n = two(r"bonus\s+bMaxHPrate,\s*\(\.@prem\)\s*\?\s*(\d+)\s*:\s*(\d+)")
@@ -362,7 +364,7 @@ h3.sub{font-family:"Noto Serif TC",serif; font-size:16px; margin:24px 0 0}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>法寶神將玩法</title>
-<meta name="description" content="神域仙境 法寶神將：29 名神將的靈氣與技能、召喚池機率、升級升星成本、十二境神將印兌換、召喚期間的加成。">
+<meta name="description" content="神域仙境 法寶神將：29 名神將的靈氣與技能、召喚池機率、升級升星成本、十二境神將印兌換、裝備就生效的加成。">
 <meta name="color-scheme" content="light dark">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="神域仙境">
@@ -388,20 +390,20 @@ __EXTRA__
       <span>← 神域仙境 玩家工具</span>
     </a>
     <h1>法寶神將玩法</h1>
-    <p class="lede">一件法寶對應一名神將。<b>裝備法寶</b>就有靈氣加成，<b>召喚出來</b>神將會上場替你打，而且召喚期間主人自己也會變強。全部功能都在崑崙的<b>【御寶天君‧雲虛】</b>（__MAP__ __X__,__Y__）。</p>
+    <p class="lede">一件法寶對應一名神將。<b>裝備法寶</b>就有靈氣加成，主人自己也跟著變強；<b>召喚出來</b>神將還會上場替你打。全部功能都在崑崙的<b>【御寶天君‧雲虛】</b>（__MAP__ __X__,__Y__）。</p>
   </header>
 
   <section>
     <h2>三句話</h2>
     <ol class="steps">
       <li><b><i>一</i>拿到法寶</b><p>用<b>__TICKET__</b>抽，或蒐集<b>神將碎片</b>湊。共 __NG__ 名神將，其中 __NPRE__ 名是特級。</p></li>
-      <li><b><i>二</i>裝備法寶</b><p>裝上去就有<b>靈氣</b>加成，不必召喚。同時只能裝一件 —— 換法寶會讓星級歸零。</p></li>
-      <li><b><i>三</i>召喚神將</b><p>神將上場替你打，一次撐 <b>__HOURS__ 小時</b>。召喚期間主人另外拿到一整批加成。</p></li>
+      <li><b><i>二</i>裝備法寶</b><p>裝上去就有<b>靈氣</b>加成與一整批主人加成，不必召喚。同時只能裝一件 —— 換法寶會讓星級歸零。</p></li>
+      <li><b><i>三</i>召喚神將</b><p>神將上場替你打，一次撐 <b>__HOURS__ 小時</b>。召喚只影響神將本身，主人的加成裝著就有。</p></li>
     </ol>
   </section>
 
   <section>
-    <h2>召喚期間，主人拿到什麼</h2>
+    <h2>裝備法寶，主人拿到什麼</h2>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>項目</th><th class="c">一般神將</th><th class="c">特級神將</th></tr></thead>
@@ -412,7 +414,7 @@ __EXTRA__
         </tbody>
       </table>
     </div>
-    <p class="note">這些<b>只在神將真的在場上時生效</b>，收回或時間到就沒了 —— 跟「裝備法寶就有」的靈氣是兩回事。</p>
+    <p class="note">這一批<b>裝著法寶就生效</b>，不必召喚、收回也不會沒有（2026-09-13 起）。它跟下面每名神將各自的<b>靈氣</b>是兩批不同的加成，會一起吃到。</p>
     <div class="callout"><b>無視特性 RES／MRES 有一個共用上限。</b>全服總上限是 <b>__IGCAP__%</b>，而且是<b>與其他來源共用</b>的、不是額外配額 —— 你身上如果已經從別處吃滿了，神將這一份就疊不上去。</div>
   </section>
 
