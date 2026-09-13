@@ -8,14 +8,19 @@
 |---|---|
 | `index.html` | 入口頁，列出所有工具 |
 | `runewords.html` | 符文之語圖鑑 — 33 種符文、290 組組合、掉落與煉化的取得方式 |
-| `potential.html` | 裝備潛能詞條表 — 5 個部位池、193 條詞條、六支道具的差別 |
+| `potential.html` | 裝備潛能詞條表 — 5 個部位池、194 條詞條、六支道具的差別 |
 | `petaffix.html` | 寵物詞條與星級 — 41 種能力、★3→★9 升階表、升等與六維配點 |
 | `daopan.html` | 大道星盤天賦樹 — 六大道 141 個節點、12 個核心天賦、56 點的配點上限 |
 | `advpan.html` | 進階星盤 — 六大星域 48 個節點 + 6 條跨星域連線、星蝕轉化表、30 點的配點上限 |
+| `wanfa.html` | 萬法星盤 — 72 個節點的觸發技能、機率、冷卻與傷害倍率，10 條路線、8 顆主星共鳴 |
 | `pets.html` | 神域寵物圖鑑 — 靈獸島 162 種寵物的編號、外觀、魔物編號與蛋編號 |
-| `mobs.html` | 靈獸島魔物圖鑑 — 352 隻的數值與掉落（190 隻 MVP + 162 種神域魔物）、全圖共通掉落 |
-| `wanfa.html` | 萬法星盤 — 55 個節點的觸發技能、機率、冷卻與傷害倍率，8 顆主星共鳴 |
+| `digimon.html` | 數碼寶貝圖鑑 — 33 隻的外觀、魔物編號與蛋編號；孵化即 ★5 星 5 條 |
+| `mobs.html` | 靈獸島魔物圖鑑 — 兩區合計 295 隻的數值與掉落（一區 133 隻 MVP + 二區 162 種神域魔物）、兩區共通掉落 |
+| `mobaffix.html` | 萬妖詞綴 — 28 條詞綴的數值與階級門檻、十二色怪的出現率、極道異種 |
 | `skillstone.html` | 技能石技能表 — 1/2/3/4 轉技能石各自的抽取池，1095 支技能的圖示、中文名、職業與上限 |
+| `mijing.html` | 天地大秘境玩法 — 5 個階級、6 種模板、19 隻首領、40 條地圖法則、20 項祭壇、18 條詞綴 |
+| `shenjiang.html` | 法寶神將玩法 — 29 名神將的靈氣與技能、召喚池機率、升級升星成本、十二境神將印兌換 |
+| `achievement.html` | 天命成就稱號圖鑑 — 150 個稱號的能力、稀有度與取得條件，29 類分類、25 個隱藏 |
 
 ---
 
@@ -31,18 +36,26 @@
 index.html          入口頁
 runewords.html      ┐
 potential.html      │
-petaffix.html       ├ 各工具頁，彼此獨立
+petaffix.html       │
 daopan.html         │
+advpan.html         │
+wanfa.html          ├ 各工具頁，彼此獨立
 pets.html           │
+digimon.html        │
 mobs.html           │
-wanfa.html          │
+mobaffix.html       │
 skillstone.html     │
-mijing.html         ┘
+mijing.html         │
+shenjiang.html      │
+achievement.html    ┘
 pets/               神域寵物圖鑑的 162 張外觀圖（drwmob001.png ~ drwmob162.png，共約 920 KB）
+digimon/            數碼寶貝圖鑑的 33 張外觀圖
 skills/             技能石技能表的 1093 個技能圖示（24x24 PNG，共約 830 KB）
-tools/              產生器。build_pets.py（產 pets.html 與 pets/）、build_mobs.py（產 mobs.html）、
+tools/              產生器。build_pets.py（產 pets.html 與 pets/）、build_digimon.py（產 digimon.html 與 digimon/）、
+                    build_mobs.py（產 mobs.html）、build_mobaffix.py（產 mobaffix.html）、
                     build_wanfa.py（產 wanfa.html）、build_skillstone.py（產 skillstone.html 與 skills/）、
-                    build_mijing.py（產 mijing.html）、
+                    build_mijing.py（產 mijing.html）、build_shenjiang.py（產 shenjiang.html）、
+                    build_achievement.py（產 achievement.html）、
                     build_advpan.py（產 advpan.html）、
                     build_daopan.py（只重產 daopan.html 的「互動星盤」區塊）
 logo.webp           站台 logo（去背 440px，入口頁與各頁的回首頁鈕共用）
@@ -69,16 +82,20 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 | `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act`<br>**這一頁有產生器**：`python tools/build_pets.py` |
 | `daopan.html` | `2.開機擋/script/04.系統/70.大道星盤.txt` 的 `OnInit` 八張節點表（`$@dao_name$` / `tier` / `pre` / `pre2` / `ex` / `ek1~3` / `ev1~3`）、分級表 `$@dao_tmax` `$@dao_tcost`、效果對照 `$@dao_kn$` `$@dao_ku` `$@dao_ks`、境界配點 `$@dao_grant`、常數 `$@DAO_*`<br>`2.開機擋/script/04.系統/12.境界突破.txt` 的 `$@realm_name$`（十三境的名字）<br>⚠ 抓 `setarray $@dao_name$[...]` 的 regex **一定要 `re.escape` 前綴** —— `dao_name$` / `dao_kn$` / `dao_tname$` / `dao_pathdesc$` 結尾的 `$` 會被當成行尾錨定，整條抓不到而且只噴 `NoneType`，看不出是 regex 的問題<br>⚠ 八張節點表是**人工四個一組對齊**的，少一格不會報錯只會整段錯位 —— 產生器有一道「各表長度必須一致」的檢查，觸發時直接中止<br>⚠ 互動星盤刻意**不做點數門檻** —— 伺服器端沒有那條規則，網頁多做會讓玩家照著排卻在遊戲裡點不出來；橫軸的深度只是排版<br>**這一頁有產生器**：`python tools/build_daopan.py`（只覆寫 `<!-- DAOPAN-SIM:BEGIN -->` ~ `<!-- DAOPAN-SIM:END -->` 之間，手寫說明不動） |
 | `advpan.html` | `2.開機擋/script/17.進階星盤/00.設定.txt` 的 `OnInit` —— 54 個節點的 `$@adv_name$` / `tier` / `ek1~3` / `ev1~3`、觸發表 `$@adv_pk` `pr` `pv` `pdur` `picd`、跨星域 `$@adv_xa` `xb`、星域 `$@adv_dom$` `domsrc$` `domdesc$` `lo` `hi`、分級 `$@adv_tmax` `tcost`、常數 `$@ADV_*`<br>`2.開機擋/script/17.進階星盤/02.NPC.txt` 的效果名稱表 `$@adv_kn$` / 單位 `$@adv_ku` / 觸發種類 `$@adv_pkn$` / 異常名 `$@adv_abname$` / 條件型說明 `$@adv_note$`<br>`1.原始碼/add/src/blackgod_astro_proc.inc` 的 `adv_abn_spec[]`（星蝕的持續時間與 ICD —— 引擎才是真相）<br>`自創/0909/神域仙境_進階星盤系統.md` §9.3（星蝕效果的玩家措辭；`verify()` 會比對它與引擎的名稱是否一致）<br>`2.開機擋/db/import/blackgod/item_daopan.yml`（洗點材料名，與大道星盤共用）、`conf/battle/blackgod.conf` 的 `adv_enable` / `adv_proc_per_sec`<br>⚠ 節點資料是**一行多個單格賦值**不是 `setarray`（`$@adv_name$[101] = "尋靈之眼";	$@adv_tier[101] = 1;`）—— 只寫 setarray 的解析器會抓到 0 筆且不報錯<br>⚠ 觸發表的值是**具名常數**（`$@adv_pk[203] = $@ADV_PK_ABN;`）—— 只認數字的 regex 會靜默漏掉全部 24 個觸發型節點<br>⚠ **條件型節點**（`ek` 填 0、值放 `ev`）的語意只寫在**行內註解**裡，那 11 個節點要靠 `slot_comments()` 解析，漏讀會整欄空白<br><br>⚠ 互動星盤是**門檻制**不是樹：一般節點要同星域 ≥ `ADV_DOM_PRE`(3)、核心星位 ≥ `ADV_CORE_PRE`(12)、跨星域要**兩側各** ≥ `ADV_CROSS_PRE`(6)<br>⚠ **每個星域編號最小的節點是入口，永遠可點** —— 沒有這個例外會死結（要 3 點才點得下去，但不點就拿不到那 3 點）。`01.核心.txt` 的 `F_Adv_PreOK` 有整段註解，2026-09-10 修過一次<br>⚠ `pos` / `neg` 是 `eff_text()` 產好的**文字**，所以加總不了 —— 側欄只給各星域投入與門檻進度，不做效果總計<br>**這一頁有產生器**：`python tools/build_advpan.py` |
-| `mobs.html` | `2.開機擋/script/05.魔物/13.靈獸島.txt`（352 隻的生成清單，這是權威名單）<br>`2.開機擋/script/04.系統/56.靈獸島入口.txt` 的 `$@BN_FEE`（入場費）<br>`2.開機擋/db/import/blackgod/mob_bossnia.yml`（190 隻 MVP 本體）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（162 種神域魔物本體）<br>**掉落是四層疊加**：本體的 `Drops` + `mob_skillstone.yml`（1轉技能石）+ `mob_drwmob_mvpcoin.yml`（MVP硬幣）+ `db/import/map_drops.yml` 的 `bossnia_01`（2~4轉技能石）—— 少讀一支就會漏，`Drops` 是附加不是取代<br>物品中文名取自 `db/re/item_db_*.yml` 與 `db/import/blackgod/item_*.yml`（本服的 item_db 本身就是中文）<br>⚠ 兩邊 Rate 分母不同：mob_db 是 10000，map_drops 看 `Header.Version`（2=十萬 3=百萬）<br>**這一頁有產生器**：`python tools/build_mobs.py` |
+| `mobs.html` | `2.開機擋/script/05.魔物/13.靈獸島.txt`（295 隻的生成清單，這是權威名單；**地圖名照抄行首那一格**，哪一隻在哪一區完全由這個檔決定）<br>`2.開機擋/script/04.系統/56.靈獸島入口.txt` 的 `$@BN_FEE`（入場費）<br>`2.開機擋/db/import/blackgod/mob_bossnia.yml`（190 隻 MVP 本體）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（162 種神域魔物本體）<br>**掉落是四層疊加**：本體的 `Drops` + `mob_skillstone.yml`（1轉技能石）+ `mob_drwmob_mvpcoin.yml`（MVP硬幣）+ `db/import/map_drops.yml` 的 `bossnia_01` 與 `bossnia_02`（2~4轉技能石）—— 少讀一支就會漏，`Drops` 是附加不是取代<br>⚠ 兩區的 `GlobalDrops` **必須完全一致**（`bossnia_02` 是照 `bossnia_01` 複製的），只改一邊會讓兩區產出不同而玩家看不出原因 —— 產生器不一致就直接中止<br>⚠ 生成清單裡被 `//` 註解掉的 **57 隻**（2026-09-02 停用 49 隻人形王、09-03 再停 8 隻職業造型王）不算進去，所以 MVP 是 133 不是 `mob_bossnia.yml` 的 190<br>物品中文名取自 `db/re/item_db_*.yml` 與 `db/import/blackgod/item_*.yml`（本服的 item_db 本身就是中文）<br>⚠ 兩邊 Rate 分母不同：mob_db 是 10000，map_drops 看 `Header.Version`（2=十萬 3=百萬）<br>**這一頁有產生器**：`python tools/build_mobs.py` |
 | `wanfa.html` | `2.開機擋/script/04.系統/73.萬法星盤.txt` 的 `OnInit` —— 13 張平行 `setarray`（`$@wf_name$` / `ring` / `route` / `pre` / `skill` / `bf` / `icd` / `dmg` / `flag` / `rate` / `rinc` / `slv` / `sinc`），主星另有 `$@wf_cr1` `cr2` `cbon`；參數 `$@WF_PT_MAX` `COST_*` `CUM[]` `ITEM_*`；配點表 `$@wf_grant` `$@wf_syg`<br>`2.開機擋/script/10.鎖妖塔/00.設定.txt` 的 `$@SY_MAXFLOOR`（決定「目前實際拿得到幾點」）<br>技能中文名取 `skill_db.yml` 的 **`Description`**（`Name` 是 AegisName），同時比對 `MaxLevel`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `astrolabe_pvp_proc_rate` / `astrolabe_pvp_damage_rate`<br>⚠ 抓 `setarray` 的 regex **必須帶 `setarray` 前綴** —— NPC 那段也在讀同一批陣列，少了前綴會把「使用」當「定義」抓進來且不報錯<br><br>⚠ 互動星盤的規則與大道**不一樣**：成本是**累進**的（`WF_CUM`），「再升一級要幾點」= `CUM[lv+1] - CUM[lv]`；基礎星／核心主星只有 1 級走固定價；前置最多四槽、每槽各有「要幾級」，另有 `preor` 決定「全部都要」還是「任一即可」<br>⚠ 互動盤的三個佔位符（`__SIMCSS__` / `__SIM__` / `__SIMMETA__` / `__SIMDATA__`）**必須排在替換清單最前面** —— `SIM_HTML` 裡用了 `__PTMAX__` / `__CUM__`，順序反了不報錯，只會在頁面上看到沒被取代的 `__PTMAX__` 字樣<br>**這一頁有產生器**：`python tools/build_wanfa.py` |
 | `skillstone.html` | `5.技能圖片/技能書對照表.csv`（1095 本技能書的物品ID / **階級** / 技能代號 / 上限 / 職業 / 圖示檔名 —— 這是主幹）<br>`5.技能圖片/技能圖示對應表.csv`（中文名稱與英文名，以技能代號 join）<br>`5.技能圖片/*.bmp`（24x24 圖示，洋紅 `255,0,255` 是去背色；1093 個裡有 824 個用它，其餘本來就是不透明深色底）<br>`2.開機擋/db/import/blackgod/item_skillbook.yml`（真正的物品 DB，用來驗證 CSV 沒過期）<br>`2.開機擋/script/04.系統/05.技能書.txt` 的 `$@SKB_TIER` / `$@SKB_BASE` / `$@SKB_LEN`（**這才是伺服器真正的抽取池**，`F_SkillStone` 照它均勻隨機）<br>`2.開機擋/conf/atcommands.yml` 的 `@job` 說明表（中文職業名，玩家 `@help job` 看到的就是這份）+ `1.原始碼/src/common/mmo.hpp` 的 `enum e_job`（把 CSV 的英文職業接到職業編號）<br>⚠ **階級只認「階級」欄，不看「原始分類」也不用物品 ID 前綴推** —— 2026-08-16 有 46 本二轉技能原本被歸在 1 轉，兩欄至今仍有 46 筆不一致，那是正確的歷史痕跡<br>⚠ 圖示檔名用 `技能書對照表` 的「圖示」欄，不用 `技能圖示對應表` 的「圖片檔名」（後者有兩筆是空的）<br>**這一頁有產生器**：`python tools/build_skillstone.py` |
 | `mijing.html` | `2.開機擋/script/16.天地大秘境/00.設定.txt` 的全部 `$@MJ_*` —— 階級（`RarityName$` / `RarityRoll` / `RarityFloors` / `RarityHard` / `RarityDecay` / `RarityLanternAdd` / `PDiv` …）、模板（`TplName$` / `TplRoll` / `TplEvent$` / `TplTrap$` / `TplBoss1~3`）、19 隻首領（`BossName$` / `BossSig$` / `BossTpl`）、40 條法則（`RuleName$` / `RuleKind` / `RuleV` / `RuleV2` / `RuleCat` / `RuleBonus`）、20 項祭壇、18 條詞綴、隱藏層門檻、兌換表與週配額<br>`2.開機擋/script/16.天地大秘境/02.入口管理器.txt` 的 `$@MJ_GateMapName$`（13 張候選圖的中文名）<br>`2.開機擋/script/16.天地大秘境/09.祭壇.txt` 的 `S_Desc`（20 項祭壇「玩家看到的那一句」）<br>`2.開機擋/script/16.天地大秘境/10.危害.txt` 的 `S_RuleWarn` / `S_AffWarn`（定時危害的預警文字）<br>⚠ **法則與詞綴的中文敘述是從 `kind`+`V` 還原的**，對照的是 `01.核心.txt` 的 `F_MJ_RuleApply` 與 `10.危害.txt` 的實際分支，**不是 `00.設定.txt` 的註解**（註解寫的是企劃書意圖，與實作有出入）<br>⚠ 新增一種 `kind` 而沒補還原規則的話，產生器會**當場失敗**而不是印出空白<br>**這一頁有產生器**：`python tools/build_mijing.py` |
 
-### ⚠ 產生器已經不在了（`pets.html` / `mobs.html` / `wanfa.html` / `skillstone.html` / `mijing.html` 除外）
+### ⚠ 只有 `runewords.html` / `potential.html` / `petaffix.html` 沒有產生器
+
+其餘每一頁都有，在 `tools/` 底下，執行方式一律是 `python tools/build_<頁名>.py`。
+它們都是**決定性輸出**而且**自己驗證自己** —— 來源沒變的話重跑一次 `git status` 應該是乾淨的，
+這同時就是它們的回歸測試。下面幾段是各自驗什麼。
 
 **`pets.html` 有產生器**，在 `tools/build_pets.py`：解析三支 YAML → 把客戶端 sprite 轉成 PNG → 寫出 `pets.html` → **自己反向解析驗證一次**。輸出是決定性的，來源沒變的話重跑一次 `git status` 應該是乾淨的 —— 這同時就是它的回歸測試，改完務必跑一次確認。
 
-**`mobs.html` 也有產生器**，在 `tools/build_mobs.py`（需要 PyYAML）：解析生成清單與四層掉落 → 寫出 `mobs.html` → 跑完自己驗證一次（352 隻、機率、掉落物是否全部對到中文名）。同樣是決定性輸出，改完重跑一次確認。
+**`mobs.html` 也有產生器**，在 `tools/build_mobs.py`（需要 PyYAML）：解析生成清單與四層掉落 → 寫出 `mobs.html` → 跑完自己驗證一次（295 隻、一區只有 MVP 二區只有神域魔物、機率、掉落物是否全部對到中文名）。同樣是決定性輸出，改完重跑一次確認。
 
 **`wanfa.html` 也有產生器**，在 `tools/build_wanfa.py`（需要 PyYAML）：解析 `OnInit` 的 13 張平行表 → 寫出 `wanfa.html` → 跑完自己驗證一次（表格逐格對齊、各環節點數、技能等級沒超過 `MaxLevel`、星環與路線名稱是中文而不是程式碼碎片）。同樣是決定性輸出。
 
@@ -86,7 +103,9 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 
 **`mijing.html` 也有產生器**，在 `tools/build_mijing.py`（純標準庫）：解析 `16.天地大秘境` 的四支腳本 → 寫出 `mijing.html` → 產生前先驗一輪（階級與模板的抽樣機率各自合計 100、候選地圖三張表等長、首領數 = 模板×3+1、每一條法則與詞綴的 `kind` 都有中文還原、每一項祭壇都找得到說明文字）。**這一頁沒有任何手寫的數字** —— 敘述是手寫的，數字全部來自腳本，所以改平衡之後重跑就會跟上。同樣是決定性輸出。
 
-其餘四頁沒有。README 原本寫「改完來源要重跑產生器」，但那支產生器**沒有留下來** —— repo 裡沒有，專案其他地方也沒有。
+`digimon.html` / `mobaffix.html` / `shenjiang.html` / `achievement.html` 也各有一支，同樣是解析來源 → 寫頁面 → 自己驗證一次。〔2026-09-14：這四支的來源清單還沒補進下面的「資料從哪來」表，先看各支產生器自己的檔頭註解。〕
+
+**剩下那三頁沒有。** README 原本寫「改完來源要重跑產生器」，但那支產生器**沒有留下來** —— repo 裡沒有，專案其他地方也沒有。
 2026-08-25 這次更新是**逐頁寫一次性腳本、直接改 `.html`** 完成的：解析來源 → 覆寫內嵌 JSON 或表格 → 再反過來解析改完的 `.html` 與來源逐項比對。
 
 下次更新照同樣的做法就好，但**一定要留下驗證那一步** —— 直接改 HTML 最容易出的錯是「改了 A 忘了改 B」（表格改了、lede 的數字沒改、`<title>` 沒改），只有把改完的頁面重新解析回來跟來源對，才抓得到。
