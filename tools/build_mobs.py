@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------
 來源
 --------------------------------------------------------------------------
-  script/05.魔物/13.靈獸島.txt                  生成清單(352 隻的權威名單)
+  script/05.魔物/13.靈獸島.txt                  生成清單(295 隻的權威名單)
   script/04.系統/56.靈獸島入口.txt              入場費
   db/import/blackgod/mob_bossnia.yml            190 隻專用 MVP 本體
   db/import/blackgod/mob_drwmob.yml             162 種神域魔物本體
@@ -44,7 +44,9 @@ BG   = os.path.join(DB, "import", "blackgod")
 SPAWN = os.path.join(ROOT, r"2.開機擋\script\05.魔物\13.靈獸島.txt")
 ENTRY = os.path.join(ROOT, r"2.開機擋\script\04.系統\56.靈獸島入口.txt")
 
-MAP = "bossnia_01"
+# [2026-08-31] 靈獸島拆成兩區, 一區一類。地圖名不再寫死一張 ——
+#   spawn 檔每一行自己帶地圖名, 解析時原樣讀進來再對照這張表。
+ZONE = {"bossnia_01": "第一區", "bossnia_02": "第二區"}
 
 RACE = {"Formless": "無形", "Undead": "不死", "Brute": "動物", "Plant": "植物",
         "Insect": "昆蟲", "Fish": "魚貝", "Demon": "惡魔", "Demihuman": "人形",
@@ -66,11 +68,15 @@ def body(path):
 # ---------------------------------------------------------------- 來源解析
 
 def read_spawn():
-    """從生成腳本取出實際會生成的魔物 —— 資料表的權威名單。"""
+    """從生成腳本取出實際會生成的魔物 —— 資料表的權威名單。
+
+    回傳 (地圖名, 魔物編號, 數量, 重生ms)。地圖名照抄行首那一格, 不寫死 ——
+    2026-08-31 拆成兩區之後, 哪隻在哪一區完全由這個檔決定。
+    """
     with open(SPAWN, encoding="utf-8-sig") as f:
         t = f.read()
-    return [(int(a), int(b), int(c)) for a, b, c in re.findall(
-        r'^%s,\d+,\d+,\d+,\d+\tmonster\t.+?\t(\d+),(\d+),(\d+)\s*$' % MAP, t, re.M)]
+    return [(m, int(a), int(b), int(c)) for m, a, b, c in re.findall(
+        r'^(bossnia_\d+),\d+,\d+,\d+,\d+\tmonster\t.+?\t(\d+),(\d+),(\d+)\s*$', t, re.M)]
 
 
 def read_entrance_fee():
@@ -99,14 +105,29 @@ def read_items():
     return names
 
 
-def read_map_drops():
-    """bossnia_01 的 GlobalDrops。分母看 Header 的 Version。"""
+def read_map_drops(maps):
+    """靈獸島各區的 GlobalDrops。分母看 Header 的 Version。
+
+    ★ 兩區必須完全一致 —— 拆區時 bossnia_02 是照 bossnia_01 複製的一份,
+      只改一邊會讓兩區產出不同而玩家看不出原因。不一致就直接停下來,
+      不要產出一個「看起來對」的頁面。
+    """
     d = load(os.path.join(DB, "import", "map_drops.yml"))
     denom = 1000000 if int(d["Header"]["Version"]) >= 3 else 100000
+    per = {}
     for row in d["Body"]:
-        if row.get("Map") == MAP:
-            return [(g["Item"], g["Rate"] / denom * 100) for g in row.get("GlobalDrops") or []]
-    return []
+        if row.get("Map") in maps:
+            per[row["Map"]] = [(g["Item"], g["Rate"] / denom * 100)
+                               for g in row.get("GlobalDrops") or []]
+    missing = [m for m in maps if m not in per]
+    if missing:
+        raise SystemExit("map_drops.yml 缺少這幾區的 GlobalDrops: %s" % missing)
+    ref = per[maps[0]]
+    for m in maps[1:]:
+        if per[m] != ref:
+            raise SystemExit("map_drops.yml 的 %s 與 %s 不一致:\n  %s\n  %s"
+                             % (maps[0], m, ref, per[m]))
+    return ref
 
 
 def collect():
@@ -130,12 +151,16 @@ def collect():
         return out
 
     rows = []
-    for mid, _amount, respawn in read_spawn():
+    spawn = read_spawn()
+    maps = sorted({m for m, _i, _a, _r in spawn})
+    for mapname, mid, _amount, respawn in spawn:
         mob = mvp.get(mid) or drw.get(mid)
         if mob is None:
             raise SystemExit("生成清單有 %d 但兩支 mob_db 都查不到" % mid)
         rows.append({
             "id": mid,
+            "zm": mapname,
+            "z": ZONE.get(mapname, mapname),
             "k": "mvp" if mid in mvp else "drw",
             "n": mob.get("JapaneseName") or mob["Name"],
             "en": mob["Name"],
@@ -161,16 +186,16 @@ def collect():
             "d": drops_of(mob, mid),
         })
 
-    gdrops = [[items[a][0], items[a][1], round(r, 6)] for a, r in read_map_drops()]
-    return rows, gdrops
+    gdrops = [[items[a][0], items[a][1], round(r, 6)] for a, r in read_map_drops(maps)]
+    return rows, gdrops, maps
 
 
 def common_drops(rows, gdrops):
-    """352 隻全部都掉的那幾樣 —— 抽出來單獨講, 表格就不必重複 352 次。"""
+    """兩區全部都掉的那幾樣 —— 抽出來單獨講, 表格就不必重複 295 次。"""
     sets = [{x[0] for x in r["d"] if not x[3]} for r in rows]
     shared = set.intersection(*sets) if sets else set()
     ref = {x[0]: x for x in rows[0]["d"]}
-    out = [(ref[i][1], ref[i][2], "352 隻全部") for i in sorted(shared)]
+    out = [(ref[i][1], ref[i][2], "%d 隻全部" % len(rows)) for i in sorted(shared)]
     out += [(n, r, "地圖掉落") for _, n, r in gdrops]
     return out
 
@@ -192,12 +217,12 @@ TPL = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>靈獸島魔物圖鑑 · 神域仙境</title>
-<meta name="description" content="靈獸島 352 隻魔物的完整數值與掉落：190 隻專用 MVP 與 162 種神域魔物。">
+<meta name="description" content="靈獸島 __TOTAL__ 隻魔物的完整數值與掉落：__NMVP__ 隻專用 MVP 與 __NDRW__ 種神域魔物。">
 <meta name="color-scheme" content="light dark">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="神域仙境">
 <meta property="og:title" content="靈獸島魔物圖鑑">
-<meta property="og:description" content="靈獸島 352 隻魔物的完整數值與掉落。">
+<meta property="og:description" content="靈獸島 __TOTAL__ 隻魔物的完整數值與掉落。">
 <meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
 <meta property="og:image:width" content="600">
 <meta property="og:image:height" content="600">
@@ -332,30 +357,30 @@ td.rate{color:var(--cinnabar); font-weight:500; text-align:right; font-variant-n
       <span>← 神域仙境 玩家工具</span>
     </a>
     <h1>靈獸島魔物圖鑑</h1>
-    <p class="lede">靈獸島是<b>單一張圖</b>，__TOTAL__ 隻魔物同時擠在上面：__NMVP__ 隻專用 MVP 與 __NDRW__ 種神域魔物，每種各 1 隻、<b>死了 1 秒就重生</b>。下面是每一隻的完整數值與掉落。</p>
+    <p class="lede">靈獸島分成<b>兩區</b>，一區一類：<b>第一區</b>是 __NMVP__ 隻專用 MVP，<b>第二區</b>是 __NDRW__ 種神域魔物，合計 __TOTAL__ 隻。每種各 1 隻、<b>死了 1 秒就重生</b>，兩區都可以掛機。下面是每一隻的完整數值與掉落。</p>
   </header>
 
   <section>
     <h2>進去之前</h2>
     <ul class="facts">
-      <li><span class="fk">入場費</span><span class="fv">__FEE__ z</span><span class="fn">每次進場收取</span></li>
-      <li><span class="fk">MVP 受到的傷害</span><span class="fv">10%</span><span class="fn">__NMVP__ 隻 MVP 全部減傷 90%；神域魔物無減傷</span></li>
-      <li><span class="fk">重生</span><span class="fv">1 秒</span><span class="fn">引擎下限，寫更小也沒用</span></li>
-      <li><span class="fk">魔物總數</span><span class="fv">__TOTAL__</span><span class="fn">__NMVP__ 隻 MVP ＋ __NDRW__ 種神域魔物</span></li>
+      <li><span class="fk">入場費</span><span class="fv">__FEE__ z</span><span class="fn">兩區同價，進哪一區都收一次</span></li>
+      <li><span class="fk">第一區</span><span class="fv">__NMVP__ 隻</span><span class="fn">專用 MVP，全部只吃 10% 傷害（減傷 90%）</span></li>
+      <li><span class="fk">第二區</span><span class="fv">__NDRW__ 種</span><span class="fn">神域魔物，無減傷；寵物蛋與 1轉技能石的產地</span></li>
+      <li><span class="fk">重生</span><span class="fv">1 秒</span><span class="fn">兩區都是引擎下限，寫更小也沒用</span></li>
     </ul>
-    <p class="note">這裡的 MVP 是<b>靈獸島專用的複製品</b>（編號 __MVPFROM__～__MVPTO__），與野外那些同名的王是不同的魔物 —— 差別只在<b>只吃 10% 傷害</b>。牠們掉的卡片與素材則與本尊相同。</p>
+    <p class="note">第一區的 MVP 是<b>靈獸島專用的複製品</b>（編號 __MVPFROM__～__MVPTO__），與野外那些同名的王是不同的魔物 —— 差別只在<b>只吃 10% 傷害</b>。牠們掉的卡片與素材則與本尊相同。</p>
   </section>
 
   <section>
-    <h2>全圖共通掉落</h2>
-    <p class="note" style="margin-top:0">不分魔物種類，圖上每一隻死掉都會擲的幾樣。個別魔物自己的掉落列在下面的表裡。</p>
+    <h2>兩區共通掉落</h2>
+    <p class="note" style="margin-top:0">不分區、不分魔物種類，島上每一隻死掉都會擲的幾樣。個別魔物自己的掉落列在下面的表裡。</p>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>物品</th><th class="num">機率</th><th>來源</th></tr></thead>
         <tbody>__COMMON__</tbody>
       </table>
     </div>
-    <p class="note">MVP 硬幣是這張圖的主要產出。__TOTAL__ 隻全清一輪的期望值是 __TOTAL__ × __COINPCT__ ＝ <b>__COINEXP__ 枚</b>，也就是平均清 __COINROUNDS__ 輪出一枚。</p>
+    <p class="note">MVP 硬幣是這座島的主要產出。<b>兩區</b>合計 __TOTAL__ 隻全清一輪的期望值是 __TOTAL__ × __COINPCT__ ＝ <b>__COINEXP__ 枚</b>，也就是平均清 __COINROUNDS__ 輪出一枚。技能石與礦石那幾樣兩區的機率完全相同 —— 只想刷這些的話待哪一區都一樣。</p>
   </section>
 
   <section>
@@ -435,6 +460,7 @@ function detail(m){
   td.colSpan = 6;
 
   const stats = [
+    ["所在區域", m.z],
     ["HP", fmt(m.hp)], ["攻擊", fmt(m.atk)], ["魔攻", fmt(m.matk)],
     ["防禦", fmt(m.df)], ["魔防", fmt(m.mdf)], ["射程", m.rng],
     ["STR", m.st[0]], ["AGI", m.st[1]], ["VIT", m.st[2]],
@@ -553,7 +579,7 @@ render();
 
 
 def build():
-    rows, gdrops = collect()
+    rows, gdrops, maps = collect()
     common = common_drops(rows, gdrops)
 
     nmvp = sum(1 for r in rows if r["k"] == "mvp")
@@ -605,8 +631,8 @@ def verify(dest, rows, common, out):
         ok = ok and bool(cond)
 
     print("驗證 %s" % dest)
-    chk(len(rows) == 352, "魔物 352 隻 (實得 %d)" % len(rows))
-    chk(sum(1 for r in rows if r["k"] == "mvp") == 190, "MVP 190 隻")
+    chk(len(rows) == 295, "魔物 295 隻 (實得 %d)" % len(rows))
+    chk(sum(1 for r in rows if r["k"] == "mvp") == 133, "MVP 133 隻 (190 - 停用 57)")
     chk(sum(1 for r in rows if r["k"] == "drw") == 162, "神域魔物 162 種")
     chk(len({r["id"] for r in rows}) == len(rows), "編號不重複")
     chk(all(r["n"] for r in rows), "每隻都有顯示名")
@@ -614,7 +640,21 @@ def verify(dest, rows, common, out):
         "掉落物全部是中文名")
     chk(all(r["dt"] == 10 for r in rows if r["k"] == "mvp"), "MVP 減傷 90%")
     chk(all(r["rs"] == 1000 for r in rows), "重生 1 秒")
-    chk(len(common) == 5, "全圖共通掉落 5 樣 (實得 %d)" % len(common))
+
+    # [2026-08-31] 分區。一區一類是這次改動的重點, 混到別區就是搬錯了。
+    z = {}
+    for r in rows:
+        z.setdefault(r["zm"], set()).add(r["k"])
+    chk(z == {"bossnia_01": {"mvp"}, "bossnia_02": {"drw"}},
+        "一區只有 MVP、二區只有神域魔物 (實得 %s)"
+        % {k: sorted(v) for k, v in sorted(z.items())})
+    chk(all(r["z"] for r in rows), "每隻都對到了區域中文名")
+
+    # ★ 不要硬編數量 —— 地圖掉落是會增減的(2026-08-31 就多了鋁與神之金屬),
+    #   寫死數字只會在別人改 map_drops.yml 時假失敗。改成印出內容供核對,
+    #   真正該守住的「兩區必須一致」已經在 read_map_drops() 擋掉了。
+    chk(len(common) >= 2, "兩區共通掉落 %d 樣: %s"
+        % (len(common), " / ".join("%s %s" % (c[0], pct(c[1])) for c in common)))
     coin = [c for c in common if "硬幣" in c[0]]
     chk(len(coin) == 1 and abs(coin[0][1] - 0.05) < 1e-9, "MVP硬幣 0.05%")
     st = [c for c in common if c[0] == "1轉技能石"]
