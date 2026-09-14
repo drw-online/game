@@ -442,11 +442,6 @@ __EXTRA__
         </div>
         <p class="note">抽一次要一張<b>__TICKET__</b>，商城「新商品」頁上架，<b>__PRICE__ 點</b>。</p>
       </div>
-      <div>
-        <h3 class="sub">碎片也能湊</h3>
-        <p class="note">抽到重複的法寶可以在天君那裡<b>分解</b>成該神將的碎片：一般 __DUPN__ 片、特級 __DUPP__ 片。碎片本身可以交易，湊齊了一樣能請出神將。</p>
-        <p class="note">碎片與法寶也會從<b>天降福利</b>之類的活動流出來，不是只有商城一條路。</p>
-      </div>
     </div>
   </section>
 
@@ -488,7 +483,6 @@ __EXTRA__
         <p class="note"><b>裝備法寶符印</b> —— 戰印／真印／靈印三種，分別加攻擊、血量與冷卻縮減。</p>
       </div>
       <div>
-        <p class="note"><b>分解重複法寶</b> —— 重複的法寶換成該神將的碎片。</p>
         <p class="note"><b>法寶修復</b> —— 法寶碎片換回剩餘冷卻的一半，每天一次，所有品階共用。</p>
       </div>
     </div>
@@ -528,8 +522,6 @@ __EXTRA__
         "__TBLSEAL__": tbl_seal,
         "__TICKET__": e(items.get(tk, tk)),
         "__PRICE__": str(price),
-        "__DUPN__": comma(sc["SJ_DupFragN"]),
-        "__DUPP__": comma(sc["SJ_DupFragP"]),
     }
     for k, v in rep.items():
         doc = doc.replace(k, v)
