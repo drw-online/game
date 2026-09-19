@@ -15,7 +15,9 @@
   script/19.技能專精/00.設定.txt    全部 $@SPZ_* (唯一的數值來源)
   script/19.技能專精/01.對照表.txt  $@SPZ_LINE$ 十一職系
   script/19.技能專精/04.技能表.txt  白名單 $@SPZ_SKTY / SKLV / SKVC / SKDL / SKBK / SKLN
+  script/19.技能專精/03.NPC.txt     萬法宗師・玄策的主選單 (功能清單)
   script/21.專精換取/00.設定.txt    靈髓換取的配方數與四個技能書配方
+  script/21.專精換取/02.NPC.txt     換取的十一個分類選單
   script/04.系統/12.境界突破.txt    $@realm_name$ (解鎖門檻那一境的名字)
   db/re/skill_db.yml + db/import/skill_db.yml   技能中文名取 Description
 
@@ -45,6 +47,8 @@ F_CONF  = os.path.join(SPZ, "00.設定.txt")
 F_TABLE = os.path.join(SPZ, "01.對照表.txt")
 F_SKILL = os.path.join(SPZ, "04.技能表.txt")
 F_EXCH  = os.path.join(SRV, r"script\21.專精換取\00.設定.txt")
+F_NPC   = os.path.join(SPZ, "03.NPC.txt")
+F_EXNPC = os.path.join(SRV, r"script\21.專精換取\02.NPC.txt")
 F_REALM = os.path.join(SRV, r"script\04.系統\12.境界突破.txt")
 F_SKDB  = [os.path.join(SRV, r"db\re\skill_db.yml"),
            os.path.join(SRV, r"db\import\skill_db.yml")]
@@ -132,6 +136,46 @@ def parse(text):
             continue
         scalars[name] = conv(val)
     return arrays, scalars
+
+
+MENU_RE = re.compile(r"select\(\s*(.*?)\)", re.S)
+
+
+def menu_items(path, anchor):
+    """取 anchor 之後第一個 select( ) 的選項文字, 去掉色碼與【】。
+
+    ★ 選單就是「這個 NPC 能做什麼」的唯一真相 —— 來源加了一項而
+      MENU_DESC 沒補說明, 下面的驗證會擋下來, 不會靜默漏掉一個功能。
+    """
+    text = strip_comments(read(path))
+    i = text.find(anchor)
+    chk(i >= 0, f"{os.path.basename(path)} 找不到選單錨點 {anchor}")
+    m = MENU_RE.search(text, i)
+    chk(bool(m), f"{os.path.basename(path)} 的 {anchor} 後面沒有 select()")
+    out = []
+    for s in re.findall(r'"([^"]*)"', m.group(1)):
+        s = re.sub(r"\^[0-9A-Fa-f]{6}", "", s).replace("【", "").replace("】", "").strip()
+        if s:
+            out.append(s)
+    chk(len(out) >= 2, f"{anchor} 只解析到 {len(out)} 個選項")
+    return out
+
+
+#  主選單每一項的一句話 —— 項目名從 03.NPC.txt 解析, 說明是手寫的。
+MENU_DESC = {
+    "查看專精技能":     "列出你已經投過材料的技能：目前等級、走哪條路線、有沒有裝進槽。",
+    "提升專精等級":     "投技能書或殘頁把一支技能推上一級。到突破點要改走下一項。",
+    "突破專精階段":     "四個突破點的關卡，成功率固定，失敗會掉級而且材料不退。",
+    "選擇／切換路線":   "Lv.10 選路線、Lv.20 選極意；選錯了可以用輪迴石換。",
+    "分解技能書":       "把用不到的書拆成殘頁先囤著。別的職系的書只能走這裡。",
+    "技能書重煉":       "用不要的書換一本隨機技能書，不能指定要換出哪一支。",
+    "配置專精槽":       "把練好的專精放進啟用槽 —— 沒裝進去等於沒有。",
+    "重置單一技能":     "退掉一支技能的專精，返還大部分材料，Zeny 不退。",
+    "查看材料倉庫":     "殘頁與靈髓的存量。帳號共用、不佔背包、不能交易。",
+    "查看規則與成功率": "遊戲裡的規則說明，數字跟這一頁同一份來源。",
+    "換取專精靈髓":     "拿技能書、殘頁或副本材料換靈髓，共 {exn} 個配方。",
+}
+MENU_SKIP = ("離開", "返回")
 
 
 def seq(arr, lo, hi):
@@ -357,6 +401,24 @@ def main():
                  "out": ex_a["$@SPZX_Out"][r], "same": ex_a["$@SPZX_SameN"][r]}
                 for r in range(4)]
 
+    # ---- 萬法宗師・玄策身上有哪些功能 ----
+    #  ★ 靈髓換取沒有自己的 NPC, 是掛在這個主選單的其中一項
+    #    (script/21.專精換取/init.conf 的檔頭寫得很清楚)。
+    menu = [s for s in menu_items(F_NPC, "S_Menu:") if s not in MENU_SKIP]
+    menu_rows = ""
+    for i, item in enumerate(menu, 1):
+        chk(item in MENU_DESC, f"主選單多了「{item}」, 到 MENU_DESC 補一句說明")
+        menu_rows += (f'<tr><td class="num">{i}</td><td><b>{esc(item)}</b></td>'
+                      f'<td>{esc(MENU_DESC[item].format(exn=ex_n))}</td></tr>')
+
+    #  換取的分類: 02.NPC.txt 的 select 前 N 項正好是 $@SPZX_Cat 的 1~N,
+    #  後面兩項是「查看綁定…」與「返回」。
+    ex_catn = max(ex_a["$@SPZX_Cat"].values())
+    ex_cats = [s for s in menu_items(F_EXNPC, "F_SPZX_UIMain") if s not in MENU_SKIP]
+    chk(len(ex_cats) > ex_catn,
+        f"換取選單只解析到 {len(ex_cats)} 項, 不足以對上 {ex_catn} 個分類")
+    ex_cats = ex_cats[:ex_catn]
+
     # ======================================================================
     #  驗證 (產生之前)
     # ======================================================================
@@ -567,6 +629,17 @@ __EXTRA__
   </section>
 
   <section>
+    <h2>找他能做什麼</h2>
+    <p class="note">整套技能專精<b>只有這一個 NPC</b> —— 從解鎖、升級到換靈髓，全部在他的主選單上，不必再去找別人。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="num">#</th><th>選單</th><th>做什麼</th></tr></thead>
+        <tbody>__MENUROWS__</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
     <h2>材料怎麼來</h2>
     <h3 class="sub">技能書拆成殘頁</h3>
     <div class="tbl-wrap">
@@ -578,7 +651,7 @@ __EXTRA__
     <p class="note">殘頁反過來<b>每 N 張抵 1 本</b>，N 就是上表同職系那一欄 —— 所以拆或不拆的價值一樣，拆只是為了「先囤著」。別的職系的書<b>只能拆</b>，而且只有 __DECOMPOTHER__%。<b>同一支技能的書直接投進去算 __FEEDSKILL__ 本</b>，這個倍率只在直接投入時有，拆殘頁不會跟著變 __FEEDSKILL__ 倍。</p>
 
     <h3 class="sub">專精靈髓</h3>
-    <p class="note">靈髓是第二種主材料，向<b>專精換取使</b>換。換取共有 <b>__EXN__ 個配方</b>（技能書、殘頁、幻影碎片、各境材料、副本材料），下面四個是直接用技能書換的：</p>
+    <p class="note">靈髓是第二種主材料，同樣找<b>萬法宗師・玄策</b>換 —— 主選單的【換取專精靈髓】。共 <b>__EXN__ 個配方</b>，分成 __EXCATN__ 類：__EXCATS__。下面四個是直接用技能書換的：</p>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>配方</th><th class="num">技能書</th><th class="num">數量</th><th class="num">Zeny</th><th class="num">產出靈髓</th><th class="num">整批同一本書</th></tr></thead>
@@ -811,6 +884,9 @@ render();
         "__FEEDLINE__": str(feed_line),
         "__FEEDSKILL__": str(feed_skill),
         "__EXN__": str(ex_n),
+        "__EXCATN__": str(ex_catn),
+        "__EXCATS__": esc("、".join(ex_cats)),
+        "__MENUROWS__": menu_rows,
         "__BOOKROWS__": book_rows,
         "__BK10LV__": str(breaks[1]),
         "__BK15LV__": str(breaks[2]),
@@ -886,9 +962,17 @@ render();
     chk(str(len(skills)) in back, "頁面沒有寫出技能總數")
     for t in TYPE:
         chk(t in back, f"頁面沒有專精類型「{t}」")
+    for item in menu:
+        chk(item in back, f"頁面沒有列出主選單的「{item}」")
+    #  ★ 靈髓換取沒有自己的 NPC。這一頁曾經寫成「專精換取使」——
+    #    腳本裡查無此人, 玩家照著找會撲空。
+    chk("專精換取使" not in back, "頁面又出現查無此人的「專精換取使」")
 
     print(f"spz.html 產生完成: {len(back):,} bytes")
     print(f"  白名單 {len(skills)} 支技能 / 職系 {LINEN} / 類型 8 / 等級 1~{MAXLV}")
+    #  ★ 這一行不要寫 NPC 全名 —— 名字裡的「・」(U+30FB) 在 CP950 主控台
+    #    編不出來, print 會炸掉(頁面本身是 UTF-8, 不受影響)。
+    print(f"  萬法宗師 {len(menu)} 項功能 / 靈髓換取 {ex_n} 個配方 {ex_catn} 類")
     print(f"  期望練滿一支: 一轉書 {exp_book1:,.0f} 本、Zeny {exp_zeny/100000000:,.1f} 億、"
           f"靈髓 {exp_total['SL']:,.0f}、悟道石 {exp_total['WD']:,.0f}")
     print("  突破平均嘗試: " + " / ".join(f"Lv.{b} {exp_tries[b]:.1f} 次" for b in breaks))
