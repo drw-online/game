@@ -7,7 +7,7 @@
 | 頁面 | 內容 |
 |---|---|
 | `index.html` | 入口頁，列出所有工具 |
-| `runewords.html` | 符文之語圖鑑 — 33 種符文、290 組組合、掉落與煉化的取得方式 |
+| `runewords.html` | 符文之語圖鑑 — 四階 33 種符文、290 組組合、掉落與煉化的取得方式；另列自成一系的破韌 6 種 |
 | `potential.html` | 裝備潛能詞條表 — 5 個部位池、194 條詞條、六支道具的差別 |
 | `petaffix.html` | 寵物詞條與星級 — 41 種能力、★3→★9 升階表、升等與六維配點 |
 | `daopan.html` | 大道星盤天賦樹 — 六大道 141 個節點、12 個核心天賦、56 點的配點上限 |
@@ -21,6 +21,8 @@
 | `mijing.html` | 天地大秘境玩法 — 5 個階級、6 種模板、19 隻首領、40 條地圖法則、20 項祭壇、18 條詞綴 |
 | `shenjiang.html` | 法寶神將玩法 — 29 名神將的靈氣與技能、召喚池機率、升級升星成本、十二境神將印兌換 |
 | `achievement.html` | 天命成就稱號圖鑑 — 150 個稱號的能力、稀有度與取得條件，29 類分類、25 個隱藏 |
+| `bossz.html` | 手動打王區 — `pvp_n_1-2` 上 152 隻 MVP 的共用數值、地圖規則、共通技能與各自的攻擊技能、152 種寵物蛋 |
+| `shadow.html` | 三流派影子裝備 — 18 件的單件能力、2/4/6 件門檻、星雷追擊機率與冷卻 |
 
 ---
 
@@ -48,7 +50,9 @@ skillstone.html     │
 spz.html            │
 mijing.html         │
 shenjiang.html      │
-achievement.html    ┘
+achievement.html    │
+bossz.html          │
+shadow.html         ┘
 pets/               神域寵物圖鑑的 162 張外觀圖（drwmob001.png ~ drwmob162.png，共約 920 KB）
 digimon/            數碼寶貝圖鑑的 33 張外觀圖
 skills/             技能石技能表的 1098 個技能圖示（24x24 PNG，共約 854 KB）
@@ -59,6 +63,7 @@ tools/              產生器。build_pets.py（產 pets.html 與 pets/）、bui
                     build_achievement.py（產 achievement.html）、
                     build_advpan.py（產 advpan.html）、
                     build_spz.py（產 spz.html）、
+                    build_bossz.py（產 bossz.html）、build_shadow.py（產 shadow.html）、
                     build_daopan.py（只重產 daopan.html 的「互動星盤」區塊）
 logo.webp           站台 logo（去背 440px，入口頁與各頁的回首頁鈕共用）
 favicon.png         瀏覽器分頁圖示（64px）
@@ -78,7 +83,7 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 
 | 頁面 | 來源 |
 |---|---|
-| `runewords.html` | `2.開機擋/db/import/item_combos.yml`（290 組的符文與組合名）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（33 種符文的 ID、中文名與階級區段）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（定位、效果文字。**「適用裝備」欄不採用** —— item_combos.yml 的 290 組 `Combo` 只列符文、沒有任何裝備，`SameItem: true` 也只要求「同一件裝備湊齊」而不指定哪一件，實際上不限部位）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號 |
+| `runewords.html` | `2.開機擋/db/import/item_combos.yml`（290 組的符文與組合名）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（33 種符文的 ID、中文名與階級區段）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（定位、效果文字。**「適用裝備」欄不採用** —— item_combos.yml 的 290 組 `Combo` 只列符文、沒有任何裝備，`SameItem: true` 也只要求「同一件裝備湊齊」而不指定哪一件，實際上不限部位）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號<br>⚠ **階級一律用 `16.符文煉化.txt` 的 `$@RR_TIER_LO/HI` 判定，不要用 ID 前綴猜** —— 2026-09-21 新增的破韌六符（2200034~2200039）就落在四段之外。它們**不參與煉化、也不進任何符文之語組合**，所以刻意**不放進上面那條可點選的符文條**（那條的數字是「參與幾組」，放進去只會讓人點了得到 0 筆），而是另立「破韌符文」一段列效果 |
 | `potential.html` | `2.開機擋/script/04.系統/22.裝備潛能.txt` 的 `$@BGP_*` 五個詞條池與 `$@BGP_OptWeight*`；**效果文字取自同檔的 `$@BGP_OptFmt$`**（客戶端 tooltip 原文，NPC 也是印這張表）——<br>2026-08-27 之前誤用詞條池的開發註解，45 筆與遊戲內用字不符<br>同檔 `F_BGP_Enchant` 檔頭的六支道具與旗標；`db/import/blackgod/item_vipmat.yml` 是實際的呼叫端 |
 | `petaffix.html` | `2.開機擋/script/04.系統/30.寵物詞條.txt` 的 `$@PETAB_*`、`$@PETUP_*`、`$@PET_DIGI_*`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `pet_gain_exp_rate` / `pet_levelup_point` / `pet_max_level` / `pet_bonus_point_class_*`（升等與配點） |
 | `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act`<br>**這一頁有產生器**：`python tools/build_pets.py` |
@@ -89,6 +94,8 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 | `skillstone.html` | `5.技能圖片/技能書對照表.csv`（1100 本技能書的物品ID / **階級** / 技能代號 / 上限 / 職業 / 圖示檔名 —— 這是主幹）<br>`5.技能圖片/技能圖示對應表.csv`（中文名稱與英文名，以技能代號 join）<br>`5.技能圖片/*.bmp`（24x24 圖示，洋紅 `255,0,255` 是去背色；1098 個裡有 828 個用它，其餘本來就是不透明深色底）<br>`2.開機擋/db/import/blackgod/item_skillbook.yml`（真正的物品 DB，用來驗證 CSV 沒過期）<br>`2.開機擋/script/04.系統/05.技能書.txt` 的 `$@SKB_TIER` / `$@SKB_BASE` / `$@SKB_LEN`（**這才是伺服器真正的抽取池**，`F_SkillStone` 照它均勻隨機）<br>`2.開機擋/conf/atcommands.yml` 的 `@job` 說明表（中文職業名，玩家 `@help job` 看到的就是這份）+ `1.原始碼/src/common/mmo.hpp` 的 `enum e_job`（把 CSV 的英文職業接到職業編號）<br>⚠ **階級只認「階級」欄，不看「原始分類」也不用物品 ID 前綴推** —— 2026-08-16 有 46 本二轉技能原本被歸在 1 轉，兩欄至今仍有 46 筆不一致，那是正確的歷史痕跡<br>⚠ 圖示檔名用 `技能書對照表` 的「圖示」欄，不用 `技能圖示對應表` 的「圖片檔名」（後者有兩筆是空的）<br>**這一頁有產生器**：`python tools/build_skillstone.py` |
 | `mijing.html` | `2.開機擋/script/16.天地大秘境/00.設定.txt` 的全部 `$@MJ_*` —— 階級（`RarityName$` / `RarityRoll` / `RarityFloors` / `RarityHard` / `RarityDecay` / `RarityLanternAdd` / `PDiv` …）、模板（`TplName$` / `TplRoll` / `TplEvent$` / `TplTrap$` / `TplBoss1~3`）、19 隻首領（`BossName$` / `BossSig$` / `BossTpl`）、40 條法則（`RuleName$` / `RuleKind` / `RuleV` / `RuleV2` / `RuleCat` / `RuleBonus`）、20 項祭壇、18 條詞綴、隱藏層門檻、兌換表與週配額<br>`2.開機擋/script/16.天地大秘境/02.入口管理器.txt` 的 `$@MJ_GateMapName$`（13 張候選圖的中文名）<br>`2.開機擋/script/16.天地大秘境/09.祭壇.txt` 的 `S_Desc`（20 項祭壇「玩家看到的那一句」）<br>`2.開機擋/script/16.天地大秘境/10.危害.txt` 的 `S_RuleWarn` / `S_AffWarn`（定時危害的預警文字）<br>⚠ **法則與詞綴的中文敘述是從 `kind`+`V` 還原的**，對照的是 `01.核心.txt` 的 `F_MJ_RuleApply` 與 `10.危害.txt` 的實際分支，**不是 `00.設定.txt` 的註解**（註解寫的是企劃書意圖，與實作有出入）<br>⚠ 新增一種 `kind` 而沒補還原規則的話，產生器會**當場失敗**而不是印出空白<br>**這一頁有產生器**：`python tools/build_mijing.py` |
 | `spz.html` | `2.開機擋/script/19.技能專精/00.設定.txt` 的全部 `$@SPZ_*`（解鎖、分解、每級消耗七張表、階段總量、突破、啟用槽、效果曲線與上限、八種類型、路線與極意、重煉、重置）<br>`2.開機擋/script/19.技能專精/01.對照表.txt` 的 `$@SPZ_LINE$`（十一職系）<br>`2.開機擋/script/19.技能專精/04.技能表.txt` 的白名單 `$@SPZ_SKTY` / `SKLV` / `SKBK` / `SKLN`<br>`2.開機擋/script/21.專精換取/00.設定.txt` 的 `$@SPZX_N` 與四個「技能書換靈髓」配方<br>`2.開機擋/script/19.技能專精/03.NPC.txt` 的 `S_Menu:` 那個 `select()`（萬法宗師・玄策的功能清單）<br>`2.開機擋/script/21.專精換取/02.NPC.txt` 的 `F_SPZX_UIMain` 那個 `select()`（換取的十一個分類）<br>`2.開機擋/script/04.系統/12.境界突破.txt` 的 `$@realm_name$`（解鎖門檻那一境的名字）<br>技能中文名取 `skill_db.yml` 的 **`Description`**（`Name` 是 AegisName）<br>⚠ **純量的 regex 不能綁行首** —— `00.設定.txt` 有一行寫兩個賦值（`$@SPZ_BK_WD10 = 10;` 後面接著 `$@SPZ_BK_B2_10 = 20;`），綁 `^` 的話第二個永遠抓不到，而且要等用到它才 KeyError<br>⚠ **每級表 `$@SPZ_B1~B4` 的單位是「同職系同轉技能書幾本」不是殘頁** —— 殘頁每 `$@SPZ_DECOMP[階]` 張抵 1 本（`06.升級.txt` 檔頭）。當成殘頁算期望成本會差 5 倍<br>⚠ 「練滿一支的期望成本」是**解線性方程式**得到的，不是把每級相加 —— 突破失敗會掉到「目標級 −1−`$@SPZ_BREAK_DROP`」，路徑會往回走。產生器拿算出來的值跟 `00.設定.txt` 註解的 8,905 本 / 191 億對照，差超過 2% 就中止（註解過期或模型寫錯都攔得下來）<br>⚠ **靈髓換取沒有自己的 NPC** —— 它掛在萬法宗師・玄策主選單的第 11 項。這一頁原本寫成向「專精換取使」換，腳本裡查無此人，玩家照著找會撲空；產生器現在有一條 `chk` 擋著這個名字<br>**這一頁有產生器**：`python tools/build_spz.py` |
+| `bossz.html` | `2.開機擋/script/25.手動王區/00.設定.txt`（地圖代號 `$@BZ_MAP$`、六面旗、`mf_mobdmgrate`）<br>`2.開機擋/script/05.魔物/16.手動王區_魔物.txt`（常駐 spawn，隻數與重生毫秒）<br>`2.開機擋/db/import/blackgod/mob_bossz.yml`（152 隻的數值與 `Drops`）<br>`2.開機擋/db/import/blackgod/item_petegg_bossz.yml` + `pet_bossz.yml`（蛋編號與捕捉／餵食參數）<br>`2.開機擋/db/import/mob_resist_db.yml` 的 `ResistProfile`（屬性與近／遠距離的額外減傷）<br>`2.開機擋/db/import/mob_skill_db.txt`（每一隻的技能組），中文名取 `skill_db.yml` 的 **`Description`**<br>⚠ **152 隻目前共用同一組數值**，所以頁面把數值抽成一張共用表 —— 產生器有一道「每個欄位只能有一種值」的檢查，哪天分級了會**當場失敗**，那時要改成逐隻列<br>⚠ 技能分「共通」與「各自」兩組，是**取交集與差集算出來的**不是寫死名單；共通那幾招的等級／機率也會逐隻核對<br>⚠ `mf_mobdmgrate` 的**第 2 個參數沒給就是 0**，飄字傷害會變成 0 而且不報錯 —— 產生器擋著這一條<br>⚠ 入場方式是**掃出來的**（全服腳本有沒有 warp 到這張圖）。目前掃不到，頁面就照實寫「還沒有入口 NPC」；補了入口重跑就會跟上<br>**這一頁有產生器**：`python tools/build_bossz.py` |
+| `shadow.html` | `2.開機擋/script/23.影子裝備/00.設定.txt` 的 `$@SHD_*_LO/HI`（三系列的 ID 區段，**區段本身就是系列識別**）<br>`2.開機擋/script/23.影子裝備/01.套裝.txt` 的 `F_Shadow_Calc`（單件 `case`、`if (.@phy >= N)` 門檻、PVP 停用的旗標清單）<br>`2.開機擋/db/import/blackgod/item_shadow_three.yml`（名稱、部位、精煉與交易限制）<br>`2.開機擋/conf/battle/blackgod.conf` 的 `bg_star_*`（追擊機率、內置冷卻、追擊技能等級）<br>⚠ **道具 yml 裡沒有任何 `Script`** —— 單件能力與九個門檻全部在 `01.套裝.txt`。想從 item_db 讀能力會讀到空的而且不報錯<br>⚠ 能力文字是從 `bonus` 指令**翻**出來的，`BONUS1` / `BONUS2` 是白名單 —— 表裡沒有的詞條會讓產生器**當場失敗**，逼人補翻譯而不是印出空白<br>⚠ `bStarThunder` 在 `pc_bonus` 是**取最高值不是相加**，所以穿滿六件是「第 2 階」不是「第 3 階」<br>⚠ 取得管道是**掃出來的**（全服腳本有沒有 `getitem` 這些 ID）。目前掃不到，頁面標「尚未開放取得」<br>**這一頁有產生器**：`python tools/build_shadow.py` |
 
 ### ⚠ 只有 `runewords.html` / `potential.html` / `petaffix.html` 沒有產生器
 

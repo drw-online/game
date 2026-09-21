@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>符文之語圖鑑</title>
-<meta name="description" content="神域仙境 33 種符文、290 組符文之語的查詢表。可依符文、洞數與關鍵字篩選。">
+<meta name="description" content="神域仙境 39 種符文（四階 33 + 破韌 6）、290 組符文之語的查詢表。可依符文、洞數與關鍵字篩選。">
 <meta name="color-scheme" content="light dark">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="神域仙境">
 <meta property="og:title" content="符文之語圖鑑">
-<meta property="og:description" content="神域仙境 33 種符文、290 組符文之語的查詢表。可依符文、洞數與關鍵字篩選。">
+<meta property="og:description" content="神域仙境 39 種符文（四階 33 + 破韌 6）、290 組符文之語的查詢表。可依符文、洞數與關鍵字篩選。">
 <meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
 <meta property="og:image:width" content="600">
 <meta property="og:image:height" content="600">
@@ -26,7 +26,7 @@
   --rule:#D3D8D0; --rule-soft:#E1E5DC;
   --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
   --on-accent:#F8F9F6;
-  --t-fan:#6B7472; --t-ling:#2F6E5E; --t-xian:#8A6420; --t-shen:#B8331C;
+  --t-fan:#6B7472; --t-ling:#2F6E5E; --t-xian:#8A6420; --t-shen:#B8331C; --t-po:#5B4A8A;
   --focus:#B8331C;
   --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
 }
@@ -37,7 +37,7 @@
     --rule:#2A322F; --rule-soft:#222A27;
     --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
     --on-accent:#121615;
-    --t-fan:#9AA4A0; --t-ling:#5EA894; --t-xian:#C9A24F; --t-shen:#E0654A;
+    --t-fan:#9AA4A0; --t-ling:#5EA894; --t-xian:#C9A24F; --t-shen:#E0654A; --t-po:#9B8AC4;
     --focus:#E0654A;
     --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
   }
@@ -48,7 +48,7 @@
   --rule:#2A322F; --rule-soft:#222A27;
   --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
   --on-accent:#121615;
-  --t-fan:#9AA4A0; --t-ling:#5EA894; --t-xian:#C9A24F; --t-shen:#E0654A;
+  --t-fan:#9AA4A0; --t-ling:#5EA894; --t-xian:#C9A24F; --t-shen:#E0654A; --t-po:#9B8AC4;
   --focus:#E0654A;
   --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
 }
@@ -112,6 +112,7 @@ h1{
 .seal[aria-pressed="true"] .ct{color:var(--on-accent); opacity:.8}
 .t-fan{--tc:var(--t-fan)} .t-ling{--tc:var(--t-ling)}
 .t-xian{--tc:var(--t-xian)} .t-shen{--tc:var(--t-shen)}
+.t-po{--tc:var(--t-po)}
 
 .controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:16px 0 14px; border-bottom:1px solid var(--rule); margin-bottom:20px}
 .ctl-row{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center}
@@ -192,7 +193,7 @@ td.mat{font-size:13px; color:var(--ink-soft); line-height:1.7}
       <span>← 神域仙境 玩家工具</span>
     </a>
     <h1>符文之語圖鑑</h1>
-    <p class="lede">三十三種符文，可組出 <b>290 組符文之語</b>。符文直接插在裝備的卡槽上，同一件裝備自己湊齊就生效，<b>不限部位</b> —— 卡槽夠的裝備都行。不同裝備湊齊<b>不同</b>的符文之語，效果各自生效；<b>同一組全身只算一次</b> —— 頭上與武器都是「大道歸真」，還是只有一組效果。</p>
+    <p class="lede">三十三種符文，可組出 <b>290 組符文之語</b>。符文直接插在裝備的卡槽上，同一件裝備自己湊齊就生效，<b>不限部位</b> —— 卡槽夠的裝備都行。不同裝備湊齊<b>不同</b>的符文之語，效果各自生效；<b>同一組全身只算一次</b> —— 頭上與武器都是「大道歸真」，還是只有一組效果。另有 <b>6 種破韌符文</b>自成一系，不參與煉化、目前也不進任何組合。</p>
   </header>
 
   <section class="seals" aria-labelledby="seals-h">
@@ -220,6 +221,21 @@ td.mat{font-size:13px; color:var(--ink-soft); line-height:1.7}
     <p>沒有符合條件的符文之語。</p>
     <p>試著少選幾個符文，或清除條件重來。</p>
   </div>
+
+  <section class="seals" aria-labelledby="po-h">
+    <div class="seals-hd">
+      <h2 id="po-h">破韌符文</h2>
+      <p class="hint">另成一系的 6 種，走的是「打穿對方抗性」這條路。<b>不屬於凡／靈／仙／神四階</b> —— 煉化既不會產出它們，也不吃它們當材料。</p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>符文</th><th class="num">編號</th><th>效果</th></tr></thead>
+        <tbody><tr><td><span class="rs t-po">破符文</span></td><td class="num">2200034</td><td>無視所有種族的物理抗性 3%</td></tr><tr><td><span class="rs t-po">滅符文</span></td><td class="num">2200035</td><td>無視所有種族的魔法抗性 3%</td></tr><tr><td><span class="rs t-po">穿符文</span></td><td class="num">2200036</td><td>物理抗性穿透 +2、魔法抗性穿透 +2</td></tr><tr><td><span class="rs t-po">極符文</span></td><td class="num">2200037</td><td>無視所有種族的物理抗性 5%、物理攻擊力 P.ATK +5</td></tr><tr><td><span class="rs t-po">虛符文</span></td><td class="num">2200038</td><td>無視所有種族的魔法抗性 5%、魔法攻擊力 S.MATK +5</td></tr><tr><td><span class="rs t-po">破界符文</span></td><td class="num">2200039</td><td>無視所有種族的物理抗性 3%、無視所有種族的魔法抗性 3%、物理抗性穿透 +3、魔法抗性穿透 +3</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note"><b>目前還沒有任何符文之語用到它們</b>，也還沒有取得管道 —— 上面那 290 組全部是四階符文組成的。插在裝備上就是單純吃自己這一條效果。</p>
+    <p class="note">「無視抗性」與「抗性穿透」是兩件事：前者按比例削掉魔物的抗性，後者是固定值。<b>兩者合計都受伺服器上限夾制</b>，堆過頭的部分會被丟掉；而且它們只穿得到魔物本身的抗性，<b>副本裡另外乘上去的減傷穿不到</b>。</p>
+  </section>
 
   <section class="seals" aria-labelledby="get-h">
     <div class="seals-hd">

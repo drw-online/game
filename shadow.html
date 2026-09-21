@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三流派影子裝備</title>
+<meta name="description" content="神域仙境 三流派影子裝備：破軍誅仙、太虛萬法、星雷幻舞各 6 件，套裝門檻與星雷追擊的完整數值。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="神域仙境">
+<meta property="og:title" content="三流派影子裝備">
+<meta property="og:description" content="物理、法術、自詠普攻三條路線，各六件，穿越多越強。">
+<meta property="og:image" content="https://drw-online.github.io/game/og.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#EFF1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121615" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+:root{
+  --ground:#EFF1EC; --paper:#F8F9F6; --sunk:#E5E8E1;
+  --ink:#1F2422; --ink-soft:#5A625E; --ink-faint:#8B948F;
+  --rule:#D3D8D0; --rule-soft:#E1E5DC;
+  --cinnabar:#B8331C; --cinnabar-wash:#B8331C1A;
+  --on-accent:#F8F9F6; --focus:#B8331C;
+  --shadow:0 1px 2px #1f242212, 0 6px 18px #1f24220a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+    --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+    --rule:#2A322F; --rule-soft:#222A27;
+    --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+    --on-accent:#121615; --focus:#E0654A;
+    --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121615; --paper:#1A201E; --sunk:#0D100F;
+  --ink:#E4E8E3; --ink-soft:#9AA4A0; --ink-faint:#6E7873;
+  --rule:#2A322F; --rule-soft:#222A27;
+  --cinnabar:#E0654A; --cinnabar-wash:#E0654A22;
+  --on-accent:#121615; --focus:#E0654A;
+  --shadow:0 1px 2px #00000040, 0 6px 18px #00000030;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 76px}
+.masthead{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+.home{display:inline-flex; align-items:center; gap:11px; text-decoration:none; margin-bottom:12px}
+.home img{width:46px; height:auto; flex:none; display:block}
+.home span{font-size:12px; letter-spacing:.34em; color:var(--cinnabar); font-weight:700}
+.home:hover span{text-decoration:underline; text-underline-offset:5px}
+.home:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:3px}
+h1{margin:0; font-family:"Noto Serif TC",serif; font-weight:900;
+  font-size:clamp(32px,6vw,48px); line-height:1.12; letter-spacing:.07em; text-wrap:balance}
+.lede{margin:14px 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--ink); font-weight:500}
+h2{margin:0 0 14px; font-family:"Noto Serif TC",serif; font-size:20px; font-weight:700; letter-spacing:.1em}
+section{margin-top:38px}
+.tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:460px}
+th,td{text-align:left; padding:9px 14px; border-bottom:1px solid var(--rule-soft)}
+th{font-size:12px; letter-spacing:.14em; color:var(--ink-faint); font-weight:500; white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:hover{background:var(--sunk)}
+.foot{margin-top:48px; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.85; color:var(--ink-faint); max-width:76ch}
+.foot b{color:var(--ink-soft); font-weight:500}
+.foot p{margin:0 0 10px}
+.back{display:inline-block; margin-top:6px; color:var(--cinnabar); font-size:13px; letter-spacing:.06em; text-decoration:none}
+.back:hover{text-decoration:underline; text-underline-offset:5px}
+.back:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:2px}
+@media (max-width:640px){ .masthead{padding:32px 0 22px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+.controls{position:sticky; top:0; z-index:5; background:var(--ground); padding:14px 0 12px;
+  border-bottom:1px solid var(--rule); margin-bottom:18px}
+.ctl-row{display:flex; flex-wrap:wrap; gap:9px 16px; align-items:center}
+.glab{font-size:12px; letter-spacing:.18em; color:var(--ink-faint)}
+.search{flex:1 1 240px; min-width:200px; padding:9px 13px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:4px; font:inherit; font-size:14px}
+.search::placeholder{color:var(--ink-faint)}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)}
+.chip{padding:5px 12px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--rule);
+  border-radius:100px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap;
+  transition:background .12s ease,color .12s ease,border-color .12s ease}
+.chip:hover{border-color:var(--ink-faint)}
+.chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--cinnabar); border-color:var(--cinnabar); color:var(--on-accent)}
+.tally{margin:11px 0 0; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.tally b{color:var(--cinnabar); font-weight:700; font-size:15px}
+td.oid{font-variant-numeric:tabular-nums; color:var(--ink-faint); width:1%; white-space:nowrap}
+td.pos{white-space:nowrap; color:var(--ink-soft); font-size:13px}
+td.rng{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--cinnabar); font-weight:500}
+td.roll{color:var(--cinnabar); font-weight:500; white-space:nowrap}
+td.keep{color:var(--ink-faint); white-space:nowrap}
+td.lim{font-size:13px; color:var(--ink-soft)}
+.note{margin:12px 0 0; font-size:13px; color:var(--ink-faint); max-width:64ch}
+.empty{padding:40px 0; text-align:center; color:var(--ink-faint)}
+</style>
+
+<style>
+h3.sub{font-family:"Noto Serif TC",serif; font-size:17px; margin:30px 0 4px;
+       letter-spacing:.06em}
+h3.sub .tag{font-family:"Noto Sans TC",sans-serif; font-size:12px; font-weight:500;
+            letter-spacing:.14em; color:var(--cinnabar); margin-left:10px;
+            padding:2px 8px; border:1px solid var(--cinnabar); border-radius:20px;
+            vertical-align:3px}
+.sub-desc{margin:0 0 12px; font-size:14px; color:var(--ink-soft)}
+.eff{margin:0; padding:0; list-style:none}
+.eff li{display:inline-block; padding:1px 8px; margin:2px 5px 2px 0;
+        border-radius:6px; font-size:.9em; background:var(--sunk); color:var(--ink-soft)}
+.eff li.up{background:var(--cinnabar-wash); color:var(--cinnabar); font-weight:700}
+.thr{list-style:none; margin:0; padding:0; display:grid; gap:12px;
+     grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.thr li{border:1px solid var(--rule); border-radius:10px; padding:13px 15px;
+        background:var(--paper); box-shadow:var(--shadow)}
+.thr b{display:block; font-family:"Noto Serif TC",serif; font-size:16px;
+       margin-bottom:7px}
+.callout{border-left:3px solid var(--cinnabar); padding:2px 0 2px 14px;
+         margin:18px 0 0; color:var(--ink-soft); font-size:14.5px;
+         line-height:1.85; max-width:72ch}
+.callout b{color:var(--ink)}
+.warn{border:1px solid var(--cinnabar); border-radius:10px; padding:14px 16px;
+      margin:16px 0 0; font-size:14.5px; color:var(--ink-soft); line-height:1.85;
+      background:var(--cinnabar-wash)}
+.warn b{color:var(--ink)}
+.rules{list-style:none; margin:0; padding:0; display:grid; gap:10px;
+       grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.rules li{border-left:3px solid var(--rule); padding:2px 0 2px 13px;
+          font-size:14px; color:var(--ink-soft); line-height:1.8}
+.rules li b{color:var(--ink); font-weight:700}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="home" href="index.html">
+      <img src="logo.webp" width="440" height="440" alt="" decoding="async">
+      <span>← 神域仙境 玩家工具</span>
+    </a>
+    <h1>三流派影子裝備</h1>
+    <p class="lede">三條路線各 <b>6 件</b>，穿在<b>影裝欄</b>、不佔一般裝備位。每一件自己就有能力，湊到 <b>2／4／6 件</b>還會再開一層。三個流派<b>各自算件數</b>，混穿不會互相湊數。</p>
+  </header>
+
+  <section>
+    <h2>怎麼拿</h2>
+    <div class="warn"><b>這 18 件目前尚未開放取得。</b>全服腳本裡找不到任何發放它們的地方 —— 沒有兌換、沒有掉落、也沒有商城。下面列的是它們<b>開放之後</b>的能力，取得方式等公告。</div>
+  </section>
+
+  <section>
+    <h2>18 件與各自的能力</h2>
+    <h3 class="sub">破軍誅仙<span class="tag">物理</span></h3><p class="sub-desc">把物理攻擊、爆發與抗性穿透堆到底。　道具編號 6021001 ~ 6021006。</p><div class="tbl-wrap"><table><thead><tr><th>裝備</th><th>部位</th><th class="num">編號</th><th>單件能力</th></tr></thead><tbody><tr><td>影子‧破軍戰刃</td><td>武器</td><td class="num">6021001</td><td><ul class="eff"><li>物理攻擊 +8%</li><li>物理攻擊力 P.ATK +8</li></ul></td></tr><tr><td>影子‧破軍戰甲</td><td>鎧甲</td><td class="num">6021002</td><td><ul class="eff"><li>最大生命 +10%</li><li>物理抗性 RES +300</li></ul></td></tr><tr><td>影子‧破軍戰盾</td><td>盾牌</td><td class="num">6021003</td><td><ul class="eff"><li>無視所有種族的物理抗性 6%</li><li>物理抗性穿透 +4</li></ul></td></tr><tr><td>影子‧破軍戰靴</td><td>戰靴</td><td class="num">6021004</td><td><ul class="eff"><li>攻擊速度 +3</li><li>最大生命 +5%</li></ul></td></tr><tr><td>影子‧破軍戰環</td><td>耳環</td><td class="num">6021005</td><td><ul class="eff"><li>近距離物理傷害 +10%</li><li>遠距離物理傷害 +10%</li><li>命中 +150</li></ul></td></tr><tr><td>影子‧破軍戰墜</td><td>墜子</td><td class="num">6021006</td><td><ul class="eff"><li>物理攻擊力 P.ATK +5</li><li>技能後延遲 -5%</li></ul></td></tr></tbody></table></div><h3 class="sub">太虛萬法<span class="tag">法術</span></h3><p class="sub-desc">魔法攻擊、屬性增傷與詠唱縮短。　道具編號 6021011 ~ 6021016。</p><div class="tbl-wrap"><table><thead><tr><th>裝備</th><th>部位</th><th class="num">編號</th><th>單件能力</th></tr></thead><tbody><tr><td>影子‧太虛法杖</td><td>武器</td><td class="num">6021011</td><td><ul class="eff"><li>魔法攻擊 +8%</li><li>魔法攻擊力 S.MATK +8</li></ul></td></tr><tr><td>影子‧太虛法衣</td><td>鎧甲</td><td class="num">6021012</td><td><ul class="eff"><li>最大生命 +10%</li><li>魔法抗性 MRES +300</li></ul></td></tr><tr><td>影子‧太虛法盾</td><td>盾牌</td><td class="num">6021013</td><td><ul class="eff"><li>無視所有種族的魔法抗性 6%</li><li>魔法抗性穿透 +4</li></ul></td></tr><tr><td>影子‧太虛法履</td><td>戰靴</td><td class="num">6021014</td><td><ul class="eff"><li>固定詠唱 -0.2 秒</li><li>最大魔力 +10%</li></ul></td></tr><tr><td>影子‧太虛法環</td><td>耳環</td><td class="num">6021015</td><td><ul class="eff"><li>對所有屬性的魔法傷害 +10%</li><li>技能魔力消耗 -5%</li></ul></td></tr><tr><td>影子‧太虛法墜</td><td>墜子</td><td class="num">6021016</td><td><ul class="eff"><li>魔法攻擊力 S.MATK +5</li><li>技能後延遲 -5%</li></ul></td></tr></tbody></table></div><h3 class="sub">星雷幻舞<span class="tag">自詠普攻</span></h3><p class="sub-desc">靠普通攻擊本體吃傷害，並自動引下雷擊。　道具編號 6021021 ~ 6021026。</p><div class="tbl-wrap"><table><thead><tr><th>裝備</th><th>部位</th><th class="num">編號</th><th>單件能力</th></tr></thead><tbody><tr><td>影子‧星雷幻刃</td><td>武器</td><td class="num">6021021</td><td><ul class="eff"><li>物理攻擊 +5%</li><li>魔法攻擊 +5%</li><li>攻擊速度 +3</li></ul></td></tr><tr><td>影子‧星雷幻衣</td><td>鎧甲</td><td class="num">6021022</td><td><ul class="eff"><li>最大生命 +12%</li><li>物理抗性 RES +200</li><li>魔法抗性 MRES +200</li></ul></td></tr><tr><td>影子‧星雷幻盾</td><td>盾牌</td><td class="num">6021023</td><td><ul class="eff"><li>無視所有種族的物理抗性 4%</li><li>無視所有種族的魔法抗性 4%</li></ul></td></tr><tr><td>影子‧星雷幻靴</td><td>戰靴</td><td class="num">6021024</td><td><ul class="eff"><li>攻擊速度 +5</li><li>迴避 +150</li></ul></td></tr><tr><td>影子‧星雷幻環</td><td>耳環</td><td class="num">6021025</td><td><ul class="eff"><li>普通攻擊傷害 +20%</li><li>命中 +200</li></ul></td></tr><tr><td>影子‧星雷幻墜</td><td>墜子</td><td class="num">6021026</td><td><ul class="eff"><li>魔法攻擊力 S.MATK +8</li><li>最大魔力 +10%</li></ul></td></tr></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>套裝門檻</h2>
+    <p class="note">下面是<b>額外</b>加上去的，單件能力照樣生效。穿滿 6 件就同時吃到 2 件、4 件、6 件 這幾層。</p>
+    <h3 class="sub">破軍誅仙</h3><ul class="thr"><li><b>2 件</b><ul class="eff"><li class="up">物理攻擊 +5%</li><li class="up">最大生命 +5%</li></ul></li><li><b>4 件</b><ul class="eff"><li class="up">無視所有種族的物理抗性 6%</li><li class="up">物理抗性穿透 +4</li></ul></li><li><b>6 件</b><ul class="eff"><li class="up">對一般、BOSS 與傭兵的物理傷害 +15%</li><li class="up">物理攻擊力 P.ATK +10</li><li class="up">對BOSS的物理傷害 +10%</li></ul></li></ul><h3 class="sub">太虛萬法</h3><ul class="thr"><li><b>2 件</b><ul class="eff"><li class="up">魔法攻擊 +5%</li><li class="up">最大魔力 +10%</li></ul></li><li><b>4 件</b><ul class="eff"><li class="up">無視所有種族的魔法抗性 6%</li><li class="up">魔法抗性穿透 +4</li></ul></li><li><b>6 件</b><ul class="eff"><li class="up">對所有屬性的魔法傷害 +15%</li><li class="up">魔法攻擊力 S.MATK +10</li><li class="up">技能後延遲 -8%</li></ul></li></ul><h3 class="sub">星雷幻舞</h3><ul class="thr"><li><b>2 件</b><ul class="eff"><li class="up">攻擊速度 +3</li><li class="up">最大生命 +5%</li></ul></li><li><b>4 件</b><ul class="eff"><li class="up">物理抗性穿透 +4</li><li class="up">魔法抗性穿透 +4</li><li class="up">星雷追擊 第 1 階</li></ul></li><li><b>6 件</b><ul class="eff"><li class="up">普通攻擊傷害 +25%</li><li class="up">星雷追擊傷害 +30%</li></ul></li></ul>
+  </section>
+
+  <section>
+    <h2>星雷追擊</h2>
+    <p class="note">星雷幻舞獨有。普通攻擊<b>造成實際傷害</b>時有機率自動放出一發<b>雷擊術 Lv.3</b>（風屬性魔法，3 段）。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>階級</th><th class="num">發動率</th><th class="num">內置冷卻</th><th>來自</th></tr></thead>
+        <tbody><tr><td>第 1 階</td><td class="num">15%</td><td class="num">1 秒</td><td>4 件套裝</td></tr><tr><td>第 2 階</td><td class="num">25%</td><td class="num">0.8 秒</td><td>6 件套裝</td></tr></tbody>
+      </table>
+    </div>
+    <div class="callout">
+      幾個容易誤會的地方：<b>一次普通攻擊只抽一次</b> —— 多段武器、雙持、二刀連擊都算同一次。
+      <b>機率沒中不會進冷卻</b>，下一次普攻照樣抽。冷卻<b>不會被換裝、切圖或死亡重置</b>。
+      追擊打出來的傷害<b>不會再觸發追擊</b>，也不吃吸血與吸魔。
+      另外，<b>普通攻擊傷害加成不會加到追擊上</b> —— 那一條只認普攻本體。
+    </div>
+  </section>
+
+  <section>
+    <h2>規則</h2>
+    <ul class="rules"><li><b>玩家互打的場合一律不生效</b>　在PVP 地圖、攻城戰、攻城城堡、TE 攻城戰、TE 攻城城堡、戰場裡，單件能力、所有套裝門檻與星雷追擊全部停用，只保留裝備欄占位。</li><li><b>不能精煉</b>　本版沒有開放。</li><li><b>不能附魔</b>　本版沒有開放。</li><li><b>不能交易也不能丟棄</b>　拿到就是自己的。</li><li><b>穿 5 件 = 只拿到 2 件、4 件 的效果</b>　門檻是「至少幾件」，中間的件數沒有額外特效。</li><li><b>只算同系列、不同部位</b>　三個流派的件數各自獨立計算，混穿不會互相湊數。</li></ul>
+  </section>
+
+  <footer class="foot">
+    資料以伺服器實際設定為準。若頁面內容與遊戲內不符，請以遊戲內為準並回報管理員。
+  </footer>
+</div>
+</body>
+</html>
