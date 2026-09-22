@@ -12,9 +12,15 @@
   2.開機擋/db/import/blackgod/pet_digimon.yml          33 筆的 Mob / EggItem
   2.開機擋/db/import/blackgod/mob_digimon.yml          魔物編號與 JapaneseName
   2.開機擋/db/import/blackgod/item_petegg_digimon.yml  寵物蛋編號
-  外觀 (兩處, 逐名解析 —— 只看其中一處會少一批而且不會報錯):
-    3.客戶端/data/sprite/跨蝶攪/         [2026-09-04] 新增的 22 隻
-    3.客戶端/old/data_/sprite/跨蝶攪/    最早那 11 隻
+  外觀 (三處, 逐名解析 —— 只看其中一處會少一批而且不會報錯):
+    3.客戶端/old/data_drw03/sprite/跨蝶攪/  [2026-09-17] 全部 33 隻現在在這
+    3.客戶端/data/sprite/跨蝶攪/            [2026-09-04] 新增的 22 隻(已搬走)
+    3.客戶端/old/data_/sprite/跨蝶攪/       最早那 11 隻
+
+  ★ [2026-09-22] drw03 這一條是補上去的。09-17 起 client_limit.dll 多掛了
+    drw03.grf(優先權最高), 那 22 隻就從 data/sprite/跨蝶攪/ 搬到 drw03 的
+    來源資料夾, 於是產生器只找得到 11 隻 —— 而且 rc=0 不報錯, 頁面直接從
+    33 種掉到 11 種。少了就少了, 只有比對前後檔案大小才看得出來。
 
 --------------------------------------------------------------------------
 與 build_pets.py 的關係
@@ -32,6 +38,7 @@ WEB  = os.path.dirname(HERE)
 ROOT = r"H:\91.神域仙境"
 DB   = os.path.join(ROOT, r"2.開機擋\db\import\blackgod")
 SPR_DIRS = [
+    os.path.join(ROOT, r"3.客戶端\old\data_drw03\sprite\跨蝶攪"),
     os.path.join(ROOT, r"3.客戶端\data\sprite\跨蝶攪"),
     os.path.join(ROOT, r"3.客戶端\old\data_\sprite\跨蝶攪"),
 ]

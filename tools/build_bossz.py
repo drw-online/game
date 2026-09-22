@@ -37,8 +37,10 @@
   兩組都是算出來的(取交集與差集), 不是寫死的名單。
 
 ★ 入場方式是「找出來」的不是寫死的 —— 掃全服腳本有沒有 warp 到這張圖。
-  目前找不到任何入口, 頁面就照實寫「還沒有入口 NPC」。日後補了入口
-  重跑一次就會跟上。
+  找不到就照實寫「還沒有入口 NPC」。
+  [2026-09-22] 入口已經有了(萬境試煉使 -> script/25.手動王區/01.入口.txt)。
+  它寫的是 `warp $@BZ_MAP$`, 所以 find_entrance 要先解地圖名變數 ——
+  只比字面地圖名會誤報成「還沒有入口」。
 """
 import io, os, re, sys, html, collections
 
@@ -51,6 +53,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WEB  = os.path.dirname(HERE)
 ROOT = r"H:\91.神域仙境"
 SRV  = os.path.join(ROOT, "2.開機擋")
+SRC  = os.path.join(ROOT, "1.原始碼")
 
 F_CONF  = os.path.join(SRV, r"script\25.手動王區\00.設定.txt")
 F_SPAWN = os.path.join(SRV, r"script\05.魔物\16.手動王區_魔物.txt")
@@ -59,6 +62,9 @@ F_EGG   = os.path.join(SRV, r"db\import\blackgod\item_petegg_bossz.yml")
 F_PET   = os.path.join(SRV, r"db\import\blackgod\pet_bossz.yml")
 F_RES   = os.path.join(SRV, r"db\import\mob_resist_db.yml")
 F_MSKL  = os.path.join(SRV, r"db\import\mob_skill_db.txt")
+F_SHDEF = os.path.join(SRC, r"add\src\blackgod_boss_shield.inc")
+F_SHENU = os.path.join(SRC, r"src\map\mob.hpp")
+F_SHMAP = os.path.join(SRC, r"src\map\mob.cpp")
 
 STYLE_FROM = os.path.join(WEB, "potential.html")
 DEST       = os.path.join(WEB, "bossz.html")
@@ -85,6 +91,11 @@ def yload(path):
 
 def num(n):
     return "{:,}".format(int(n))
+
+
+def rng(lo, hi):
+    """數量不一致時寫成區間, 例如 4~6。"""
+    return str(lo) if lo == hi else "%d~%d" % (lo, hi)
 
 
 def cn_num(n):
@@ -207,9 +218,72 @@ def read_skill_names(ids):
     return got
 
 
+def parse_shields():
+    """四大防禦的參數一律從原始碼取 —— 頁面不自己抄一份數字。
+
+    ★ 這四招「不在 mob_skill_db 裡」。2026-09-22 起改成引擎實作
+      (add/src/blackgod_boss_shield.inc), 所以掃技能表掃不到,
+      舊版頁面那段寫死的文案整段過期了(還提到已經不存在的「魔法鏡」)。
+
+    三個檔各取一段, 全部對得起來才算數:
+      mob.hpp  enum e_bg_shield 的「順序」= bg_shield_def[] 的索引
+      mob.cpp  ShieldOrder 的英文字串 -> BGS_*
+      .inc     bg_shield_def[] 的參數與 BGS_* 常數
+    """
+    hpp = read(F_SHENU, "utf-8")
+    m = re.search(r"enum\s+e_bg_shield\s*:\s*\w+\s*\{(.*?)\}", hpp, re.S)
+    chk(m, "mob.hpp 找不到 enum e_bg_shield")
+    order = re.findall(r"^\s*(BGS_\w+)", m.group(1), re.M)
+    chk(order and order[0] == "BGS_NONE", "e_bg_shield 的第一項不是 BGS_NONE")
+    chk(order[-1] == "BGS_MAX", "e_bg_shield 的最後一項不是哨兵 BGS_MAX")
+    order = order[:-1]          # 去掉哨兵, 剩下 [NONE] + 實際的盾
+
+    cpp = read(F_SHMAP, "utf-8")
+    en = dict(re.findall(r'name\s*==\s*"(\w+)"\s*\)\s*sv\s*=\s*(BGS_\w+)', cpp))
+    chk(len(en) == len(order) - 1,
+        "mob.cpp 認得 %d 種 ShieldOrder 字串, 列舉有 %d 種" % (len(en), len(order) - 1))
+
+    inc = read(F_SHDEF, "utf-8")
+    m = re.search(r"bg_shield_def\[BGS_MAX\]\s*=\s*\{(.*?)\n\};", inc, re.S)
+    chk(m, "blackgod_boss_shield.inc 找不到 bg_shield_def")
+    rows = re.findall(r'\{\s*"([^"]+)"\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,',
+                      m.group(1))
+    chk(len(rows) == len(order) - 1,
+        "bg_shield_def 有 %d 列, 列舉有 %d 種盾" % (len(rows), len(order) - 1))
+
+    # 階段 -> 血量百分比。從 bg_shield_phase() 的判斷式算, 不抄註解
+    ph = {}
+    for expr, p in re.findall(r"hp\s*<=\s*([^)]+?)\s*\)\s*return\s+(\d+);", inc):
+        mm = re.fullmatch(r"mx\s*(?:\*\s*(\d+)\s*)?/\s*(\d+)", expr.strip())
+        chk(mm, "bg_shield_phase 的判斷式看不懂: %r" % expr)
+        ph[int(p)] = 100 * int(mm.group(1) or 1) // int(mm.group(2))
+    chk(ph, "bg_shield_phase 一條判斷式都沒解析到")
+
+    sh = {}
+    for name, (cn, dur, cd, up, rate) in zip(order[1:], rows):
+        up = int(up)
+        chk(up in ph, "解鎖階段 %d 在 bg_shield_phase 裡沒有對應的血量" % up)
+        sh[name] = {"cn": cn, "dur": int(dur), "cd": int(cd),
+                    "hp": ph[up], "rate": int(rate)}
+
+    k = {}
+    for key in ("BGS_TELEGRAPH", "BGS_RF_WINDOW", "BGS_RF_CAP_PCT", "BGS_GAP_NORMAL"):
+        mm = re.search(r"#define\s+%s\s+(\d+)" % key, inc)
+        chk(mm, "blackgod_boss_shield.inc 找不到 %s" % key)
+        k[key] = int(mm.group(1))
+
+    return en, sh, k
+
+
 def find_entrance(mapname):
-    """全服腳本有沒有 warp 到這張圖 —— 有入口才寫得出「怎麼進去」。"""
-    hits = []
+    """全服腳本有沒有 warp 到這張圖 —— 有入口才寫得出「怎麼進去」。
+
+    ★ 不能只比對字面地圖名。手動王區的入口寫的是 `warp $@BZ_MAP$, ...`,
+      地圖名要到 25.手動王區/00.設定.txt 的 OnInit 才綁上去, 只比字面
+      會誤報成「還沒有入口 NPC」。所以先掃一遍「哪些字串變數 = 這張圖」,
+      再拿那些變數名一起比。
+    """
+    bodies = []
     for base in ("script", "npc"):
         root = os.path.join(SRV, base)
         if not os.path.isdir(root):
@@ -220,17 +294,32 @@ def find_entrance(mapname):
                     continue
                 p = os.path.join(dirpath, fn)
                 try:
-                    body = read(p, "utf-8")
+                    bodies.append((p, read(p, "utf-8")))
                 except (UnicodeDecodeError, OSError):
                     continue
-                if mapname not in body:
-                    continue
-                for line in body.splitlines():
-                    t = line.strip()
-                    if t.startswith("//") or mapname not in t:
-                        continue
-                    if re.search(r"\bwarp\b|warpparty|warpguild|unitwarp", t):
-                        hits.append((os.path.relpath(p, SRV), t[:120]))
+
+    # `$@BZ_MAP$ = "pvp_n_1-2"` 與 `set $@BZ_MAP$, "pvp_n_1-2"` 兩種寫法
+    alias = set()
+    pat = r'((?:\$@|\$|\.@|\.)\w+\$)\s*(?:=|,)\s*"%s"' % re.escape(mapname)
+    for _p, body in bodies:
+        if mapname not in body:
+            continue
+        for line in body.splitlines():
+            t = line.strip()
+            if t.startswith("//"):
+                continue
+            alias.update(re.findall(pat, t))
+
+    hits = []
+    for p, body in bodies:
+        for line in body.splitlines():
+            t = line.strip()
+            if t.startswith("//"):
+                continue
+            if mapname not in t and not any(a in t for a in alias):
+                continue
+            if re.search(r"\bwarp\b|warpparty|warpguild|unitwarp", t):
+                hits.append((os.path.relpath(p, SRV), t[:120]))
     return hits
 
 
@@ -262,7 +351,8 @@ def main():
     FIELDS = ["Level", "Hp", "Attack", "Attack2", "Defense", "MagicDefense",
               "Resistance", "MagicResistance", "Dex", "AttackRange",
               "Size", "Race", "Element", "ElementLevel", "WalkSpeed",
-              "AttackDelay", "BaseExp", "JobExp", "ResistProfile"]
+              "AttackDelay", "BaseExp", "JobExp", "ResistProfile",
+              "IgnoreDef", "IgnoreRes"]
     stat = {}
     for k in FIELDS:
         vals = {mb.get(k) for mb in mobs.values()}
@@ -326,12 +416,14 @@ def main():
     mskill = parse_mob_skills(ids)
     chk(len(mskill) == N, "只有 %d 隻有技能設定, 應該是 %d 隻" % (len(mskill), N))
     cnt = {len(v) for v in mskill.values()}
-    chk(len(cnt) == 1, "每隻的技能數不一致: %s" % cnt)
-    per_n = cnt.pop()
+    per_lo, per_hi = min(cnt), max(cnt)
 
     sets = {mid: {s[0] for s in v} for mid, v in mskill.items()}
     shared = set.intersection(*sets.values())
     chk(shared, "152 隻沒有任何共通技能 —— 頁面的分組方式要重想")
+
+    own_cnt = {mid: len(sets[mid] - shared) for mid in ids}
+    own_lo, own_hi = min(own_cnt.values()), max(own_cnt.values())
 
     all_sk = {s[0] for v in mskill.values() for s in v}
     names = read_skill_names(all_sk)
@@ -348,6 +440,20 @@ def main():
             chk(got and got[0] == (sid, lv, rate),
                 "共通技能 %s 在各隻身上的等級/機率不一致" % names[sid])
         shared_rows.append((sid, lv, rate))
+
+    # ---- 四大防禦 (引擎實作, 不在 mob_skill_db 裡) ----
+    sh_en, sh_def, sh_k = parse_shields()
+    mob_sh = {}
+    for mid, mb in mobs.items():
+        so = [e["Type"] for e in (mb.get("ShieldOrder") or [])]
+        chk(so, "魔物 %d 沒有 ShieldOrder —— 牠不會放任何防禦" % mid)
+        for t in so:
+            chk(t in sh_en, "魔物 %d 的 ShieldOrder 有認不得的 %r" % (mid, t))
+        mob_sh[mid] = [sh_en[t] for t in so]
+    sh_used = collections.Counter(k for v in mob_sh.values() for k in v)
+    chk(set(sh_used) == set(sh_def),
+        "有盾沒被任何一隻用到(或用到沒定義的): %s"
+        % (set(sh_def) ^ set(sh_used)))
 
     # ---- 入場方式 ----
     entrance = find_entrance(mapname)
@@ -417,6 +523,8 @@ td.skl{min-width:280px; line-height:2.1}
         ("攻擊間隔", "%s 毫秒" % num(stat["AttackDelay"]),
          "攻擊距離 %d 格" % stat["AttackRange"]),
         ("經驗值", num(stat["BaseExp"]), "職業經驗 %s" % num(stat["JobExp"])),
+        ("無視防禦", "%d%% / %d%%" % (stat["IgnoreDef"], stat["IgnoreRes"]),
+         "你的 DEF / RES 只算得到一半"),
     ]
     stat_cards = "".join(
         "<li><b>%s</b><span>%s</span>%s</li>"
@@ -454,6 +562,29 @@ td.skl{min-width:280px; line-height:2.1}
         '<tr><td>%s</td><td class="num">%d%%</td><td>傷害只剩 %d%%</td></tr>'
         % (html.escape(t), v, 100 - v) for t, v in pr)
 
+    # ---- 四大防禦表 ----
+    #  ★ 白名單。多一種盾而沒補說法, 這裡會當場失敗而不是印出空白 ——
+    #    與 FLAG_CN / RANGE_CN 同一個規矩。
+    SHIELD_CN = {
+        "BGS_REFLECT": "你打出的傷害 <b>%d%%</b> 反彈回自己身上",
+        "BGS_PAIN":    "你打出的傷害 <b>%d%%</b> 反彈回自己身上",
+        "BGS_MIRROR":  "你的<b>魔法</b>傷害只剩 <b>%d%%</b>",
+        "BGS_LIGHT":   "你的<b>遠距離武器</b>傷害只剩 <b>%d%%</b>",
+    }
+    SHIELD_CUT = {"BGS_MIRROR", "BGS_LIGHT"}   # rate 是減傷, 不是反傷
+    miss = sorted(set(sh_def) - set(SHIELD_CN))
+    chk(not miss, "這幾種防禦還沒有中文說法: %s" % miss)
+
+    shield_rows = "".join(
+        '<tr><td>%s</td><td class="num">%g 秒</td><td class="num">%g 秒</td>'
+        '<td class="num">%d%%</td><td>%s</td><td class="num">%d 隻</td></tr>'
+        % (html.escape(sh_def[k]["cn"]), sh_def[k]["dur"] / 1000.0,
+           sh_def[k]["cd"] / 1000.0, sh_def[k]["hp"],
+           SHIELD_CN[k] % (100 - sh_def[k]["rate"] if k in SHIELD_CUT
+                           else sh_def[k]["rate"]),
+           sh_used[k])
+        for k in sorted(sh_def, key=lambda k: -sh_used[k]))
+
     sh_rows = "".join(
         '<tr><td>%s</td><td class="num">Lv.%d</td><td class="num">%g%%</td></tr>'
         % (html.escape(names[sid]), lv, rate / 100.0)
@@ -465,12 +596,16 @@ td.skl{min-width:280px; line-height:2.1}
         eid, _ename = eggs[pets[mb["AegisName"]]["EggItem"]]
         own = sorted(s for s in sets[mid] if s not in shared)
         chips = "".join('<span class="sk">%s</span>' % html.escape(names[s]) for s in own)
-        key = "%s %d %d %s" % (mb["JapaneseName"], mid, eid,
-                               " ".join(names[s] for s in own))
+        shn = [sh_def[k]["cn"] for k in mob_sh[mid]]
+        shc = "".join('<span class="sk">%s</span>' % html.escape(n) for n in shn)
+        key = "%s %d %d %s %s" % (mb["JapaneseName"], mid, eid,
+                                  " ".join(shn), " ".join(names[s] for s in own))
         rows.append(
             '<tr data-k="%s"><td>%s</td><td class="num">%d</td>'
-            '<td class="num">%d</td><td class="skl">%s</td></tr>'
-            % (html.escape(key), html.escape(mb["JapaneseName"]), mid, eid, chips))
+            '<td class="num">%d</td><td class="skl">%s</td>'
+            '<td class="skl">%s</td></tr>'
+            % (html.escape(key), html.escape(mb["JapaneseName"]), mid, eid,
+               shc, chips))
     mob_rows = "".join(rows)
 
     drop_rows = ['<tr><td>自己的寵物蛋</td><td class="num">%g%%</td>'
@@ -551,7 +686,24 @@ __EXTRA__
         <tbody>__PROF__</tbody>
       </table>
     </div>
-    <p class="note">這一層疊在上面的 RES／MRES 之外。<b>遠距離比近距離更吃虧</b>，而且下面那幾招還會再砍一次遠距離傷害。</p>
+    <p class="note">這一層疊在上面的 RES／MRES 之外。<b>遠距離比近距離更吃虧</b>，而且下面的防禦還會再砍一次。</p>
+  </section>
+
+  <section>
+    <h2>四大防禦</h2>
+    <p class="note">這四招<b>不是技能</b>，是系統排的，所以技能表裡看不到。開始前會先跳一行<b>紅字預警</b>，__TELE__ 秒後才真的生效 —— 看到字就停手。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>防禦</th><th class="num">持續</th><th class="num">冷卻</th><th class="num">血量門檻</th><th>對你的影響</th><th class="num">幾隻會</th></tr></thead>
+        <tbody>__SHIELDS__</tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <b>每一隻固定只會其中兩種</b>，輪流放 —— 誰會哪兩種見最下面那張表。
+      血量門檻是「掉到那個百分比以下才會開始放」，所以開場不會有。
+      反彈傷害有上限：每 __RFWIN__ 秒最多吃到自己 <b>__RFCAP__%</b> 的血，
+      一次不會被秒殺，但站著硬打一樣會死。防禦結束後有 <b>__GAP__ 秒</b>的空窗，那才是輸出時間。
+    </div>
   </section>
 
   <section>
@@ -561,11 +713,6 @@ __EXTRA__
         <thead><tr><th>技能</th><th class="num">等級</th><th class="num">發動率</th></tr></thead>
         <tbody>__SHARED__</tbody>
       </table>
-    </div>
-    <div class="callout">
-      這幾招決定了打法：<b>反射盾</b>與<b>極限痛苦</b>會把你的傷害反彈回來，<b>魔法鏡</b>反彈魔法，
-      <b>光之盾</b>會讓<b>遠距離武器</b>的傷害掉到原本的八分之一，還有一招直接回血。
-      血量夠厚才適合硬拚，不然反彈的傷害會先把自己打死。
     </div>
   </section>
 
@@ -590,7 +737,7 @@ __EXTRA__
     </div>
     <div class="tbl-wrap">
       <table id="tbl">
-        <thead><tr><th>魔物</th><th class="num">魔物編號</th><th class="num">蛋編號</th><th>各自的攻擊技能</th></tr></thead>
+        <thead><tr><th>魔物</th><th class="num">魔物編號</th><th class="num">蛋編號</th><th>會的兩種防禦</th><th>各自的攻擊技能</th></tr></thead>
         <tbody>__ROWS__</tbody>
       </table>
     </div>
@@ -637,12 +784,17 @@ __EXTRA__
         "__STATS__": stat_cards,
         "__PROF__": prof_rows,
         "__SHN__": str(len(shared_rows)),
+        "__SHIELDS__": shield_rows,
+        "__TELE__": "%g" % (sh_k["BGS_TELEGRAPH"] / 1000.0),
+        "__RFWIN__": "%g" % (sh_k["BGS_RF_WINDOW"] / 1000.0),
+        "__RFCAP__": str(sh_k["BGS_RF_CAP_PCT"]),
+        "__GAP__": "%g" % (sh_k["BGS_GAP_NORMAL"] / 1000.0),
         "__SHARED__": sh_rows,
         "__DROPS__": drop_rows,
         "__PETNOTE__": pet_note,
         "__ROWS__": mob_rows,
-        "__OWNN__": str(per_n - len(shared_rows)),
-        "__PERN__": str(per_n),
+        "__OWNN__": rng(own_lo, own_hi),
+        "__PERN__": rng(per_lo, per_hi),
     }
     for k, v in rep.items():
         doc = doc.replace(k, v)
@@ -666,16 +818,24 @@ __EXTRA__
         chk(nm == mb["JapaneseName"], "頁面的魔物名 %s 與來源不符" % nm)
         chk(int(eid) == eggs[pets[mb["AegisName"]]["EggItem"]][0],
             "頁面的蛋編號與來源不符 (魔物 %d)" % want_id)
-    chk(out.count('class="sk"') == N * (per_n - len(shared_rows)),
+    chk(out.count('class="sk"') == sum(own_cnt.values()) + 2 * N,
         "技能標籤總數對不上")
+    for k, v in sh_def.items():
+        chk(out.count(">%s<" % v["cn"]) + out.count(">%s</span>" % v["cn"]) > 0,
+            "頁面沒寫出防禦 %s" % v["cn"])
 
     print("地圖 %s / %d 隻 MVP / 每種 %d 隻 / 重生 %g 秒"
           % (mapname, N, amount, delay_ms / 1000.0))
     print("旗標 %d 面 + 地圖減傷 %g%%" % (len(flags), 100 - take / 100.0))
     print("數值 Lv.%d HP %s ATK %s 命中 %s"
           % (stat["Level"], num(stat["Hp"]), num(stat["Attack"]), num(hit)))
-    print("技能 每隻 %d 招 (共通 %d + 各自 %d), 技能中文名 %d 種"
-          % (per_n, len(shared_rows), per_n - len(shared_rows), len(names)))
+    print("技能 每隻 %s 招 (共通 %d + 各自 %s), 技能中文名 %d 種"
+          % (rng(per_lo, per_hi), len(shared_rows), rng(own_lo, own_hi), len(names)))
+    print("防禦 %s (預警 %g 秒, 空窗 %g 秒, 反傷上限 每 %g 秒 %d%%)"
+          % (" / ".join("%s %d隻" % (sh_def[k]["cn"], sh_used[k])
+                        for k in sorted(sh_def, key=lambda k: -sh_used[k])),
+             sh_k["BGS_TELEGRAPH"] / 1000.0, sh_k["BGS_GAP_NORMAL"] / 1000.0,
+             sh_k["BGS_RF_WINDOW"] / 1000.0, sh_k["BGS_RF_CAP_PCT"]))
     if not entrance:
         print("[!] 找不到任何 warp 到 %s 的入口, 頁面已標註「還沒有入口 NPC」" % mapname)
     print("已寫出 %s (%d bytes)" % (DEST, os.path.getsize(DEST)))

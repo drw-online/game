@@ -29,8 +29,11 @@
 ★ bStarThunder 在 pc_bonus 是取最高值不是相加(規格 6.1), 所以穿滿六件
   是「第 2 階」不是「第 1+2 = 3 階」。頁面照這個語意寫。
 
-★ 取得管道是「找出來」的不是寫死的 —— 掃全服腳本有沒有 getitem 這 18 個
-  ID。目前找不到, 頁面就照實標「尚未開放取得」。日後做了兌換重跑就跟上。
+★ 取得管道是「找出來」的不是寫死的 —— 兩條路都要掃, 找不到才標「尚未開放取得」:
+    1. 全服腳本的 getitem / makeitem / rentitem 帶這 18 個 ID
+    2. db/map_drops_increased.yml 的地圖掉落表(base 與 import 兩份)
+  [2026-09-22] 影子裝走的是第 2 條(pvp_n_1-2 全魔物 0.01%), 之前只掃第 1 條,
+  頁面因此一直誤標「尚未開放取得」—— 而且 rc=0 不報錯。
 """
 import io, os, re, sys, html
 
@@ -211,6 +214,7 @@ def parse_items():
         tr = it.get("Trade") or {}
         out[it["Id"]] = {
             "name": it["Name"],
+            "aegis": it["AegisName"],
             "loc": locs[0],
             "refine": bool(it.get("Refineable")),
             "grade": bool(it.get("Gradable")),
@@ -242,7 +246,36 @@ def skill_name(aegis):
     die("skill_db 找不到 %s" % aegis)
 
 
-def find_source(ids):
+def find_map_drops(aegis):
+    """地圖掉落表有沒有這些道具 —— 影子裝走的就是這條路, 不是 NPC 發的。
+
+    ★ [2026-09-22] 只掃腳本 getitem 會整條漏掉, 頁面於是誤標「尚未開放取得」。
+    ★ 分母看檔頭 Version: 2 = 十萬分比, 3 = 百萬分比。看錯就差 10 倍。
+    ★ base 與 import 兩份都要看 —— import 是後蓋上去的那一份。
+    """
+    out = []
+    for rel in (r"db\map_drops_increased.yml", r"db\import\map_drops_increased.yml"):
+        p = os.path.join(SRV, rel)
+        if not os.path.isfile(p):
+            continue
+        with io.open(p, "r", encoding="utf-8-sig") as f:
+            doc = yaml.safe_load(f) or {}
+        ver = ((doc.get("Header") or {}).get("Version")) or 0
+        chk(ver in (2, 3), "%s 的 Header Version 是 %r, 分母不明" % (rel, ver))
+        denom = 100000.0 if ver == 2 else 1000000.0
+        for ent in (doc.get("Body") or []):
+            rates = {d["Rate"] for d in (ent.get("GlobalDrops") or [])
+                     if d.get("Item") in aegis}
+            if not rates:
+                continue
+            chk(len(rates) == 1,
+                "%s 在 %s 的掉落率不一致: %s" % (ent.get("Map"), rel, sorted(rates)))
+            out.append("%s 全魔物掉落 %g%%"
+                       % (ent.get("Map"), rates.pop() / denom * 100))
+    return out
+
+
+def find_source(ids, aegis):
     """全服腳本有沒有發放這些道具 —— 有才寫得出「怎麼拿」。"""
     hits = set()
     pat = re.compile(r"\b(?:getitem|getitem2|makeitem|rentitem)\s*[\( ]\s*(?:%s)\b"
@@ -266,7 +299,7 @@ def find_source(ids):
                         continue
                     if pat.search(t):
                         hits.add(os.path.relpath(p, SRV))
-    return sorted(hits)
+    return find_map_drops(aegis) + sorted(hits)
 
 
 # ==========================================================================
@@ -343,7 +376,7 @@ def main():
         "最高門檻 %d 件與每系列 %d 件對不上" % (steps[-1], per_line))
 
     # ---- 取得管道 ----
-    sources = find_source(sorted(items))
+    sources = find_source(sorted(items), {v["aegis"] for v in items.values()})
 
     # ======================================================================
     #  HTML
