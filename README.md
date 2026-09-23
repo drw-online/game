@@ -7,7 +7,7 @@
 | 頁面 | 內容 |
 |---|---|
 | `index.html` | 入口頁，列出所有工具 |
-| `runewords.html` | 符文之語圖鑑 — 四階 33 種符文、348 組組合、掉落與煉化的取得方式；另列自成一系的破韌 6 種 |
+| `runewords.html` | 符文之語圖鑑 — 39 種符文（四階 33 ＋ 破韌 6）與各自的單顆效果、348 組組合、掉落與煉化的取得方式 |
 | `potential.html` | 裝備潛能詞條表 — 5 個部位池、194 條詞條、六支道具的差別 |
 | `petaffix.html` | 寵物詞條與星級 — 41 種能力、★3→★9 升階表、升等與六維配點 |
 | `daopan.html` | 大道星盤天賦樹 — 六大道 141 個節點、12 個核心天賦、56 點的配點上限 |
@@ -83,7 +83,7 @@ logo.jpg            原始 logo（1254px 白底），只是來源檔，頁面不
 
 | 頁面 | 來源 |
 |---|---|
-| `runewords.html` | `2.開機擋/db/import/item_combos.yml`（348 組的符文與組合名）<br>`自創/0920/神域仙境_新版符文與符文之語系統_V1.md` §5（09-21 新增那 58 組的中文效果與流派文案 —— yml 裡只有 `Script`，中文得從企劃表取）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（33 種符文的 ID、中文名與階級區段）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（定位、效果文字。**「適用裝備」欄不採用** —— item_combos.yml 的 290 組 `Combo` 只列符文、沒有任何裝備，`SameItem: true` 也只要求「同一件裝備湊齊」而不指定哪一件，實際上不限部位）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號<br>⚠ **階級一律用 `16.符文煉化.txt` 的 `$@RR_TIER_LO/HI` 判定，不要用 ID 前綴猜** —— 2026-09-21 新增的破韌六符（2200034~2200039）就落在四段之外。它們**不參與煉化、也不進任何符文之語組合**，所以刻意**不放進上面那條可點選的符文條**（那條的數字是「參與幾組」，放進去只會讓人點了得到 0 筆），而是另立「破韌符文」一段列效果 |
+| `runewords.html` | `2.開機擋/db/import/item_combos.yml`（348 組的符文與組合名）<br>`自創/0920/神域仙境_新版符文與符文之語系統_V1.md` §5（09-21 新增那 58 組的中文效果與流派文案 —— yml 裡只有 `Script`，中文得從企劃表取）<br>`2.開機擋/db/import/blackgod/item_rune.yml`（39 種符文的 ID、中文名，以及**單顆效果** —— 從 `Script` 翻成中文（白名單翻譯，沒翻到的 bonus 當場失敗），再拿 `3.客戶端/System/itemInfo_drw.lub` 說明第一行交叉比對數字。★ 企劃 §4 的「單顆能力（V1）」是建議替換值、與本服實際 `Script` 大多不同，不能拿來寫頁面）<br>`2.開機擋/script/04.系統/42.符文掉落.txt`（開放的洞天與掉率）<br>`2.開機擋/script/04.系統/16.符文煉化.txt` 的 `$@RR_*`（四道工序與材料）<br>`符文之語_去重複版/*.xlsx`（定位、效果文字。**「適用裝備」欄不採用** —— item_combos.yml 的 290 組 `Combo` 只列符文、沒有任何裝備，`SameItem: true` 也只要求「同一件裝備湊齊」而不指定哪一件，實際上不限部位）——<br>2026-08-27 起以此為準，舊的 `符文之語/*.xlsx` 有 19 群配方撞號<br>⚠ **階級一律用 `16.符文煉化.txt` 的 `$@RR_TIER_LO/HI` 判定，不要用 ID 前綴猜** —— 2026-09-21 新增的破韌六符（2200034~2200039）就落在四段之外，頁面把它們歸成第五排「破韌」（`t:"破"`）。它們**不參與煉化**，但 09-22 起有 27 組符文之語用到它們<br>⚠ **`DATA.runes` 必須涵蓋 `words` 用到的每一個 AegisName** —— 缺一個，`card()` 在 `RMAP` 查不到就把 `Rune_Po` 這種英文代號原樣印在卡片上，而且不報錯。〔2026-09-23 真的發生：補 58 組時沿用了舊規則「破韌不進任何組合，所以刻意不放進符文條」，27 張卡片印出英文。那條規則的前提已經不成立，已刪除〕<br>⚠ 58 組的效果文字取自企劃表，其中 9 組含伺服器標 `// [缺]` 的未實裝效果（觸發 T01~T04、每 5 秒回血 %、每次攻擊／每秒扣 HP %）—— 2026-09-23 依指示**照企劃保留文字、只拿掉 T01~T04 代號** |
 | `potential.html` | `2.開機擋/script/04.系統/22.裝備潛能.txt` 的 `$@BGP_*` 五個詞條池與 `$@BGP_OptWeight*`；**效果文字取自同檔的 `$@BGP_OptFmt$`**（客戶端 tooltip 原文，NPC 也是印這張表）——<br>2026-08-27 之前誤用詞條池的開發註解，45 筆與遊戲內用字不符<br>同檔 `F_BGP_Enchant` 檔頭的六支道具與旗標；`db/import/blackgod/item_vipmat.yml` 是實際的呼叫端 |
 | `petaffix.html` | `2.開機擋/script/04.系統/30.寵物詞條.txt` 的 `$@PETAB_*`、`$@PETUP_*`、`$@PET_DIGI_*`<br>`2.開機擋/conf/battle/blackgod.conf` 的 `pet_gain_exp_rate` / `pet_levelup_point` / `pet_max_level` / `pet_bonus_point_class_*`（升等與配點） |
 | `pets.html` | `2.開機擋/db/import/blackgod/pet_drwmob.yml`（162 筆的 `Mob` 與 `EggItem`）<br>`2.開機擋/db/import/blackgod/mob_drwmob.yml`（魔物編號與 `JapaneseName`，遊戲內顯示的是這欄）<br>`2.開機擋/db/import/blackgod/item_petegg_drwmob.yml`（寵物蛋編號）<br>外觀圖來自客戶端 `3.客戶端/old/data09/<몬스터>/drwmob001~162.spr｜act`<br>**這一頁有產生器**：`python tools/build_pets.py` |
